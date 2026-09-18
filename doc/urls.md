@@ -19,3 +19,5 @@ URLs en vrac
 
 + jouer pendant les pauses : [pacman](https://freepacman.org/) :D
 + tout savoir sur Pacman : [Wikipedia](https://fr.wikipedia.org/wiki/Pac-Man)
+
++ documentation MLX python: [MLX](https://github.com/noradefitero/42_MiniLibX_Python_Manual)
