@@ -21,3 +21,5 @@ URLs en vrac
 + tout savoir sur Pacman : [Wikipedia](https://fr.wikipedia.org/wiki/Pac-Man)
 
 + documentation MLX python: [MLX](https://github.com/noradefitero/42_MiniLibX_Python_Manual)
+
++ excalidraw: https://excalidraw.com/#json=ho6K4Ul6Qq_hWfII_o3xl,DRmANS8ZqhFZXzTxV9lLrg
