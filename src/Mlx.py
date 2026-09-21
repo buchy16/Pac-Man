@@ -31,7 +31,7 @@ class Mlx_Engine():
         # keysym_X11 dic reference {key_code: kay_name}
         self.KEYNAME = {x[1]: x[0] for x in keysymdef}
 
-        self.last_tick = time.monotonic_ns()
+        self._last_tick = time.monotonic_ns()
         self._timer = 0.0
 
     def get_tools(self) -> Mlx:
@@ -139,7 +139,7 @@ class Mlx_Engine():
             draw()
             for window in self.windows.values():
                 self.m.mlx_clear_window(self.mlx_ptr, window)
-            elapsed = (time.monotonic_ns() - self.last_tick) // 1000000
+            elapsed = (time.monotonic_ns() - self._last_tick) // 1000000
             self._timer = elapsed / 1000
 
         for window in self.windows.values():
