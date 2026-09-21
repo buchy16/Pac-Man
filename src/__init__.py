@@ -1,4 +1,7 @@
-from keysymdef import keysymdef
+from .Mlx import mlx
 
-# keysym_X11 dic reference {key_code: kay_name}
-KEYNAME = {x[1]: x[0] for x in keysymdef}
+__version__ = "1.0.0"
+__author__ = "nbuchy"
+__all__ = [
+    "mlx",
+]
