@@ -135,10 +135,10 @@ class Mlx_Engine():
             Returns:
                 None: The callback only drives update, draw, and timing.
             """
-            update()
-            draw()
             for window in self.windows.values():
                 self.m.mlx_clear_window(self.mlx_ptr, window)
+            update()
+            draw()
             elapsed = (time.monotonic_ns() - self._last_tick) // 1000000
             self._timer = elapsed / 1000
 
