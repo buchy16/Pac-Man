@@ -1,32 +1,44 @@
-LOCK = uv.lock
-PYTHON = python3 -m
+all: install run
 
-all : run
-
-run :
-	uv run python -m src
+install:
+	@# uv sync est TRES intelligent :P
+	@# il lit aveuglément le lockfile (uv.lock) existant,
+	@# crée le .venv s'il est absent,
+	@# y installe exactement les dépendances issues du `pyproject.toml`.
+	uv sync --group app
 
 update:
+	@# pour forcer la mise à jour de uv.lock si il y a eu modif manuelle
+	@# des dépendances dans pyproject.toml
 	uv lock --upgrade
 	uv sync --group app
 
-lint : install
-	. ./.venv/bin/activate && \
-	flake8 src && \
-	mypy src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+test:
+	uv run pytest tests/
 
-lint-strict : install
-	. ./.venv/bin/activate && \
-	flake8 src && \
-	mypy --strict src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+run:
+	uv run python -m src config.json
 
-clean : 
-	find . -name "__pycache__" -exec rm -rf {} \+
-	find . -name ".mypy_cache" -exec rm -rf {} \+
-	find . -name ".vscode" -exec rm -rf {} \+
+debug:
+	uv run python3 -m pdb -m src config.json
 
-uninstall :
-	rm -rf .venv
-	rm -rf $(LOCK)
+lint:
+	@# Les outils liront leurs configurations,
+	@# respectivement consignées dans `.flake8` et `pyproject.toml`
+	uv run flake8 src
+	uv run  mypy src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
-.PHONY: clean lint run install uninstall
+lint-strict:
+	uv run flake8 .
+	uv run mypy --strict src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+
+# supprime tout ce qui est régénérable automatiquement
+clean:
+	rm -rf .mypy_cache .pytest_cache build dist
+	@find . -type d -name "__pycache__" -exec rm -rf {} +
+
+# supprime en plus ce qui nécessite une action manuelle pour être reconstruit
+fclean: clean
+	rm -rf .venv uv.lock
+
+.PHONY: all install update test run debug lint lint-strict clean fclean
