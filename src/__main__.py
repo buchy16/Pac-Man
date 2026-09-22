@@ -7,7 +7,13 @@ from . import mlx
 class App():
     def __init__(self) -> None:
         self.number = 0
-        mlx.new_window(256, 256, "main")
+        mlx.new_window(1280, 720, "main")
+        self.middle_X = int(1280 / 2)
+        self.middle_Y = int(720 / 2)
+        self.img = mlx.get_tools().mlx_png_file_to_image(
+            mlx.mlx_ptr,
+            "assets/Maze Parts.png"
+        )[0]
 
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
@@ -21,42 +27,13 @@ class App():
 # -----------------------------------------------------------------------------
 
     def draw(self) -> None:
-        if (mlx.timer % 2 <= 0.5):
-            mlx.get_tools().mlx_string_put(
-                mlx.mlx_ptr,
-                mlx.windows["main"],
-                128,
-                128,
-                0x0000FF,  # couleur BGR en Hexa
-                str(mlx.timer)
-            )
-        elif (mlx.timer % 2 > 0.5 and mlx.timer % 2 <= 1):
-            mlx.get_tools().mlx_string_put(
-                mlx.mlx_ptr,
-                mlx.windows["main"],
-                128,
-                128,
-                0x00FFFF,
-                str(mlx.timer)
-            )
-        elif (mlx.timer % 2 > 1 and mlx.timer % 2 <= 1.5):
-            mlx.get_tools().mlx_string_put(
-                mlx.mlx_ptr,
-                mlx.windows["main"],
-                128,
-                128,
-                0xFF0000,
-                str(mlx.timer)
-            )
-        elif (mlx.timer % 2 > 1.5):
-            mlx.get_tools().mlx_string_put(
-                mlx.mlx_ptr,
-                mlx.windows["main"],
-                128,
-                128,
-                0xFF00FF,
-                str(mlx.timer)
-            )
+        mlx.get_tools().mlx_put_image_to_window(
+            mlx.mlx_ptr,
+            mlx.windows["main"],
+            self.img,
+            0,
+            0
+        )
 
 
 def get_maze(display: bool = False) -> None:
