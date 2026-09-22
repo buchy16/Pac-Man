@@ -22,4 +22,4 @@ URLs en vrac
 
 + documentation MLX python: [MLX](https://github.com/noradefitero/42_MiniLibX_Python_Manual)
 
-+ excalidraw: https://excalidraw.com/#json=AVw9uTxM3cmRUS90MuQ7u,k8GbqLDWMqk5cKHlk9cNew
++ excalidraw: [Excalicraw](https://excalidraw.com/#json=KLRzZouDn5pMPr53fUSFx,C0rLNNCZHASNGEHR4JsBvQ)
