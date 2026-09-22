@@ -48,7 +48,9 @@ wheels = [
 name = "pac-man"
 version = "0.1.0"
 source = { virtual = "." }
-dependencies = [
+
+[package.dev-dependencies]
+app = [
     { name = "argparse" },
     { name = "keysymdef" },
     { name = "mazegenerator" },
@@ -57,7 +59,9 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [
+
+[package.metadata.requires-dev]
+app = [
     { name = "argparse", specifier = ">=1.4.0" },
     { name = "keysymdef", specifier = ">=1.2.0" },
     { name = "mazegenerator", path = "modules/mazegenerator-2.1.0-py3-none-any.whl" },

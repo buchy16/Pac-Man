@@ -3,16 +3,12 @@ PYTHON = python3 -m
 
 all : run
 
-.venv/bin/activate : 
-	$(PYTHON) uv sync
+run :
+	uv run python -m src
 
-$(LOCK) :
-	$(PYTHON) uv sync
-
-install : .venv/bin/activate $(LOCK)
-
-run : install
-	$(PYTHON) uv run python -m src
+update:
+	uv lock --upgrade
+	uv sync --group app
 
 lint : install
 	. ./.venv/bin/activate && \
@@ -29,7 +25,7 @@ clean :
 	find . -name ".mypy_cache" -exec rm -rf {} \+
 	find . -name ".vscode" -exec rm -rf {} \+
 
-uninstall : install
+uninstall :
 	rm -rf .venv
 	rm -rf $(LOCK)
 

@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Pac_Man !!!!"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = [
+dependencies = []
+
+[dependency-groups]
+
+app = [
     "argparse>=1.4.0",
     "keysymdef>=1.2.0",
     "mazegenerator",
