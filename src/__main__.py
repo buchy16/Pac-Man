@@ -1,7 +1,62 @@
-import mlx
 from mazegenerator import MazeGenerator
+from . import mlx
 
-m = mlx.Mlx()
+# On est pas en RGB mais en BGR
+
+
+class App():
+    def __init__(self) -> None:
+        self.number = 0
+        mlx.new_window(256, 256, "main")
+
+# -----------------------------------------------------------------------------
+# -------------------------------   UPDATE   ----------------------------------
+# -----------------------------------------------------------------------------
+
+    def update(self) -> None:
+        pass
+
+# -----------------------------------------------------------------------------
+# -------------------------------     DRAW   ----------------------------------
+# -----------------------------------------------------------------------------
+
+    def draw(self) -> None:
+        if (mlx.timer % 2 <= 0.5):
+            mlx.get_tools().mlx_string_put(
+                mlx.mlx_ptr,
+                mlx.windows["main"],
+                128,
+                128,
+                0x0000FF,  # couleur BGR en Hexa
+                str(mlx.timer)
+            )
+        elif (mlx.timer % 2 > 0.5 and mlx.timer % 2 <= 1):
+            mlx.get_tools().mlx_string_put(
+                mlx.mlx_ptr,
+                mlx.windows["main"],
+                128,
+                128,
+                0x00FFFF,
+                str(mlx.timer)
+            )
+        elif (mlx.timer % 2 > 1 and mlx.timer % 2 <= 1.5):
+            mlx.get_tools().mlx_string_put(
+                mlx.mlx_ptr,
+                mlx.windows["main"],
+                128,
+                128,
+                0xFF0000,
+                str(mlx.timer)
+            )
+        elif (mlx.timer % 2 > 1.5):
+            mlx.get_tools().mlx_string_put(
+                mlx.mlx_ptr,
+                mlx.windows["main"],
+                128,
+                128,
+                0xFF00FF,
+                str(mlx.timer)
+            )
 
 
 def get_maze(display: bool = False) -> None:
@@ -11,33 +66,12 @@ def get_maze(display: bool = False) -> None:
         print(maze.maze)
 
 
-def exit(keynum, mlx_tools):
-    mlx_ptr, screen = mlx_tools
-
-    m.mlx_destroy_window(mlx_ptr, screen)
-    m.mlx_loop_exit(mlx_ptr)
-
-
 def main():
     print("begining tests")
-
     get_maze()
+    pac_man = App()
 
-    m = mlx.Mlx()
-
-    mlx_ptr = m.mlx_init()
-    screen = m.mlx_new_window(mlx_ptr, 256, 256, "Pac-man")
-
-    m.mlx_clear_window(mlx_ptr, screen)
-
-    m.mlx_string_put(mlx_ptr, screen, 128, 128, 255, ":D")
-
-    m.mlx_key_hook(screen, exit, (mlx_ptr, screen))
-
-    m.mlx_loop(mlx_ptr)
-
-    m.mlx_destroy_window(mlx_ptr, screen)
-    m.mlx_loop_exit(mlx_ptr)
+    mlx.run(pac_man.update, pac_man.draw)
 
 
 if __name__ == "__main__":

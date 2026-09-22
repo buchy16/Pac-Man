@@ -21,6 +21,14 @@ wheels = [
 ]
 
 [[package]]
+name = "keysymdef"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/42/d3/c3db0b92a0ff39c3e08f168cd382c24bf021d4a96fc89b47a3e55294f883/keysymdef-1.2.0-py2.py3-none-any.whl", hash = "sha256:19a5c2263a861f3ff884a1f58e2b4f7efa319ffc9d11f9ba8e20129babc31a9e", size = 20146, upload-time = "2023-02-25T00:22:36.318Z" },
+]
+
+[[package]]
 name = "mazegenerator"
 version = "2.1.0"
 source = { path = "modules/mazegenerator-2.1.0-py3-none-any.whl" }
@@ -42,6 +50,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "argparse" },
+    { name = "keysymdef" },
     { name = "mazegenerator" },
     { name = "mlx" },
     { name = "pydantic" },
@@ -50,6 +59,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "argparse", specifier = ">=1.4.0" },
+    { name = "keysymdef", specifier = ">=1.2.0" },
     { name = "mazegenerator", path = "modules/mazegenerator-2.1.0-py3-none-any.whl" },
     { name = "mlx", path = "modules/mlx-2.4-py3-none-any.whl" },
     { name = "pydantic", specifier = ">=2.13.5" },
