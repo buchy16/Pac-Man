@@ -1,5 +1,4 @@
-from mazegenerator import MazeGenerator
-from . import mlx
+from . import mlx, Maze
 
 # On est pas en RGB mais en BGR
 
@@ -15,6 +14,8 @@ class App():
             "assets/Maze Parts.png"
         )[0]
 
+        self.maze = Maze(size=(30, 30), seed=42)
+
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
@@ -27,25 +28,12 @@ class App():
 # -----------------------------------------------------------------------------
 
     def draw(self) -> None:
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            self.img,
-            0,
-            0
-        )
-
-
-def get_maze(display: bool = False) -> None:
-    maze = MazeGenerator()
-    maze.generate()
-    if (display is True):
-        print(maze.maze)
+        self.maze.draw_maze()
+        pass
 
 
 def main():
     print("begining tests")
-    get_maze()
     pac_man = App()
 
     mlx.run(pac_man.update, pac_man.draw)
