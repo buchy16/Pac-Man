@@ -1,6 +1,6 @@
 from mazegenerator import MazeGenerator
 from . import mlx
-from .parse_config import test_parsing
+from .parse_config import parsing
 
 # On est pas en RGB mais en BGR
 
@@ -76,5 +76,5 @@ def main():
 
 
 if __name__ == "__main__":
-    test_parsing("config.json")
+    parsing("config.json")
     main()

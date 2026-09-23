@@ -24,3 +24,9 @@ dev = [
 [tool.uv.sources]
 mlx = { path = "modules/mlx-2.4-py3-none-any.whl" }
 mazegenerator = { path = "modules/mazegenerator-2.1.0-py3-none-any.whl" }
+
+[tool.pytest.ini_options]
+# avant sa collecte des tests, pytest ajoutera '.' (racine du projet) à sys.path
+pythonpath = ["."]
+# afficher le nom de chaque fonction pdt les tests
+addopts = "-v"
