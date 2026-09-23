@@ -66,7 +66,7 @@ class GameConfig(BaseModel):
         return self
 
 
-def parse_validate_config(chemin_fichier: str) -> GameConfig:
+def parse_validate_config(chemin_fichier: str | Path) -> GameConfig:
     """Parse et valide le fichier de configuration du jeu.
 
     Laisse remonter les exceptions pertinentes :
@@ -75,6 +75,7 @@ def parse_validate_config(chemin_fichier: str) -> GameConfig:
     Args:
         chemin_fichier: Chemin vers le fichier de configuration
             (JSON pouvant inclure commentaires ``#`` et ``//``)
+            ajouté type Path car la fixture tmp_path pytest donne un objet Path
 
     Returns:
         GameConfig: la configuration validée
@@ -86,13 +87,13 @@ def parse_validate_config(chemin_fichier: str) -> GameConfig:
     """
     chemin = Path(chemin_fichier)
 
-    with open(chemin, 'r', encoding='utf-8') as a_file:
+    with chemin.open("r", encoding="utf-8") as a_file:
         config_raw = commentjson.load(a_file)
 
     return GameConfig(**config_raw)
 
 
-def test_parsing(file_path: str) -> None:
+def parsing(file_path: str) -> None:
     """Point d'entrée appelé depuis __main__.py, pour tester le parsing."""
     try:
         config = parse_validate_config(file_path)
@@ -109,10 +110,10 @@ def test_parsing(file_path: str) -> None:
         return
 
     print_green("Config is valid and ready to use!")
-    print_green(f"Level {config.level[0].id}: Player can resurrect "
-                f"{config.lives} times :D\n")
-    print_config(config)
+    # print_green(f"Level {config.level[0].id}: Player can resurrect "
+    #             f"{config.lives} times :D\n")
+    # print_config(config)
 
 
 # if __name__ == "__main__":
-#     test_parsing("config.json")
+#     parsing("config.json")
