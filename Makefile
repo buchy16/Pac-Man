@@ -1,3 +1,8 @@
+# factorisé les flags dupliqués
+MYPY_FLAGS = --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+# permet `make run CONFIG=level2.json` sans toucher au Makefile :D
+CONFIG ?= config.json
+
 all: install run
 
 install:
@@ -5,32 +10,35 @@ install:
 	@# il lit aveuglément le lockfile (uv.lock) existant,
 	@# crée le .venv s'il est absent,
 	@# y installe exactement les dépendances issues du `pyproject.toml`.
-	uv sync --group app
+	uv sync
 
 update:
 	@# pour forcer la mise à jour de uv.lock si il y a eu modif manuelle
 	@# des dépendances dans pyproject.toml
 	uv lock --upgrade
-	uv sync --group app
+	uv sync
 
 test:
 	uv run pytest tests/
 
 run:
-	uv run python -m src config.json
+	uv run python -m src $(CONFIG)
 
 debug:
-	uv run python3 -m pdb -m src config.json
+	uv run python -m pdb -m src config.json
 
 lint:
-	@# Les outils liront leurs configurations,
-	@# respectivement consignées dans `.flake8` et `pyproject.toml`
 	uv run flake8 src
-	uv run  mypy src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	uv run mypy src $(MYPY_FLAGS)
 
 lint-strict:
-	uv run flake8 .
-	uv run mypy --strict src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	uv run flake8 src
+	uv run mypy --strict src $(MYPY_FLAGS)
+
+# Pour le packaging, penser à utiliser le flag --no-dev
+package:
+	uv sync --no-dev
+	# commande de packaging
 
 # supprime tout ce qui est régénérable automatiquement
 clean:

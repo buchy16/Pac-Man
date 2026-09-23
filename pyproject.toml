@@ -4,16 +4,21 @@ version = "0.1.0"
 description = "Pac_Man !!!!"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
 
-[dependency-groups]
-
-app = [
-    "argparse>=1.4.0",
+dependencies = [
+    "commentjson",
     "keysymdef>=1.2.0",
     "mazegenerator",
     "mlx",
     "pydantic>=2.13.5",
+]
+
+# Isolement des outils de test/qualité
+[dependency-groups]
+dev = [
+    "flake8>=7.3.0",
+    "mypy>=2.1.0",
+    "pytest>=9.1.1",
 ]
 
 [tool.uv.sources]
