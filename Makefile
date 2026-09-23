@@ -1,44 +1,42 @@
+MYPY_FLAGS = --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+# permet `make run CONFIG=level2.json` sans toucher au Makefile :D
+CONFIG ?= config.json
+
 all: install run
 
 install:
-	@# uv sync est TRES intelligent :P
-	@# il lit aveuglément le lockfile (uv.lock) existant,
-	@# crée le .venv s'il est absent,
-	@# y installe exactement les dépendances issues du `pyproject.toml`.
-	uv sync --group app
+	uv sync
 
 update:
-	@# pour forcer la mise à jour de uv.lock si il y a eu modif manuelle
-	@# des dépendances dans pyproject.toml
 	uv lock --upgrade
-	uv sync --group app
+	uv sync
 
 test:
 	uv run pytest tests/
 
 run:
-	uv run python -m src config.json
+	uv run python -m src $(CONFIG)
 
 debug:
-	uv run python3 -m pdb -m src config.json
+	uv run python -m pdb -m src $(CONFIG)
 
 lint:
-	@# Les outils liront leurs configurations,
-	@# respectivement consignées dans `.flake8` et `pyproject.toml`
 	uv run flake8 src
-	uv run  mypy src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	uv run mypy src $(MYPY_FLAGS)
 
 lint-strict:
-	uv run flake8 .
-	uv run mypy --strict src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	uv run flake8 src
+	uv run mypy --strict src $(MYPY_FLAGS)
 
-# supprime tout ce qui est régénérable automatiquement
+package:
+	uv sync --no-dev
+	# commande de packaging
+
 clean:
 	rm -rf .mypy_cache .pytest_cache build dist
 	@find . -type d -name "__pycache__" -exec rm -rf {} +
 
-# supprime en plus ce qui nécessite une action manuelle pour être reconstruit
 fclean: clean
 	rm -rf .venv uv.lock
 
-.PHONY: all install update test run debug lint lint-strict clean fclean
+.PHONY: all install update test run debug lint lint-strict package clean fclean
