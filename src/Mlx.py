@@ -31,6 +31,9 @@ class Mlx_Engine():
         # keysym_X11 dic reference {key_code: kay_name}
         self.KEYNAME = {x[1]: x[0] for x in keysymdef}
 
+        # key = Window_name, value = list of key_hook_functions
+        self.key_hook_functions: dict[str, list[Callable]] = {}
+
         self._start_time = time.monotonic_ns()
         self._timer = 0.0
         self.last_tick = self.timer
@@ -72,6 +75,35 @@ class Mlx_Engine():
         """
         return self._timer
 
+    def add_key_hook_function(self, function: Callable,
+                              window_name: str):
+        """Link a function with the window's keys events specified in args
+
+        Args:
+            function (Callable): function to link with a specified window
+            window_name (str): name of the window
+        """
+        self.key_hook_functions[window_name].append(function)
+
+    def rm_key_hook_function(self, function: Callable,
+                             window_name: str) -> bool:
+        """Unlink a function with the window's keys events specified in args
+
+        Args:
+            function (Callable): function to unlink with a specified window
+            window_name (str): name of the window
+
+        Returns:
+            bool: True if the function was unlinked successfuly otherwise Else
+        """
+        try:
+            self.key_hook_functions[window_name].remove(function)
+        except (ValueError):
+            print("Warning, you are trying to remove a function that is not \
+linked to this window ")
+            return (False)
+        return (True)
+
     def new_window(self, w: int, h: int, name: str) -> bool:
         """Create and register a new MLX window.
 
@@ -90,28 +122,23 @@ class Mlx_Engine():
             print("Error while creating windows")
             return (False)
         self.windows[name] = window
+        self.key_hook_functions[name] = []
         return (True)
 
-    def _exit(self, keynum, mlx_tools) -> None:
-        """Handle exit requests triggered by the MLX key hook.
+    def _do_key_functions(self, keynum: int, window_name: str) -> None:
+        """Listen for key action and pass them to all function linked
+        with their windows
 
         Args:
-            keynum: Key code received from MLX.
-            mlx_tools: Two-item tuple containing the MLX context pointer and
-                the window pointer associated with the hook.
-
-        Returns:
-            None: This callback only performs side effects.
-
-        Notes:
-            Pressing Escape or receiving a zero key code closes the window and
-            stops the MLX event loop.
+            keynum (int): Value of the key catched (keysym_X11)
+            window_name (str): name of the window
         """
-        mlx_ptr, screen = mlx_tools
-
         if (self.KEYNAME[keynum] == "Escape" or keynum == 0):
-            self.m.mlx_destroy_window(mlx_ptr, screen)
-            self.m.mlx_loop_exit(mlx_ptr)
+            self.m.mlx_destroy_window(self.mlx_ptr, self.windows[window_name])
+            self.m.mlx_loop_exit(self.mlx_ptr)
+
+        for function in self.key_hook_functions[window_name]:
+            function(keynum)
 
     def run(self, update: Callable, draw: Callable) -> None:
         """Start the MLX main loop and execute the game callbacks.
@@ -148,9 +175,9 @@ class Mlx_Engine():
             elapsed = (time.monotonic_ns() - self._start_time) // 1000000
             self._timer = elapsed / 1000
 
-        for window in self.windows.values():
+        for name, window in self.windows.items():
             self.m.mlx_clear_window(self.mlx_ptr, window)
-            self.m.mlx_key_hook(window, self._exit, (self.mlx_ptr, window))
+            self.m.mlx_key_hook(window, self._do_key_functions, name)
 
         self.m.mlx_loop_hook(self.mlx_ptr, run_app, None)
         self.m.mlx_loop(self.mlx_ptr)
