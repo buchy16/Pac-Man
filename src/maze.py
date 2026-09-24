@@ -1,6 +1,6 @@
 from mazegenerator import MazeGenerator
 from . import mlx
-from typing import TypedDict, Dict
+from typing import TypedDict
 
 
 class MazeContent(TypedDict):
@@ -78,7 +78,7 @@ class Maze(MazeGenerator):
         self.smaze = self.generate_smaze()
         self.maze_img = self.bake_background(self._width, self._height, 48)
 
-    def generate_smaze(self) -> list[list[Dict[str, MazeContent]]]:
+    def generate_smaze(self) -> list[list[MazeContent]]:
         """Build the maze grid with each cell's code and coordinates.
 
         Returns:
