@@ -1,5 +1,4 @@
-from mazegenerator import MazeGenerator
-from . import mlx
+from . import mlx, Maze
 from .parse_config import parsing
 
 # On est pas en RGB mais en BGR
@@ -8,7 +7,11 @@ from .parse_config import parsing
 class App():
     def __init__(self) -> None:
         self.number = 0
-        mlx.new_window(256, 256, "main")
+        mlx.new_window(1280, 720, "main")
+        self.middle_X = int(1280 / 2)
+        self.middle_Y = int(720 / 2)
+
+        self.maze = Maze(size=(15, 15), seed=42)
 
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
@@ -22,54 +25,12 @@ class App():
 # -----------------------------------------------------------------------------
 
     def draw(self) -> None:
-        if (mlx.timer % 2 <= 0.5):
-            mlx.get_tools().mlx_string_put(
-                mlx.mlx_ptr,
-                mlx.windows["main"],
-                128,
-                128,
-                0x0000FF,  # couleur BGR en Hexa
-                str(mlx.timer)
-            )
-        elif (mlx.timer % 2 > 0.5 and mlx.timer % 2 <= 1):
-            mlx.get_tools().mlx_string_put(
-                mlx.mlx_ptr,
-                mlx.windows["main"],
-                128,
-                128,
-                0x00FFFF,
-                str(mlx.timer)
-            )
-        elif (mlx.timer % 2 > 1 and mlx.timer % 2 <= 1.5):
-            mlx.get_tools().mlx_string_put(
-                mlx.mlx_ptr,
-                mlx.windows["main"],
-                128,
-                128,
-                0xFF0000,
-                str(mlx.timer)
-            )
-        elif (mlx.timer % 2 > 1.5):
-            mlx.get_tools().mlx_string_put(
-                mlx.mlx_ptr,
-                mlx.windows["main"],
-                128,
-                128,
-                0xFF00FF,
-                str(mlx.timer)
-            )
-
-
-def get_maze(display: bool = False) -> None:
-    maze = MazeGenerator()
-    maze.generate()
-    if (display is True):
-        print(maze.maze)
+        self.maze.draw_maze()
+        pass
 
 
 def main():
     print("begining tests")
-    get_maze()
     pac_man = App()
 
     mlx.run(pac_man.update, pac_man.draw)

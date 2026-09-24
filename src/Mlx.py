@@ -31,8 +31,9 @@ class Mlx_Engine():
         # keysym_X11 dic reference {key_code: kay_name}
         self.KEYNAME = {x[1]: x[0] for x in keysymdef}
 
-        self._last_tick = time.monotonic_ns()
+        self._start_time = time.monotonic_ns()
         self._timer = 0.0
+        self.last_tick = self.timer
 
     def get_tools(self) -> Mlx:
         """Return the underlying MLX wrapper instance.
@@ -135,11 +136,16 @@ class Mlx_Engine():
             Returns:
                 None: The callback only drives update, draw, and timing.
             """
-            for window in self.windows.values():
-                self.m.mlx_clear_window(self.mlx_ptr, window)
-            update()
-            draw()
-            elapsed = (time.monotonic_ns() - self._last_tick) // 1000000
+
+            if (self.timer - self.last_tick >= 0.016):
+                update()
+                for window in self.windows.values():
+                    self.m.mlx_clear_window(self.mlx_ptr, window)
+                draw()
+                self.last_tick = self.timer
+                self.get_tools().mlx_do_sync(self.mlx_ptr)
+
+            elapsed = (time.monotonic_ns() - self._start_time) // 1000000
             self._timer = elapsed / 1000
 
         for window in self.windows.values():
