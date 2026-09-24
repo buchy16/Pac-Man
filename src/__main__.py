@@ -9,12 +9,8 @@ class App():
         mlx.new_window(1280, 720, "main")
         self.middle_X = int(1280 / 2)
         self.middle_Y = int(720 / 2)
-        self.img = mlx.get_tools().mlx_png_file_to_image(
-            mlx.mlx_ptr,
-            "assets/Maze Parts.png"
-        )[0]
 
-        self.maze = Maze(size=(30, 30), seed=42)
+        self.maze = Maze(size=(15, 15), seed=42)
 
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
