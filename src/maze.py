@@ -96,7 +96,7 @@ class Maze(MazeGenerator):
                 x += 48
             result.append(line)
             y += 48
-            x = 0
+            x = self.x + round(48 / 2)
         return result
 
     def set_coordinates(self) -> tuple[int, int]:
