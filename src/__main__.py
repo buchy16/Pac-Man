@@ -36,6 +36,7 @@ class App():
 
 
 def main():
+    parsing("config.json")
     print("begining tests")
     pac_man = App()
 
@@ -43,5 +44,4 @@ def main():
 
 
 if __name__ == "__main__":
-    parsing("config.json")
     main()

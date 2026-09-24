@@ -2,15 +2,17 @@ from pathlib import Path
 
 import commentjson
 from pydantic import (BaseModel, ConfigDict, Field, ValidationError,
-                       field_validator, model_validator)
+                      field_validator, model_validator)
 
-from .utils import print_config, print_green, print_red
+from .utils import print_green, print_red
+
 
 # sous-structure pour les niveaux
 class LevelConfig(BaseModel):
     id: int = Field(default=1, ge=1, le=10)
     width: int = Field(default=15, ge=14, le=30)
     height: int = Field(default=15, ge=10, le=16)
+
 
 # structure principale
 class GameConfig(BaseModel):
@@ -42,27 +44,30 @@ class GameConfig(BaseModel):
         # la super pacgum doit rapporter plus que l'ordinaire
         if self.points_per_pacgum >= self.points_per_super_pacgum:
             raise ValueError(
-                f"What a scam! points_per_super_pacgum ({self.points_per_super_pacgum}) "
-                f"should be greater than points_per_pacgum ({self.points_per_pacgum})."
+                "What a scam! points_per_super_pacgum "
+                f"({self.points_per_super_pacgum}) "
+                "should be greater than points_per_pacgum "
+                f"({self.points_per_pacgum})."
             )
         # miam-miam ghost doit rapporter plus que la super pacgum
         if self.points_per_super_pacgum >= self.points_per_ghost:
             raise ValueError(
                 f"What a scam! points_per_ghost ({self.points_per_ghost}) "
-                f"should be greater than points_per_super_pacgum ({self.points_per_super_pacgum})."
+                "should be greater than points_per_super_pacgum "
+                f"({self.points_per_super_pacgum})."
             )
         # tout est OK, on peut renvoyer l'objet
         return self
 
     @model_validator(mode='after')
     def verifier_niveaux(self):
-        # il faut au moins un niveau pour pouvoir jouer
-        if len(self.level) == 0:
-            raise ValueError("At least one level is required.")
         # les id des niveaux doivent être uniques
         ids = [lvl.id for lvl in self.level]
         if len(ids) != len(set(ids)):
             raise ValueError(f"Duplicate level ids found: {ids}")
+        # mandatory : fournir 10 niveaux minimum
+        if len(self.level) < 10:
+            raise ValueError("The game requires at least ten levels.")
         return self
 
 
@@ -110,10 +115,3 @@ def parsing(file_path: str) -> None:
         return
 
     print_green("Config is valid and ready to use!")
-    # print_green(f"Level {config.level[0].id}: Player can resurrect "
-    #             f"{config.lives} times :D\n")
-    # print_config(config)
-
-
-# if __name__ == "__main__":
-#     parsing("config.json")
