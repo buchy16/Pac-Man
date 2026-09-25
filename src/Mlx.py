@@ -33,6 +33,8 @@ class Mlx_Engine():
 
         # key = Window_name, value = list of key_hook_functions
         self.key_hook_functions: dict[str, list[Callable]] = {}
+        # key = Window_name, value = list of mouse_hook_functions
+        self.mouse_hook_functions: dict[str, list[Callable]] = {}
 
         self._start_time = time.monotonic_ns()
         self._timer = 0.0
@@ -104,6 +106,35 @@ linked to this window ")
             return (False)
         return (True)
 
+    def add_mouse_hook_function(self, function: Callable,
+                                window_name: str):
+        """Link a function with the window's mouse events specified in args
+
+        Args:
+            function (Callable): function to link with a specified window
+            window_name (str): name of the window
+        """
+        self.mouse_hook_functions[window_name].append(function)
+
+    def rm_mouse_hook_function(self, function: Callable,
+                               window_name: str) -> bool:
+        """Unlink a function with the window's mouse events specified in args
+
+        Args:
+            function (Callable): function to unlink with a specified window
+            window_name (str): name of the window
+
+        Returns:
+            bool: True if the function was unlinked successfuly otherwise Else
+        """
+        try:
+            self.mouse_hook_functions[window_name].remove(function)
+        except (ValueError):
+            print("Warning, you are trying to remove a function that is not \
+linked to this window ")
+            return (False)
+        return (True)
+
     def new_window(self, w: int, h: int, name: str) -> bool:
         """Create and register a new MLX window.
 
@@ -123,6 +154,7 @@ linked to this window ")
             return (False)
         self.windows[name] = window
         self.key_hook_functions[name] = []
+        self.mouse_hook_functions[name] = []
         return (True)
 
     def _do_key_functions(self, keynum: int, window_name: str) -> None:
@@ -139,6 +171,18 @@ linked to this window ")
 
         for function in self.key_hook_functions[window_name]:
             function(keynum)
+
+    def _do_mouse_functions(self, button: int, mouse_x: int,
+                            mouse_y: int, window_name: str) -> None:
+        """Listen for mouse action and pass them to all function linked
+        with their windows
+
+        Args:
+            keynum (int): ?
+            window_name (str): name of the window
+        """
+        for function in self.mouse_hook_functions[window_name]:
+            function(button, mouse_x, mouse_y)
 
     def run(self, update: Callable, draw: Callable) -> None:
         """Start the MLX main loop and execute the game callbacks.
@@ -178,6 +222,7 @@ linked to this window ")
         for name, window in self.windows.items():
             self.m.mlx_clear_window(self.mlx_ptr, window)
             self.m.mlx_key_hook(window, self._do_key_functions, name)
+            self.m.mlx_mouse_hook(window, self._do_mouse_functions, name)
 
         self.m.mlx_loop_hook(self.mlx_ptr, run_app, None)
         self.m.mlx_loop(self.mlx_ptr)

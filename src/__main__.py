@@ -1,6 +1,7 @@
 from . import mlx, Maze
 from .parse_config import parsing
 from .entities import Player
+from .menu import MainMenu
 
 # On est pas en RGB mais en BGR
 
@@ -8,31 +9,39 @@ from .entities import Player
 class App():
     def __init__(self) -> None:
         self.number = 0
-        mlx.new_window(1280, 720, "main")
+        # mlx.new_window(1280, 720, "main")
         self.middle_X = int(1280 / 2)
         self.middle_Y = int(720 / 2)
 
-        self.maze = Maze(size=(15, 15), seed=42)
+        # self.maze = Maze(size=(15, 15), seed=42)
 
-        self.player = Player(self.maze)
+        # self.player = Player(self.maze)
+
+        self.main_menu = MainMenu()
 
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
 
     def update(self) -> None:
-        self.player.move()
+        # self.player.move()
+        pass
 
 # -----------------------------------------------------------------------------
 # -------------------------------     DRAW   ----------------------------------
 # -----------------------------------------------------------------------------
 
     def draw(self) -> None:
-        self.maze.draw_maze()
+        # self.maze.draw_maze()
 
-        self.player.draw()
+        # self.player.draw()
 
         # self.maze.display_Smaze()
+
+        # self.main_menu.draw_main_menu()
+        # self.main_menu.draw_scores_viwer()
+        # self.main_menu.draw_instructions()
+        self.main_menu.draw()
 
 
 def main():
