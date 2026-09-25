@@ -1,39 +1,11 @@
 from . import Entity
 from .. import Maze
+from .. import J_WALK_SPRIT
 from .. import mlx
 from enum import Enum, auto
 
 # i = height (y)
 # j = width (x)
-
-WALK_SPRIT = {
-    "0J": (mlx.get_tools().
-           mlx_png_file_to_image(mlx.mlx_ptr, "assets/Entities/0J.png")[0]),
-    "1J_Est": (mlx.get_tools().
-               mlx_png_file_to_image(mlx.mlx_ptr,
-                                     "assets/Entities/1J_Est.png")[0]),
-    "1J_North": (mlx.get_tools().
-                 mlx_png_file_to_image(mlx.mlx_ptr,
-                                       "assets/Entities/1J_North.png")[0]),
-    "1J_South": (mlx.get_tools().
-                 mlx_png_file_to_image(mlx.mlx_ptr,
-                                       "assets/Entities/1J_South.png")[0]),
-    "1J_West": (mlx.get_tools().
-                mlx_png_file_to_image(mlx.mlx_ptr,
-                                      "assets/Entities/1J_West.png")[0]),
-    "2J_Est": (mlx.get_tools().
-               mlx_png_file_to_image(mlx.mlx_ptr,
-                                     "assets/Entities/2J_Est.png")[0]),
-    "2J_North": (mlx.get_tools().
-                 mlx_png_file_to_image(mlx.mlx_ptr,
-                                       "assets/Entities/2J_North.png")[0]),
-    "2J_South": (mlx.get_tools().
-                 mlx_png_file_to_image(mlx.mlx_ptr,
-                                       "assets/Entities/2J_South.png")[0]),
-    "2J_West": (mlx.get_tools().
-                mlx_png_file_to_image(mlx.mlx_ptr,
-                                      "assets/Entities/2J_West.png")[0]),
-}
 
 
 class Direction(Enum):
@@ -49,8 +21,10 @@ class Player(Entity):
         super().__init__(maze)
         self.life = life
         self.super_pacgum = False
+        self.score = 0
 
         self.i, self.j = self.maze._height // 2, self.maze._width // 2
+        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.direction: Direction = Direction.NONE
 
         mlx.add_key_hook_function(
@@ -92,149 +66,142 @@ class Player(Entity):
                     self.maze.smaze[self.i][self.j]["code"] & 0b0010 == 0):
                 self.j = (self.j + 1) % self.maze._height
             self.last_s = mlx.timer
+        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
 
     def draw_Est(self) -> None:
-        x, y = self.maze.smaze[self.i][self.j]["coor"]
-
         if (mlx.timer % 0.80 < 0.20):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["0J"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["0J"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.20 and mlx.timer % 0.80 < 0.40):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["1J_Est"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["1J_Est"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.40 and mlx.timer % 0.80 < 0.60):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["2J_Est"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["2J_Est"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.60):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["1J_Est"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["1J_Est"],
+                self.x - 13,
+                self.y - 13
             )
 
     def draw_West(self) -> None:
-        x, y = self.maze.smaze[self.i][self.j]["coor"]
-
         if (mlx.timer % 0.80 < 0.20):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["0J"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["0J"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.20 and mlx.timer % 0.80 < 0.40):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["1J_West"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["1J_West"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.40 and mlx.timer % 0.80 < 0.60):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["2J_West"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["2J_West"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.60):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["1J_West"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["1J_West"],
+                self.x - 13,
+                self.y - 13
             )
 
     def draw_North(self) -> None:
-        x, y = self.maze.smaze[self.i][self.j]["coor"]
-
         if (mlx.timer % 0.80 < 0.20):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["0J"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["0J"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.20 and mlx.timer % 0.80 < 0.40):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["1J_North"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["1J_North"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.40 and mlx.timer % 0.80 < 0.60):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["2J_North"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["2J_North"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.60):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["1J_North"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["1J_North"],
+                self.x - 13,
+                self.y - 13
             )
 
     def draw_South(self) -> None:
-        x, y = self.maze.smaze[self.i][self.j]["coor"]
-
         if (mlx.timer % 0.80 < 0.20):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["0J"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["0J"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.20 and mlx.timer % 0.80 < 0.40):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["1J_South"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["1J_South"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.40 and mlx.timer % 0.80 < 0.60):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["2J_South"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["2J_South"],
+                self.x - 13,
+                self.y - 13
             )
         elif (mlx.timer % 0.80 >= 0.60):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
                 mlx.windows["main"],
-                WALK_SPRIT["1J_South"],
-                x - 13,
-                y - 13
+                J_WALK_SPRIT["1J_South"],
+                self.x - 13,
+                self.y - 13
             )
 
     def draw(self) -> None:
