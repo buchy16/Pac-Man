@@ -10,6 +10,9 @@ class MainMenu():
 
         self.menu_state = self.main_menu
 
+        self.place_holder = mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr,
+                                                                  "assets/Place_Holder.png")[0]
+
     def update(self):
         pass
 
@@ -28,13 +31,12 @@ class MainMenu():
         pass
 
     def draw_main_menu(self):
-        mlx.get_tools().mlx_string_put(
+        mlx.get_tools().mlx_put_image_to_window(
             mlx.mlx_ptr,
             mlx.windows["main_menu"],
-            360,
-            144,
-            0x0000FF,
-            "S"
+            self.place_holder,
+            360 - 180,
+            144 - 72
         )
         mlx.get_tools().mlx_string_put(
             mlx.mlx_ptr,
