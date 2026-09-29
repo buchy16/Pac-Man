@@ -1,10 +1,13 @@
 from ..Mlx import mlx
 from typing import Callable
-from ..sprites import MAIN_MENU
+from ..sprites import MAIN_MENU, DIGITS
+from ..parse_config import GameConfig
 
 
 class MainMenu():
-    def __init__(self):
+    def __init__(self, config: GameConfig):
+        self.config = config
+
         mlx.new_window(720, 720, "main_menu")
         self.to_draw: Callable = self.draw_main_menu
         mlx.add_mouse_hook_function(self._update_menu, "main_menu")
@@ -16,6 +19,25 @@ class MainMenu():
         _, x, y = mlx.get_tools().mlx_mouse_get_pos(mlx.windows["main_menu"])
         self.x = x
         self.y = y
+
+    @staticmethod
+    def display_nums(x: int, y: int, nums: str) -> None:
+        for digit in nums:
+            mlx.get_tools().mlx_put_image_to_window(
+                mlx.mlx_ptr,
+                mlx.windows["main_menu"],
+                DIGITS[digit],
+                x - 7,
+                y - 7
+            )
+            x += 14
+        mlx.get_tools().mlx_put_image_to_window(
+            mlx.mlx_ptr,
+            mlx.windows["main_menu"],
+            MAIN_MENU["PTS"],
+            x,
+            y - 7
+        )
 
     def update(self):
         _, x, y = mlx.get_tools().mlx_mouse_get_pos(mlx.windows["main_menu"])
@@ -154,14 +176,15 @@ class MainMenu():
             )
 
     def draw_instructions(self) -> None:
-        mlx.get_tools().mlx_string_put(
+        mlx.get_tools().mlx_put_image_to_window(
             mlx.mlx_ptr,
             mlx.windows["main_menu"],
-            240,
-            360,
-            0x0000FF,
-            "Picture of instructions"
+            MAIN_MENU["Instructions_img"],
+            360 - 250,
+            0
         )
+        self.display_nums(110 + 242, 391, str(self.config.points_per_pacgum))
+        self.display_nums(110 + 242, 428, str(self.config.points_per_super_pacgum))
         if ((self.x >= 360 - 180 and self.x <= 360 + 180) and
            (self.y >= 700 - 72 and self.y <= 700 + 72)):
             mlx.get_tools().mlx_put_image_to_window(
