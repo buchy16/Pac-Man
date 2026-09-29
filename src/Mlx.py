@@ -155,7 +155,20 @@ linked to this window ")
         self.windows[name] = window
         self.key_hook_functions[name] = []
         self.mouse_hook_functions[name] = []
+
+        self.m.mlx_key_hook(window, self._do_key_functions, name)
+        self.m.mlx_mouse_hook(window, self._do_mouse_functions, name)
         return (True)
+
+    def close_window(self, window_name: str) -> None:
+        self.key_hook_functions = {key: item for key, item in
+                                   self.key_hook_functions.items()
+                                   if key != window_name}
+        self.mouse_hook_functions = {key: item for key, item in
+                                     self.mouse_hook_functions.items()
+                                     if key != window_name}
+        self.m.mlx_destroy_window(self.mlx_ptr, self.windows[window_name])
+        del self.windows[window_name]
 
     def _do_key_functions(self, keynum: int, window_name: str) -> None:
         """Listen for key action and pass them to all function linked
@@ -165,7 +178,7 @@ linked to this window ")
             keynum (int): Value of the key catched (keysym_X11)
             window_name (str): name of the window
         """
-        if (self.KEYNAME[keynum] == "Escape" or keynum == 0):
+        if (keynum == 0 or self.KEYNAME[keynum] == "Escape"):
             self.m.mlx_destroy_window(self.mlx_ptr, self.windows[window_name])
             self.m.mlx_loop_exit(self.mlx_ptr)
 
@@ -219,13 +232,20 @@ linked to this window ")
             elapsed = (time.monotonic_ns() - self._start_time) // 1000000
             self._timer = elapsed / 1000
 
-        for name, window in self.windows.items():
+            # print("Mouse", self.mouse_hook_functions)
+            # print("Keys", self.key_hook_functions)
+
+        for window in self.windows.values():
             self.m.mlx_clear_window(self.mlx_ptr, window)
-            self.m.mlx_key_hook(window, self._do_key_functions, name)
-            self.m.mlx_mouse_hook(window, self._do_mouse_functions, name)
 
         self.m.mlx_loop_hook(self.mlx_ptr, run_app, None)
         self.m.mlx_loop(self.mlx_ptr)
+
+    def close_app(self) -> None:
+        """Manually close all opened windows
+        """
+        for name in self.windows.keys():
+            self._do_key_functions(0, name)
 
 
 mlx = Mlx_Engine()

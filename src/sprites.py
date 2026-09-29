@@ -64,3 +64,35 @@ J_WALK_SPRIT = {
                 mlx_png_file_to_image(mlx.mlx_ptr,
                                       "assets/Entities/2J_West.png")[0]),
 }
+
+MAIN_MENU = {
+    "Start Game": (mlx.get_tools().
+                   mlx_png_file_to_image(mlx.mlx_ptr,
+                                         "assets/Texts/Start_game.png")[0]),
+    "View_Highscores": (mlx.get_tools().
+                        mlx_png_file_to_image(mlx.mlx_ptr,
+                                              "assets/Texts/\
+View_Highscores.png")[0]),
+    "Instructions": (mlx.get_tools().
+                     mlx_png_file_to_image(mlx.mlx_ptr,
+                                           "assets/Texts/\
+Instructions.png")[0]),
+    "Exit": (mlx.get_tools().
+             mlx_png_file_to_image(mlx.mlx_ptr,
+                                   "assets/Texts/Exit.png")[0]),
+    "Start Game b": (mlx.get_tools().
+                     mlx_png_file_to_image(mlx.mlx_ptr,
+                                           "assets/Texts/\
+Start_game_b.png")[0]),
+    "View_Highscores b": (mlx.get_tools().
+                          mlx_png_file_to_image(mlx.mlx_ptr,
+                                                "assets/Texts/\
+View_Highscores_b.png")[0]),
+    "Instructions b": (mlx.get_tools().
+                       mlx_png_file_to_image(mlx.mlx_ptr,
+                                             "assets/Texts/\
+Instructions_b.png")[0]),
+    "Exit b": (mlx.get_tools().
+               mlx_png_file_to_image(mlx.mlx_ptr,
+                                     "assets/Texts/Exit_b.png")[0]),
+}
