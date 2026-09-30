@@ -22,7 +22,8 @@ class App():
     def update(self) -> None:
         if (self.main_menu.game_started is True):
             if (self.game is None):
-                self.game = Game((15, 8))
+                self.game = Game((self.config.level[0].width,
+                                  self.config.level[0].height))
             else:
                 self.game.update()
         else:

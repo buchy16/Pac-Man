@@ -183,8 +183,10 @@ class MainMenu():
             360 - 250,
             0
         )
-        self.display_nums(110 + 242, 391, str(self.config.points_per_pacgum))
-        self.display_nums(110 + 242, 428, str(self.config.points_per_super_pacgum))
+        self.display_nums(110 + 242, 391,
+                          str(self.config.points_per_pacgum))
+        self.display_nums(110 + 242, 428,
+                          str(self.config.points_per_super_pacgum))
         if ((self.x >= 360 - 180 and self.x <= 360 + 180) and
            (self.y >= 700 - 72 and self.y <= 700 + 72)):
             mlx.get_tools().mlx_put_image_to_window(
