@@ -64,3 +64,63 @@ J_WALK_SPRIT = {
                 mlx_png_file_to_image(mlx.mlx_ptr,
                                       "assets/Entities/2J_West.png")[0]),
 }
+
+MAIN_MENU = {
+    "Start Game": (mlx.get_tools().
+                   mlx_png_file_to_image(mlx.mlx_ptr,
+                                         "assets/Texts/Start_game.png")[0]),
+    "View_Highscores": (mlx.get_tools().
+                        mlx_png_file_to_image(mlx.mlx_ptr,
+                                              "assets/Texts/\
+View_Highscores.png")[0]),
+    "Instructions": (mlx.get_tools().
+                     mlx_png_file_to_image(mlx.mlx_ptr,
+                                           "assets/Texts/\
+Instructions.png")[0]),
+    "Exit": (mlx.get_tools().
+             mlx_png_file_to_image(mlx.mlx_ptr,
+                                   "assets/Texts/Exit.png")[0]),
+    "Start Game b": (mlx.get_tools().
+                     mlx_png_file_to_image(mlx.mlx_ptr,
+                                           "assets/Texts/\
+Start_game_b.png")[0]),
+    "View_Highscores b": (mlx.get_tools().
+                          mlx_png_file_to_image(mlx.mlx_ptr,
+                                                "assets/Texts/\
+View_Highscores_b.png")[0]),
+    "Instructions b": (mlx.get_tools().
+                       mlx_png_file_to_image(mlx.mlx_ptr,
+                                             "assets/Texts/\
+Instructions_b.png")[0]),
+    "Exit b": (mlx.get_tools().
+               mlx_png_file_to_image(mlx.mlx_ptr,
+                                     "assets/Texts/Exit_b.png")[0]),
+    "Instructions_img": (mlx.get_tools().
+                         mlx_png_file_to_image(mlx.mlx_ptr,
+                                               "assets/Instructions.png")[0]),
+    "PTS": (mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr,
+                                                  "assets/Texts/PTS.png")[0]),
+}
+
+DIGITS = {
+   "0": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/0.png")[0]),
+   "1": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/1.png")[0]),
+   "2": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/2.png")[0]),
+   "3": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/3.png")[0]),
+   "4": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/4.png")[0]),
+   "5": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/5.png")[0]),
+   "6": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/6.png")[0]),
+   "7": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/7.png")[0]),
+   "8": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/8.png")[0]),
+   "9": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/9.png")[0]),
+}

@@ -1,7 +1,7 @@
 from . import Entity
-from .. import Maze
-from .. import J_WALK_SPRIT
-from .. import mlx
+from ... import Maze
+from ... import J_WALK_SPRIT
+from ... import mlx
 from enum import Enum, auto
 
 # i = height (y)
@@ -35,6 +35,7 @@ class Player(Entity):
         self.last_s = mlx.timer
 
     def _update_direction(self, keynum: int) -> None:
+        # print("hi ?")
         if (mlx.KEYNAME[keynum] == "w"):
             self.direction = Direction.NORTH
             # print("North")
@@ -60,11 +61,11 @@ class Player(Entity):
 
             elif (self.direction == Direction.WEST and
                     self.maze.smaze[self.i][self.j]["code"] & 0b1000 == 0):
-                self.j = (self.j - 1) % self.maze._height
+                self.j = (self.j - 1) % self.maze._width
 
             elif (self.direction == Direction.EST and
                     self.maze.smaze[self.i][self.j]["code"] & 0b0010 == 0):
-                self.j = (self.j + 1) % self.maze._height
+                self.j = (self.j + 1) % self.maze._width
             self.last_s = mlx.timer
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
 
