@@ -1,28 +1,31 @@
-from dataclasses import asdict, dataclass
+import logging
+import shutil
+from dataclasses import dataclass, asdict
+from datetime import datetime
 from pathlib import Path
 import json
 
 MAX_USERNAME_LENGTH = 10
 
+logger = logging.getLogger(__name__)
+
 
 # ---------------------------------------------------------------------------
 #                                                                  VALIDATION
-# pseudo valide, score valide
-# PAS d'accès disque, PAS d'input()
 # ---------------------------------------------------------------------------
 
 def username_errors(raw_user: object) -> str | None:
     """Checks whether a username complies with the rules.
 
     Returns a clear error message if there is a problem,
-    or None if the username is valid.
+    or `None` if the username is valid.
     """
     if not isinstance(raw_user, str):
         return "The username must be a string of characters."
 
     stripped = raw_user.strip()
     if not stripped:
-        return "The username can not be left blank."
+        return "The username can not be only spaces neither left blank."
 
     if len(stripped) > MAX_USERNAME_LENGTH:
         return (
@@ -35,7 +38,6 @@ def username_errors(raw_user: object) -> str | None:
 
     return None
 
-
 def score_errors(raw_score: object) -> str | None:
     """Checks whether a score is valid (an integer >= 0)."""
     if type(raw_score) is not int:
@@ -43,7 +45,6 @@ def score_errors(raw_score: object) -> str | None:
     if raw_score < 0:
         return "The score can not be negative."
     return None
-
 
 @dataclass(frozen=True)
 class HighScore:
@@ -61,16 +62,25 @@ class HighScore:
 
 
 # ---------------------------------------------------------------------------
-#                                                                    STOCKAGE
-# Lire le JSON
-# écrire le JSON
-# PAS affichage
+#                                                                     STORAGE
 # ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class LoadResult:
+    """Full result of an attempt to read the file.
+
+    entries: list of valid highscores
+    corrupted: True if the file existed but content could not be fully parsed
+    (invalid JSON, unexpected structure, or at least one invalid entry).
+    """
+    entries: list["HighScore"]
+    corrupted: bool
+
 
 class HighScoreStorage:
     """Handles only reading and writing the JSON file to the disk."""
 
-    def __init__(self, file_path: str | Path = "highscores.json") -> None:
+    def __init__(self, file_path: str | Path = "../highscores.json") -> None:
         self.file_path = Path(file_path)
 
     def _json_item_to_highscore(self, item: object) -> HighScore | None:
@@ -78,7 +88,7 @@ class HighScoreStorage:
         if not isinstance(item, dict):
             return None
 
-        json_user = item.get("username")  # None if the key is missing
+        json_user = item.get("username")
         if (username_errors(json_user) is not None):
             return None
 
@@ -88,47 +98,77 @@ class HighScoreStorage:
 
         return HighScore(username=json_user.strip(), score=json_score)
 
-    def load_scores(self) -> list[HighScore]:
-        """Lit le fichier JSON et retourne la liste des scores valides.
-
-        SANS effet de bord : ne modifie JAMAIS le fichier sur le disque.
+    def _load_raw(self) -> LoadResult:
+        """Handles reading/decoding/validation of scores stored in JSON file
+        Returns:
+            empty list, not corrupted if File not found or Empty file;
+            empty list, corrupted if Malformed JSON or Not a list
+            else
+            list of valid scores and corrupted set to True if nb_corrupted > 0
         """
         if not self.file_path.exists():
-            return []
+            return LoadResult(entries=[], corrupted=False)
+
+        content = self.file_path.read_text(encoding="utf-8")
+
+        if not content.strip():
+            return LoadResult(entries=[], corrupted=False)
 
         try:
-            highscores_file = self.file_path.read_text(encoding="utf-8")
+            data = json.loads(content)
+        except json.JSONDecodeError as err:
+            logger.warning("Scores file: invalid JSON (%s).", err)
+            return LoadResult(entries=[], corrupted=True)
 
-            if not highscores_file.strip():
-                return []
+        if not isinstance(data, list):
+            logger.warning("Scores file: a JSON list was expected.")
+            return LoadResult(entries=[], corrupted=True)
 
-            highscores_data = json.loads(highscores_file)
-
-        except (OSError, ValueError) as err:
-            # NE DOIT RIEN AFFICHER
-            print(f"Unreadable score file: {err}")
-            return []
-
-        if not isinstance(highscores_data, list):
-            # NE DOIT RIEN AFFICHER
-            print("Unexpected JSON format (a list was expected).")
-            return []
-
-        valid_highscores: list[HighScore] = []
-        nb_corrupted_highscores = 0
-
-        for item in highscores_data:
-            highscore = self._json_item_to_highscore(item)
-            if highscore is not None:
-                valid_highscores.append(highscore)
+        valid_entries: list[HighScore] = []
+        nb_corrupted = 0
+        for item in data:
+            entry = self._json_item_to_highscore(item)
+            if entry is not None:
+                valid_entries.append(entry)
             else:
-                nb_corrupted_highscores += 1
+                nb_corrupted += 1
 
-        if nb_corrupted_highscores > 0:
-            # NE DOIT RIEN AFFICHER
-            print(f"{nb_corrupted_highscores} invalid data in the file have been ignored.")
+        if nb_corrupted:
+            logger.warning(
+                "%d Invalid entry(ies) ignored in the score file.",
+                nb_corrupted,
+            )
 
-        return valid_highscores
+        return LoadResult(entries=valid_entries, corrupted=nb_corrupted > 0)
+
+    def load_scores(self) -> list["HighScore"]:
+        """Reads the JSON file and returns the list of valid scores.
+
+        Return: only the first argument returned by _load_raw().
+        """
+        return self._load_raw().entries
+
+    def _copy_corrupted_file(self) -> None:
+        """Set the corrupted file aside before it is overwritten.
+        If the copy fails, the original file remains in place, intact.
+        """
+        if not self.file_path.exists():
+            return  # rien à mettre en quarantaine
+
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        copy_path = self.file_path.with_name(
+            f"{self.file_path.name}.corrupt-{timestamp}"
+        )
+
+        try:
+            shutil.copy2(self.file_path, copy_path)
+        except OSError as err:
+            raise OSError(
+                f"Unable to copy the corrupted file,"
+                f"operation cancelled: {err}"
+            ) from err
+
+        logger.warning("Corrupted file placed in quarantine: %s", copy_path)
 
     def _write_all(self, entries: list[HighScore]) -> None:
         """Writes the complete list to the backup file, via a temporary file.
@@ -140,18 +180,18 @@ class HighScoreStorage:
         temp_path = self.file_path.with_name(f"{self.file_path.name}.tmp")
         try:
             with temp_path.open("w", encoding="utf-8") as file:
-                json.dump(entries, file, default=asdict, ensure_ascii=False, indent=4)
+                json.dump(entries, file, default=asdict,
+                          ensure_ascii=False, indent=4)
             temp_path.replace(self.file_path)
         except OSError as err:
-            # Supprime le fichier s'il existe, sinon ne fait rien
             temp_path.unlink(missing_ok=True)
 
-            # conserve la trace de la cause d’origine :D
             raise OSError(f"Unable to save scores: {err}") from err
 
     def add_score(self, username: str, score: int) -> None:
-        """Checks and saves a new score."""
-        user_err = username_errors(username)
+        """Validates and saves a new score."""
+        user_err = username_errors(username.strip())
+
         if user_err:
             raise ValueError(f"Invalid username: {user_err}")
 
@@ -159,27 +199,28 @@ class HighScoreStorage:
         if score_err:
             raise ValueError(f"Invalid score: {score_err}")
 
-        scores = self.load_scores()
-        scores.append(HighScore(username=username.strip(), score=score))
-        self._write_all(scores)
+        result = self._load_raw()
+        if result.corrupted:
+            self._copy_corrupted_file()
+
+        entries = result.entries
+        entries.append(HighScore(username=username.strip(), score=score))
+        self._write_all(entries)
 
     def get_top_scores(self, limit: int = 10) -> list[HighScore]:
-        """Returns the N best scores, sorted from highest to lowest."""
+        """Returns the best scores, sorted from highest to lowest."""
         all_scores = self.load_scores()
         return sorted(all_scores, key=lambda e: e.score, reverse=True)[:limit]
 
-
 # ---------------------------------------------------------------------------
 #                                                                         CLI
-# saisie et affichage
-# RAF du format du fichier
 # ---------------------------------------------------------------------------
 
 def prompt_username() -> str:
     """Requires a valid username to be entered."""
     prompt_msg = (
         f"Enter your username (max {MAX_USERNAME_LENGTH} characters, "
-        "letters/numbers/spaces) : "
+        "only letters/numbers/spaces) : "
     )
     while True:
         username_entered = input(prompt_msg).strip()
@@ -206,14 +247,19 @@ def display_best_scores(scores: list[HighScore]) -> None:
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    my_backup = HighScoreStorage("highscores.json")
+    logging.basicConfig(
+        level=logging.WARNING,
+        format="%(levelname)s: %(message)s",
+    )
+
+    my_backup = HighScoreStorage()
 
     try:
-        my_backup.add_score(prompt_username(), 12345)
+        my_backup.add_score(prompt_username(), 159753)
     except (OSError, ValueError) as err:
-        print(f"Highscore not saved: {err}")
+            print(f"Highscore not saved:", err)
 
     try:
         display_best_scores(my_backup.get_top_scores())
     except (OSError, ValueError) as err:
-        print(f"Highscores can not be displayed: {err}")
+            print(f"Highscores can not be displayed:", err)
