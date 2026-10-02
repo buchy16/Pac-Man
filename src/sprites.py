@@ -124,3 +124,15 @@ DIGITS = {
    "9": (mlx.get_tools().
          mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/9.png")[0]),
 }
+
+PACGUMS = {
+    "Pacgum": (mlx.get_tools().
+               mlx_png_file_to_image(mlx.mlx_ptr,
+                                     "assets/Pacgums/Pacgum.png")[0]),
+    "Super pacgum": (mlx.get_tools().
+                     mlx_png_file_to_image(mlx.mlx_ptr, "assets/Pacgums/\
+Super_Pacgum.png")[0]),
+    "No pacgum": (mlx.get_tools().
+                  mlx_png_file_to_image(mlx.mlx_ptr,
+                                        "assets/Pacgums/No_pacgum.png")[0]),
+}
