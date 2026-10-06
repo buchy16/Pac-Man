@@ -11,18 +11,55 @@ from ...sprites import PACGUMS
 
 
 class PacgumManager():
+    """Manage pacgum placement, rendering, and collection.
+
+    The manager builds the pacgum matrix from the maze layout, keeps the
+    rendered image in sync, and handles pacgum collection when the player
+    enters a tile.
+    """
+
     def __init__(self, player: Player, maze: Maze, pacgum_pts: int,
                  s_pacgum_pts: int):
+        """Initialize the pacgum manager.
+
+        Parameters
+        ----------
+        player : Player
+            The player instance used to detect collisions and update score.
+        maze : Maze
+            The maze instance used to build the pacgum matrix and render it.
+        pacgum_pts : int
+            The number of points awarded for a regular pacgum.
+        s_pacgum_pts : int
+            The number of points awarded for a super pacgum.
+        """
         self.player = player
         self.maze = maze
 
         # matrix of the same size as the maze
-        self.pacgums = self.init_pacgums(pacgum_pts, s_pacgum_pts)
+        # Contains a pacgum or None if nothing
+        self.pacgums: list[list[Gum | None]] = self.init_pacgums(pacgum_pts,
+                                                                 s_pacgum_pts)
 
         self.pacgums_img = self.update_img(self.maze._width, self.maze._height)
 
     def init_pacgums(self, pacgum_pts: int,
                      s_pacgum_pts: int) -> list[list[Gum | None]]:
+        """Build the pacgum matrix from the maze layout.
+
+        Parameters
+        ----------
+        pacgum_pts : int
+            The number of points assigned to each regular pacgum.
+        s_pacgum_pts : int
+            The number of points assigned to each super pacgum.
+
+        Returns
+        -------
+        list[list[Gum | None]]
+            A 2D matrix containing pacgums, super pacgums, or ``None`` where
+            no collectible should exist.
+        """
         matrix = []
 
         for i in range(0, self.maze._height):
@@ -51,6 +88,22 @@ class PacgumManager():
 
     def update_img(self, tiles_width: int, tiles_height: int,
                    tile_size: int = 48) -> int:
+        """Rebuild the pacgum layer image from the current matrix.
+
+        Parameters
+        ----------
+        tiles_width : int
+            Width of the rendered maze in tiles.
+        tiles_height : int
+            Height of the rendered maze in tiles.
+        tile_size : int, optional
+            Size in pixels of each tile, by default 48.
+
+        Returns
+        -------
+        int
+            The MLX image handle containing the rendered pacgum layer.
+        """
 
         total_w = tiles_width * tile_size
         total_h = tiles_height * tile_size
@@ -86,6 +139,11 @@ class PacgumManager():
         return pg_img
 
     def colsion_cell(self) -> None:
+        """Handle a pacgum collision on the player current tile.
+
+        If a pacgum exists on the player tile, it is consumed, removed from
+        the matrix, and the cached image is rebuilt.
+        """
         pacgum = self.pacgums[self.player.i][self.player.j]
 
         if (pacgum is not None):
@@ -95,9 +153,13 @@ class PacgumManager():
                                                self.maze._height)
 
     def update(self) -> None:
+        """Update the pacgum manager state for the current frame.
+        """
         self.colsion_cell()
 
     def darw(self) -> None:
+        """Draw the pacgum layer to the main window.
+        """
         mlx.get_tools().mlx_put_image_to_window(
             mlx.mlx_ptr,
             mlx.windows["main"],
@@ -107,6 +169,8 @@ class PacgumManager():
         )
 
     def display_pacgums(self) -> None:
+        """Print the pacgum matrix to standard output for debugging.
+        """
         for line in self.pacgums:
             for gum in line:
                 print(f"[{gum.points}] ", end="")
