@@ -157,7 +157,7 @@ class PacgumManager():
         """
         self.colsion_cell()
 
-    def darw(self) -> None:
+    def draw(self) -> None:
         """Draw the pacgum layer to the main window.
         """
         mlx.get_tools().mlx_put_image_to_window(

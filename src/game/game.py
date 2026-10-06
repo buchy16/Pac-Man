@@ -34,7 +34,7 @@ class Game():
     def draw(self) -> None:
         self.maze.draw_maze()
 
-        self.pacgums.darw()
+        self.pacgums.draw()
 
         self.player.draw()
 
