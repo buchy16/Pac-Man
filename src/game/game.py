@@ -1,6 +1,7 @@
 from ..Mlx import mlx
 from . import Maze
 from . import Player
+from . import PacgumManager
 
 
 class Game():
@@ -14,12 +15,17 @@ class Game():
 
         self.player = Player(self.maze)
 
+        self.pacgums = PacgumManager(self.player, self.maze, 10, 50)
+
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
 
     def update(self) -> None:
         self.player.move()
+        # self.pacgums.display_pacgums()
+
+        self.pacgums.update()
 
 # -----------------------------------------------------------------------------
 # -------------------------------     DRAW   ----------------------------------
@@ -28,6 +34,17 @@ class Game():
     def draw(self) -> None:
         self.maze.draw_maze()
 
+        self.pacgums.draw()
+
         self.player.draw()
+
+        mlx.get_tools().mlx_string_put(
+            mlx.mlx_ptr,
+            mlx.windows["main"],
+            0,
+            0,
+            0x0000FFFF,
+            str(self.player.score)
+        )
 
         # self.maze.display_Smaze()

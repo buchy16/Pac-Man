@@ -3,6 +3,8 @@ from ... import Maze
 from ... import J_WALK_SPRIT
 from ... import mlx
 from enum import Enum, auto
+from math import ceil
+
 
 # i = height (y)
 # j = width (x)
@@ -23,7 +25,8 @@ class Player(Entity):
         self.super_pacgum = False
         self.score = 0
 
-        self.i, self.j = self.maze._height // 2, self.maze._width // 2
+        self.i = ceil(self.maze._height / 2) - 1
+        self.j = ceil(self.maze._width / 2) - 1
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.direction: Direction = Direction.NONE
 
