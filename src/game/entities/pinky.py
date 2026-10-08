@@ -1,4 +1,4 @@
-from .entity import Direction
+from ...directions import Direction
 from .ghost import Ghost
 from .player import Player
 from ..maze import Maze
