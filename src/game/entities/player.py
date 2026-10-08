@@ -4,6 +4,7 @@ from ... import J_WALK_SPRIT
 from ... import mlx
 from enum import Enum, auto
 from math import ceil
+from ...directions import Direction
 
 
 # i = height (y)

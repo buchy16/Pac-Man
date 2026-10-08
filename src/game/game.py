@@ -2,6 +2,8 @@ from ..Mlx import mlx
 from . import Maze
 from . import Player
 from . import PacgumManager
+from ..directions import Direction
+from .entities import Blinky, Clyde, Inky, Pinky
 
 
 class Game():
@@ -17,6 +19,11 @@ class Game():
 
         self.pacgums = PacgumManager(self.player, self.maze, 10, 50)
 
+        self.blinky = Blinky(self.maze, self.player, "b", 0, 0, Direction.EAST)
+        self.clyde = Clyde(self.maze, self.player, "c", 0, 14, Direction.SOUTH)
+        self.inky = Inky(self.maze, self.player, "i", 14, 14, Direction.WEST)
+        self.pinky = Pinky(self.maze, self.player, "p", 14, 0, Direction.NORTH)
+
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
@@ -26,6 +33,11 @@ class Game():
         # self.pacgums.display_pacgums()
 
         self.pacgums.update()
+
+        self.blinky.move()
+        self.clyde.move()
+        self.inky.move()
+        self.pinky.move()
 
 # -----------------------------------------------------------------------------
 # -------------------------------     DRAW   ----------------------------------
@@ -37,6 +49,11 @@ class Game():
         self.pacgums.draw()
 
         self.player.draw()
+
+        self.blinky.draw()
+        self.clyde.draw()
+        self.inky.draw()
+        self.pinky.draw()
 
         mlx.get_tools().mlx_string_put(
             mlx.mlx_ptr,
