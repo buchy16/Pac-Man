@@ -22,7 +22,7 @@ from ...sprites import G_WALK_SPRITES
 class Ghost(Entity):
     DEATH_DELAY: Final[int] = 30   # en secondes
 
-    def __init__(self, maze: Maze, player: Player, prefix: str,
+    def __init__(self, maze: Maze, player: Player, prefix: str, speed: float,
                  i_start: int, j_start: int, dir_start: Direction,
                  life: int = 1, width: int = 26, height: int = 26) -> None:
         """Initialize a ghost instance
@@ -32,6 +32,7 @@ class Ghost(Entity):
         maze : The maze that owns the ghost and provides tile coordinates.
         player : The player the ghost may chase.
         prefix : sprite key, identifying this ghost's sprites.
+        speed: duration between moves
         i_start, j_start, dir_start : Starting row, column and direction.
         life : default 1 (ghost is alive, else 0)
         width, height : default 26, ghost sprite width and height in pixels
@@ -39,6 +40,9 @@ class Ghost(Entity):
         super().__init__(maze)
         self.player = player
         self.prefix = prefix
+        self.normal_speed = speed
+        self.speed = speed
+
         self.life = life
         self.width, self.height = width, height
 
@@ -65,14 +69,17 @@ class Ghost(Entity):
         """
         pass
 
-    def move(self, duration_between_moves: float = 1.0) -> None:
+    def move(self) -> None:
         """call find_path(), in order to move to the next square
-        if duration_between_moves (in seconds) has elapsed since the last move
+        if self.speed (in seconds) has elapsed since the last move
         """
+        if (self.life <= 0):
+            self.speed = 0.2
         if (self.life <= 0
             and mlx.timer - self.last_death >= self.DEATH_DELAY):
             self.life = 1
-        if mlx.timer - self.last_s >= duration_between_moves:
+            self.speed = self.normal_speed
+        if mlx.timer - self.last_s >= self.speed:
             if (self.life):
                 target_i, target_j = self.get_target()
             else:
@@ -116,7 +123,11 @@ class Ghost(Entity):
         """
         if (self.life):
             frame = "1" if (mlx.timer % 0.50 < 0.25) else "2"
-            dir_ghost_key = f"{frame}{self.prefix}"
+            if (self.player.super_pacgum):
+                dir_ghost_key = f"{frame}blue"
+            else:
+                dir_ghost_key = f"{frame}{self.prefix}"
+
         else:
             dir_ghost_key = "g"
 

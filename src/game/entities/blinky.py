@@ -8,9 +8,10 @@ from ..maze import Maze
 
 
 class Blinky(Ghost):
-    def __init__(self, maze: Maze, player: Player, prefix: str,
+    def __init__(self, maze: Maze, player: Player, prefix: str, speed: float,
                  i_start: int, j_start: int, dir_start: Direction) -> None:
-        super().__init__(maze, player, prefix, i_start, j_start, dir_start)
+        super().__init__(maze, player, prefix, speed,
+                         i_start, j_start, dir_start)
 
         self.width, self.height = 26, 26
         self.target = (self.player.i, self.player.j)

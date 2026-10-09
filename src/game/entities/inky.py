@@ -9,9 +9,10 @@ from ...utils import random_open_cell
 
 
 class Inky(Ghost):
-    def __init__(self, maze: Maze, player: Player, prefix: str,
+    def __init__(self, maze: Maze, player: Player, prefix: str, speed: float,
                  i_start: int, j_start: int, dir_start: Direction) -> None:
-        super().__init__(maze, player, prefix, i_start, j_start, dir_start)
+        super().__init__(maze, player, prefix, speed,
+                         i_start, j_start, dir_start)
 
         self.width, self.height = 26, 26
         self.target = (self.i_start, self.j_start)

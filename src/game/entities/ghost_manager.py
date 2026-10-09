@@ -18,10 +18,10 @@ class GhostManager():
         self.maze = maze
 
         self.ghosts: dict[str, Ghost] = {
-            "blinky": Blinky(self.maze, self.player, "b", 0, 0, Direction.EAST),
-            "clyde": Clyde(self.maze, self.player, "c", 0, 14, Direction.SOUTH),
-            "inky": Inky(self.maze, self.player, "i", 14, 14, Direction.WEST),
-            "pinky": Pinky(self.maze, self.player, "p", 14, 0, Direction.NORTH),
+            "blinky": Blinky(self.maze, self.player, "b", 1.1, 0, 0, Direction.EAST),
+            "clyde": Clyde(self.maze, self.player, "c", 1.0, 0, 14, Direction.SOUTH),
+            "inky": Inky(self.maze, self.player, "i", 1.0, 14, 14, Direction.WEST),
+            "pinky": Pinky(self.maze, self.player, "p", 0.8, 14, 0, Direction.NORTH),
         }
 
     def update(self) -> None:

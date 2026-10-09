@@ -9,9 +9,12 @@ from ...utils import manhattan_dist, random_open_cell
 
 
 class Clyde(Ghost):
-    def __init__(self, maze: Maze, player: Player, prefix: str,
+    MAGNETIC_DISTANCE: int = 8
+
+    def __init__(self, maze: Maze, player: Player, prefix: str, speed: float,
                  i_start: int, j_start: int, dir_start: Direction) -> None:
-        super().__init__(maze, player, prefix, i_start, j_start, dir_start)
+        super().__init__(maze, player, prefix, speed,
+                         i_start, j_start, dir_start)
 
         self.width, self.height = 26, 26
         self.target = (0, 0)
@@ -22,7 +25,7 @@ class Clyde(Ghost):
         """
         clyde_coord = (self.i, self.j)
         player_coord = (self.player.i, self.player.j)
-        if manhattan_dist(clyde_coord, player_coord) < 6:
+        if manhattan_dist(clyde_coord, player_coord) < self.MAGNETIC_DISTANCE:
             self.target = player_coord
         elif (clyde_coord == self.target):
             self.target = random_open_cell(self.maze)

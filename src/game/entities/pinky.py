@@ -10,9 +10,12 @@ from ...directions import DIR_MOVES
 
 
 class Pinky(Ghost):
-    def __init__(self, maze: Maze, player: Player, prefix: str,
+    MAGNETIC_DISTANCE: int = 2
+
+    def __init__(self, maze: Maze, player: Player, prefix: str, speed: float,
                  i_start: int, j_start: int, dir_start: Direction) -> None:
-        super().__init__(maze, player, prefix, i_start, j_start, dir_start)
+        super().__init__(maze, player, prefix, speed,
+                         i_start, j_start, dir_start)
 
         self.width, self.height = 26, 26
         self.target = (self.player.i, self.player.j)
@@ -21,7 +24,7 @@ class Pinky(Ghost):
         """determines the ghost's target on the grid
         Returns : the coordinates (i, j) of the cell to target
         """
-        nb_cells_forward = 2
+        nb_cells_forward = self.MAGNETIC_DISTANCE
         di, dj = DIR_MOVES.get(self.player.direction, (0, 0))
         max_row = self.maze._height - 1
         max_col = self.maze._width - 1
