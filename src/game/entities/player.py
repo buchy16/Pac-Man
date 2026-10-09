@@ -4,18 +4,19 @@ from ... import J_WALK_SPRIT
 from ... import mlx
 from enum import Enum, auto
 from math import ceil
+from ...directions import Direction
 
 
 # i = height (y)
 # j = width (x)
 
 
-class Direction(Enum):
-    NORTH = auto()
-    SOUTH = auto()
-    WEST = auto()
-    EST = auto()
-    NONE = auto()
+# class Direction(Enum):
+#     NORTH = auto()
+#     SOUTH = auto()
+#     WEST = auto()
+#     EST = auto()
+#     NONE = auto()
 
 
 class Player(Entity):
@@ -49,7 +50,7 @@ class Player(Entity):
             self.direction = Direction.WEST
             # print("WEST")
         elif (mlx.KEYNAME[keynum] == "d"):
-            self.direction = Direction.EST
+            self.direction = Direction.EAST
             # print("Est")
 
     def move(self) -> None:
@@ -66,7 +67,7 @@ class Player(Entity):
                     self.maze.smaze[self.i][self.j]["code"] & 0b1000 == 0):
                 self.j = (self.j - 1) % self.maze._width
 
-            elif (self.direction == Direction.EST and
+            elif (self.direction == Direction.EAST and
                     self.maze.smaze[self.i][self.j]["code"] & 0b0010 == 0):
                 self.j = (self.j + 1) % self.maze._width
             self.last_s = mlx.timer

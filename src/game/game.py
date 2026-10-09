@@ -2,6 +2,7 @@ from ..Mlx import mlx
 from . import Maze
 from . import Player
 from . import PacgumManager
+from .entities import GhostManager
 
 
 class Game():
@@ -17,6 +18,8 @@ class Game():
 
         self.pacgums = PacgumManager(self.player, self.maze, 10, 50)
 
+        self.ghosts = GhostManager(self.player, self.maze)
+
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
@@ -26,6 +29,8 @@ class Game():
         # self.pacgums.display_pacgums()
 
         self.pacgums.update()
+
+        self.ghosts.update()
 
 # -----------------------------------------------------------------------------
 # -------------------------------     DRAW   ----------------------------------
@@ -37,6 +42,8 @@ class Game():
         self.pacgums.draw()
 
         self.player.draw()
+
+        self.ghosts.draw()
 
         mlx.get_tools().mlx_string_put(
             mlx.mlx_ptr,

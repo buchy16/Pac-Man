@@ -1,4 +1,5 @@
 from . import mlx
+from .directions import Direction
 
 
 WALLS = {
@@ -136,3 +137,35 @@ Super_Pacgum.png")[0]),
                   mlx_png_file_to_image(mlx.mlx_ptr,
                                         "assets/Pacgums/No_pacgum.png")[0]),
 }
+
+# to create this list of sprites... avoiding some copy-and-paste mistake :D
+# G_WALK_SPRITES = {
+#     "1b": {
+#         Direction.NORTH: (mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr,
+#                                        "assets/Entities/1b_north.png")[0]),
+#         Direction.EAST: (mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr,
+#                                      "assets/Entities/1b_east.png")[0]),
+#         Direction.SOUTH: (mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr,
+#                                        "assets/Entities/1b_south.png")[0]),
+#         Direction.WEST: (mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr,
+#                                       "assets/Entities/1b_west.png")[0]),
+#     },
+#     "2b": {
+#         ...
+#     },
+#     "1c": {
+#         ...
+#     },
+#     ...
+# }
+DIRECTIONS = (Direction.NORTH, Direction.EAST,
+              Direction.SOUTH, Direction.WEST)
+G_WALK_KEYS = ["1b", "2b", "1c", "2c", "1i", "2i", "1p", "2p",
+               "1blue", "2blue", "g"]
+G_WALK_SPRITES: dict[str, dict[Direction, int]] = {}
+for key in G_WALK_KEYS:
+    G_WALK_SPRITES[key] = {}
+    for direction in DIRECTIONS:
+        img_path = f"assets/Entities/{key}_{direction.label}.png"
+        image = mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr, img_path)[0]
+        G_WALK_SPRITES[key][direction] = image
