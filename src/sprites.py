@@ -160,7 +160,7 @@ Super_Pacgum.png")[0]),
 # }
 DIRECTIONS = (Direction.NORTH, Direction.EAST,
               Direction.SOUTH, Direction.WEST)
-G_WALK_KEYS = ["1b", "2b", "1c", "2c", "1i", "2i", "1p", "2p"]
+G_WALK_KEYS = ["1b", "2b", "1c", "2c", "1i", "2i", "1p", "2p", "g"]
 G_WALK_SPRITES: dict[str, dict[Direction, int]] = {}
 for key in G_WALK_KEYS:
     G_WALK_SPRITES[key] = {}

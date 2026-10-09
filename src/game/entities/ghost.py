@@ -1,6 +1,7 @@
 import heapq
 import math
 from abc import abstractmethod
+from typing import Final
 from .entity import Entity, Direction
 from .player import Player
 from ..maze import Maze
@@ -19,6 +20,8 @@ from ...sprites import G_WALK_SPRITES
 
 
 class Ghost(Entity):
+    DEATH_DELAY: Final[int] = 30   # en secondes
+
     def __init__(self, maze: Maze, player: Player, prefix: str,
                  i_start: int, j_start: int, dir_start: Direction,
                  life: int = 1, width: int = 26, height: int = 26) -> None:
@@ -52,6 +55,8 @@ class Ghost(Entity):
 
         # time of the last movement
         self.last_s = mlx.timer
+        # time of the last death
+        self.last_death = 0
 
     @abstractmethod
     def get_target(self) -> tuple[int, int]:
@@ -64,8 +69,16 @@ class Ghost(Entity):
         """call find_path(), in order to move to the next square
         if duration_between_moves (in seconds) has elapsed since the last move
         """
+        if (self.life <= 0
+            and mlx.timer - self.last_death >= self.DEATH_DELAY):
+            self.life = 1
         if mlx.timer - self.last_s >= duration_between_moves:
-            target_i, target_j = self.get_target()
+            if (self.life):
+                target_i, target_j = self.get_target()
+            else:
+                self.target = (self.i_start, self.j_start)
+                target_i, target_j = self.target
+
             path = self.find_path(
                 (self.i, self.j),
                 (target_i, target_j)
@@ -90,12 +103,22 @@ class Ghost(Entity):
 
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
 
+    def hit_player(self) -> bool:
+        return (self.i == self.player.i and self.j == self.player.j)
+
+    def die(self) -> None:
+        self.life = 0
+        self.last_death = mlx.timer
+
     def draw(self) -> None:
         """ animates the ghost by alternating, every 0.25 seconds,
         between two sprites corresponding wich direction is moving
         """
-        frame = "1" if (mlx.timer % 0.50 < 0.25) else "2"
-        dir_ghost_key = f"{frame}{self.prefix}"
+        if (self.life):
+            frame = "1" if (mlx.timer % 0.50 < 0.25) else "2"
+            dir_ghost_key = f"{frame}{self.prefix}"
+        else:
+            dir_ghost_key = "g"
 
         # displays the sprite centred on the cell
         mlx.get_tools().mlx_put_image_to_window(
@@ -158,7 +181,7 @@ class Ghost(Entity):
                 neighbour_i, neighbour_j = current_i + di, current_j + dj
                 neighbour_coord = (neighbour_i, neighbour_j)
 
-                # if accessible and not already visited
+                # if accessible
                 if (
                     0 <= neighbour_i < self.maze._height
                     and 0 <= neighbour_j < self.maze._width
