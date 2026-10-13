@@ -4,8 +4,12 @@ from .player import Player
 from ..maze import Maze
 from ...utils import manhattan_dist, random_open_cell
 
-
-"""Clyde se balade aléatoirement... et fonce sur Pacman quand il est proche"""
+"""
+when CHASER
+    Clyde moves randomly and targets Pacman when it's within MAGNETIC_DISTANCE
+when FRIGHTENED
+    ToDo
+"""
 
 
 class Clyde(Ghost):
@@ -16,11 +20,10 @@ class Clyde(Ghost):
         super().__init__(maze, player, prefix, speed,
                          i_start, j_start, dir_start)
 
-        self.width, self.height = 26, 26
-        self.target = (0, 0)
+        self.target = (self.i_start, self.j_start)
 
-    def get_target(self) -> tuple[int, int]:
-        """determines the ghost's target on the grid
+    def get_chase_target(self) -> tuple[int, int]:
+        """determines the CHASER ghost's target on the grid
         Returns : the coordinates (i, j) of the cell to target
         """
         clyde_coord = (self.i, self.j)
@@ -30,3 +33,10 @@ class Clyde(Ghost):
         elif (clyde_coord == self.target):
             self.target = random_open_cell(self.maze)
         return (self.target)
+
+    def get_flee_target(self) -> tuple[int, int]:
+        """determines the FRIGHTENED ghost's target on the grid
+        Returns : the coordinates (i, j) of the cell to target
+        """
+        # ToDo
+        return (self.i_start, self.j_start)  # temp

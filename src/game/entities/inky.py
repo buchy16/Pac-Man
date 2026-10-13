@@ -4,8 +4,12 @@ from .player import Player
 from ..maze import Maze
 from ...utils import random_open_cell
 
-
-"""Inky se balade aléatoirement"""
+"""
+when CHASER
+    Inky moves randomly
+when FRIGHTENED
+    ToDo
+"""
 
 
 class Inky(Ghost):
@@ -14,14 +18,20 @@ class Inky(Ghost):
         super().__init__(maze, player, prefix, speed,
                          i_start, j_start, dir_start)
 
-        self.width, self.height = 26, 26
         self.target = (self.i_start, self.j_start)
 
-    def get_target(self) -> tuple[int, int]:
-        """determines the ghost's target on the grid
+    def get_chase_target(self) -> tuple[int, int]:
+        """determines the CHASER ghost's target on the grid
         Returns : the coordinates (i, j) of the cell to target
         """
         inky_coord = (self.i, self.j)
         if (inky_coord == self.target):
             self.target = random_open_cell(self.maze)
         return (self.target)
+
+    def get_flee_target(self) -> tuple[int, int]:
+        """determines the FRIGHTENED ghost's target on the grid
+        Returns : the coordinates (i, j) of the cell to target
+        """
+        # ToDo
+        return (self.i_start, self.j_start)  # temp

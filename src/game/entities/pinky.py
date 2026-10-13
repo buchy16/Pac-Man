@@ -5,8 +5,12 @@ from ..maze import Maze
 from ...utils import not_closed_cell
 from ...directions import DIR_MOVES
 
-
-"""Pinky is aiming to be four squares ahead of Pacman"""
+"""
+when CHASER
+    Pinky is aiming to be MAGNETIC_DISTANCE squares ahead of Pacman
+when FRIGHTENED
+    ToDo
+"""
 
 
 class Pinky(Ghost):
@@ -17,11 +21,10 @@ class Pinky(Ghost):
         super().__init__(maze, player, prefix, speed,
                          i_start, j_start, dir_start)
 
-        self.width, self.height = 26, 26
         self.target = (self.player.i, self.player.j)
 
-    def get_target(self) -> tuple[int, int]:
-        """determines the ghost's target on the grid
+    def get_chase_target(self) -> tuple[int, int]:
+        """determines the CHASER ghost's target on the grid
         Returns : the coordinates (i, j) of the cell to target
         """
         nb_cells_forward = self.MAGNETIC_DISTANCE
@@ -39,3 +42,10 @@ class Pinky(Ghost):
 
         # belt and suspenders :D
         return (self.player.i, self.player.j)
+
+    def get_flee_target(self) -> tuple[int, int]:
+        """determines the FRIGHTENED ghost's target on the grid
+        Returns : the coordinates (i, j) of the cell to target
+        """
+        # ToDo
+        return (self.i_start, self.j_start)  # temp
