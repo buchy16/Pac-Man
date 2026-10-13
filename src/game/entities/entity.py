@@ -9,25 +9,25 @@ class Entity(ABC):
     The class stores the maze reference
     and the common attributes shared by Pacman and ghosts.
     """
+    ENTITY_SIZE: int = 26
 
     def __init__(self, maze: Maze) -> None:
-        """Initialize a gum instance.
+        """Initialize an entity (player / ghost) instance.
 
         Parameters
         ----------
         maze : Maze
             The maze that owns the gum and provides tile coordinates.
         """
-        self.life: int
+        self.life: int  # /!\ inutile pour ghosts depuis ajout GhostState=DEAD
 
-        self.width: int
-        self.height: int
+        self.maze = maze
+        self.width: int = self.ENTITY_SIZE
+        self.height: int = self.ENTITY_SIZE
 
         # position in pixels
         self.x: int
         self.y: int
-
-        self.maze = maze
 
         # position in grid
         self.i: int
