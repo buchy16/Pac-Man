@@ -16,13 +16,13 @@ class GhostManager:
 
         self.ghosts: dict[str, Ghost] = {
             "blinky": Blinky(self.maze, self.player,
-                             "b", 1.1, 0, 0, Direction.EAST),
+                             "b", 1.25, 0, 0, Direction.EAST),
             "clyde": Clyde(self.maze, self.player,
                            "c", 1.0, 0, 14, Direction.SOUTH),
             "inky": Inky(self.maze, self.player,
-                         "i", 1.0, 14, 14, Direction.WEST),
+                         "i", 0.75, 14, 14, Direction.WEST),
             "pinky": Pinky(self.maze, self.player,
-                           "p", 0.8, 14, 0, Direction.NORTH),
+                           "p", 1.0, 14, 0, Direction.NORTH),
         }
 
         # flag enabled/disabled when Pacman’s super-pacgum mode starts/ends

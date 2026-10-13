@@ -8,7 +8,9 @@ from ...utils import random_open_cell
 when CHASER
     Inky moves randomly
 when FRIGHTENED
-    ToDo
+    Inky moves to the corner furthest from Pac-Man
+    This target is updated when it is reached,
+    or if Pac-Man has entered the same quarter of the maze as the target
 """
 
 
@@ -28,10 +30,3 @@ class Inky(Ghost):
         if (inky_coord == self.target):
             self.target = random_open_cell(self.maze)
         return (self.target)
-
-    def get_flee_target(self) -> tuple[int, int]:
-        """determines the FRIGHTENED ghost's target on the grid
-        Returns : the coordinates (i, j) of the cell to target
-        """
-        # ToDo
-        return (self.i_start, self.j_start)  # temp

@@ -1,13 +1,13 @@
 import heapq
 import math
+from math import ceil
 from abc import abstractmethod
-from typing import Final
 from enum import Enum, auto
 from .entity import Entity, Direction
 from .player import Player
 from ..maze import Maze
 from ... import mlx
-from ...utils import manhattan_dist
+from ...utils import manhattan_dist, not_closed_cell
 from ...directions import DIR_MOVES
 from ...sprites import G_WALK_SPRITES
 
@@ -30,7 +30,8 @@ class GhostState(Enum):
 class Ghost(Entity):
     DEATH_DELAY: int = 10  # in seconds
     SNAIL_SPEED: int = 1.5
-    ROCKET_SPEED: int = 0.2
+    ROCKET_SPEED: int = 0.15
+    CORNERS: list[tuple[int, int]] = [(0,0), (0, 14), (14, 14), (14, 0)]
 
     def __init__(self, maze: Maze, player: Player, prefix: str, speed: float,
                  i_start: int, j_start: int, dir_start: Direction) -> None:
@@ -89,12 +90,59 @@ class Ghost(Entity):
         """
         pass
 
-    @abstractmethod
+    def get_furthest_corner(self) -> tuple[int, int]:
+        """Returns: the corner furthest from Pac-Man"""
+        furthest_corner: tuple[int, int] = None
+        max_distance: int = -1
+        # pour chaque coin,
+        for corner in self.CORNERS:
+            # calculer la Distance de Manhattan
+            corner_dist: int = manhattan_dist((self.player.i, self.player.j), corner)
+            # si ce coin est plus loin que la distance max actuelle
+            if corner_dist > max_distance:
+                # mettre à jour la distance max
+                max_distance = corner_dist
+                # noter que ce coin est le plus éĺoigné
+                furthest_corner = corner
+        # return (furthest_corner)
+        result = furthest_corner
+        assert result in self.CORNERS, f"{result} not in {self.CORNERS}"
+        return result
+
     def get_flee_target(self) -> tuple[int, int]:
         """determines the FRIGHTENED ghost's target on the grid
         Returns : the coordinates (i, j) of the cell to target
         """
-        pass
+        player_coord = (self.player.i, self.player.j)
+        center_coord = (ceil(self.maze._width / 2) - 1,
+                        ceil(self.maze._height / 2) - 1)
+        player_to_target = manhattan_dist(player_coord, self.target)
+        center_to_target = manhattan_dist(center_coord, self.target)
+        # s'il a atteint sa target
+        if ((self.i, self.j == self.target)
+            # ou si Pacman est rentré dans le même quart que la cible
+            or player_to_target < center_to_target):
+            self.target = self.get_furthest_corner()
+        return (self.target)
+
+    def get_ahead_magnetic_target(self, dist: int, behind: bool = False) -> tuple[int, int]:
+        """Returns:
+            the further valid cell from `dist` to 0 squares ahead the player"""
+        di, dj = DIR_MOVES.get(self.player.direction, (0, 0))
+        max_row = self.maze._height - 1
+        max_col = self.maze._width - 1
+
+        # checks the cells from `dist` to 0 squares behind the player
+        for steps in range(dist, -1, -1):
+            target_row = min(max(self.player.i + di * steps, 0), max_row)
+            target_col = min(max(self.player.j + dj * steps, 0), max_col)
+
+            if not_closed_cell(self.maze, target_row, target_col):
+                return (target_row, target_col)
+
+        # when direction==NONE, `DIR_MOVES.get` returns player's position...
+        # => belt, suspenders and mypy :D
+        return (self.player.i, self.player.j)
 
     def _set_target_by_state(self) -> tuple[int, int]:
         """Points to a target algorithm depending on the state."""
