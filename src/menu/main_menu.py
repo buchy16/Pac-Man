@@ -1,8 +1,9 @@
 from typing import Callable
-from ..Mlx import mlx
-from ..sprites import MAIN_MENU
-from ..parse_config import GameConfig
-from ..utils import display_nums
+from src.Mlx import mlx
+from src.sprites import MENU
+from src.parse_config import GameConfig
+from src.utils import display_nums
+from src.state import State
 
 # Srceen middle x coordinate
 S_MIDDLE_X = 360
@@ -16,7 +17,7 @@ BIG_HALF_WIDTH = 216
 BIG_HALF_HEIGHT = 86
 
 
-class MainMenu():
+class MainMenu(State):
     """Manage the main menu state and drawing logic.
 
     Attributes:
@@ -28,7 +29,7 @@ class MainMenu():
         y: Current mouse y coordinate in the menu window.
     """
 
-    def __init__(self, config: GameConfig):
+    def __init__(self, config: GameConfig) -> None:
         """Initialize the main menu window and input handlers.
 
         Args:
@@ -39,29 +40,33 @@ class MainMenu():
         """
         self.config = config
 
-        mlx.new_window(720, 720, "main_menu")
-        self.to_draw: Callable = self.draw_main_menu
-        mlx.add_mouse_hook_function(self._update_menu, "main_menu")
+        mlx.new_window(720, 720, "MENU")
+        self.to_draw: Callable = self.draw_MENU
+        mlx.add_mouse_hook_function(self._update_menu, "MENU")
 
-        self.menu_state = self.main_menu
+        self.menu_state = self.MENU
 
         self.game_started = False
 
-        _, x, y = mlx.get_tools().mlx_mouse_get_pos(mlx.windows["main_menu"])
+        _, x, y = mlx.get_tools().mlx_mouse_get_pos(mlx.windows["MENU"])
         self.x = x
         self.y = y
 
-    def update(self):
+    def update(self) -> int:
         """Refresh the cached mouse position.
 
         Returns:
-            None.
+            int: 1 if the user want to quit this state, else 0 ongoing
         """
-        _, x, y = mlx.get_tools().mlx_mouse_get_pos(mlx.windows["main_menu"])
+        _, x, y = mlx.get_tools().mlx_mouse_get_pos(mlx.windows["MENU"])
         self.x = x
         self.y = y
 
-    def _update_menu(self, button, x, y) -> None:
+        if (self.game_started is True):
+            return (1)
+        return (0)
+
+    def _update_menu(self, button: int, x: int, y: int) -> None:
         """Dispatch a mouse event to the active menu handler.
 
         Args:
@@ -74,7 +79,7 @@ class MainMenu():
         """
         self.menu_state(button, x, y)
 
-    def main_menu(self, button: int, x: int, y: int) -> None:
+    def MENU(self, button: int, x: int, y: int) -> None:
         """Handle clicks on the main menu screen.
 
         Args:
@@ -91,7 +96,6 @@ class MainMenu():
            (x >= S_MIDDLE_X - HALF_WIDTH and x <= S_MIDDLE_X + HALF_WIDTH) and
            (y >= 144 - HALF_HEIGHT and y <= 144 + HALF_HEIGHT))):
             self.game_started = True
-            mlx.close_window("main_menu")
 
         # Check if the mouse click was on the surface area of ​​the button
         # View Highscores
@@ -128,7 +132,7 @@ class MainMenu():
         if (button == 1 and (
            (x >= S_MIDDLE_X - HALF_WIDTH and x <= S_MIDDLE_X + HALF_WIDTH) and
            (y >= 700 - HALF_HEIGHT and y <= 700 + HALF_HEIGHT))):
-            self.menu_state = self.main_menu
+            self.menu_state = self.MENU
 
     def instructions(self, button: int, x: int, y: int) -> None:
         """Handle interactions for the instructions screen.
@@ -145,9 +149,9 @@ class MainMenu():
         if (button == 1 and (
            (x >= S_MIDDLE_X - HALF_WIDTH and x <= S_MIDDLE_X + HALF_WIDTH) and
            (y >= 700 - HALF_HEIGHT and y <= 700 + HALF_HEIGHT))):
-            self.menu_state = self.main_menu
+            self.menu_state = self.MENU
 
-    def draw_main_menu(self):
+    def draw_MENU(self):
         """Draw the main menu screen.
 
         Returns:
@@ -160,8 +164,8 @@ class MainMenu():
            (self.y >= 144 - HALF_HEIGHT and self.y <= 144 + HALF_HEIGHT)):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Start Game b"],
+                mlx.windows["MENU"],
+                MENU["Start Game b"],
                 S_MIDDLE_X - BIG_HALF_WIDTH,
                 144 - BIG_HALF_HEIGHT
             )
@@ -169,8 +173,8 @@ class MainMenu():
             # normal size
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Start Game"],
+                mlx.windows["MENU"],
+                MENU["Start Game"],
                 S_MIDDLE_X - HALF_WIDTH,
                 144 - HALF_HEIGHT
             )
@@ -182,8 +186,8 @@ class MainMenu():
            (self.y >= 288 - HALF_HEIGHT and self.y <= 288 + HALF_HEIGHT)):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["View_Highscores b"],
+                mlx.windows["MENU"],
+                MENU["View_Highscores b"],
                 S_MIDDLE_X - BIG_HALF_WIDTH,
                 288 - BIG_HALF_HEIGHT
             )
@@ -191,8 +195,8 @@ class MainMenu():
             # normal size
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["View_Highscores"],
+                mlx.windows["MENU"],
+                MENU["View_Highscores"],
                 S_MIDDLE_X - HALF_WIDTH,
                 288 - HALF_HEIGHT
             )
@@ -204,8 +208,8 @@ class MainMenu():
            (self.y >= 432 - HALF_HEIGHT and self.y <= 432 + HALF_HEIGHT)):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Instructions b"],
+                mlx.windows["MENU"],
+                MENU["Instructions b"],
                 S_MIDDLE_X - BIG_HALF_WIDTH,
                 432 - BIG_HALF_HEIGHT
             )
@@ -213,8 +217,8 @@ class MainMenu():
             # normal size
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Instructions"],
+                mlx.windows["MENU"],
+                MENU["Instructions"],
                 S_MIDDLE_X - HALF_WIDTH,
                 432 - HALF_HEIGHT
             )
@@ -226,8 +230,8 @@ class MainMenu():
            (self.y >= 700 - HALF_HEIGHT and self.y <= 700 + HALF_HEIGHT)):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Exit b"],
+                mlx.windows["MENU"],
+                MENU["Exit b"],
                 S_MIDDLE_X - BIG_HALF_WIDTH,
                 700 - BIG_HALF_HEIGHT
             )
@@ -235,8 +239,8 @@ class MainMenu():
             # normal size
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Exit"],
+                mlx.windows["MENU"],
+                MENU["Exit"],
                 S_MIDDLE_X - HALF_WIDTH,
                 700 - HALF_HEIGHT
             )
@@ -249,7 +253,7 @@ class MainMenu():
         """
         mlx.get_tools().mlx_string_put(
             mlx.mlx_ptr,
-            mlx.windows["main_menu"],
+            mlx.windows["MENU"],
             220,
             S_MIDDLE_X,
             0x0000FF,
@@ -262,8 +266,8 @@ class MainMenu():
            (self.y >= 700 - HALF_HEIGHT and self.y <= 700 + HALF_HEIGHT)):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Exit b"],
+                mlx.windows["MENU"],
+                MENU["Exit b"],
                 S_MIDDLE_X - BIG_HALF_WIDTH,
                 700 - BIG_HALF_HEIGHT
             )
@@ -271,8 +275,8 @@ class MainMenu():
             # normal size
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Exit"],
+                mlx.windows["MENU"],
+                MENU["Exit"],
                 S_MIDDLE_X - HALF_WIDTH,
                 700 - HALF_HEIGHT
             )
@@ -285,25 +289,25 @@ class MainMenu():
         """
         mlx.get_tools().mlx_put_image_to_window(
             mlx.mlx_ptr,
-            mlx.windows["main_menu"],
-            MAIN_MENU["Instructions_img"],
+            mlx.windows["MENU"],
+            MENU["Instructions_img"],
             S_MIDDLE_X - 250,
             0
         )
         # Display point per pacgum followed by PTS
-        x_pts = display_nums(110 + 242, 391, "main_menu",
+        x_pts = display_nums(110 + 242, 391, "MENU",
                              str(self.config.points_per_pacgum))
         mlx.get_tools().mlx_put_image_to_window(mlx.mlx_ptr,
-                                                mlx.windows["main_menu"],
-                                                MAIN_MENU["PTS"],
+                                                mlx.windows["MENU"],
+                                                MENU["PTS"],
                                                 x_pts, 391 - 7)
 
         # Display point per pacgum followed by PTS
-        x_pts = display_nums(110 + 242, 428, "main_menu",
+        x_pts = display_nums(110 + 242, 428, "MENU",
                              str(self.config.points_per_super_pacgum))
         mlx.get_tools().mlx_put_image_to_window(mlx.mlx_ptr,
-                                                mlx.windows["main_menu"],
-                                                MAIN_MENU["PTS"],
+                                                mlx.windows["MENU"],
+                                                MENU["PTS"],
                                                 x_pts, 428 - 7)
 
         # Draw a bigger version of the button if the mouse is on the surface
@@ -313,8 +317,8 @@ class MainMenu():
            (self.y >= 700 - HALF_HEIGHT and self.y <= 700 + HALF_HEIGHT)):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Exit b"],
+                mlx.windows["MENU"],
+                MENU["Exit b"],
                 S_MIDDLE_X - BIG_HALF_WIDTH,
                 700 - BIG_HALF_HEIGHT
             )
@@ -322,8 +326,8 @@ class MainMenu():
             # normal size
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
-                mlx.windows["main_menu"],
-                MAIN_MENU["Exit"],
+                mlx.windows["MENU"],
+                MENU["Exit"],
                 S_MIDDLE_X - HALF_WIDTH,
                 700 - HALF_HEIGHT
             )
@@ -334,9 +338,14 @@ class MainMenu():
         Returns:
             None.
         """
-        if (self.menu_state == self.main_menu):
-            self.draw_main_menu()
+        if (self.menu_state == self.MENU):
+            self.draw_MENU()
         elif (self.menu_state == self.scores_viwer):
             self.draw_scores_viwer()
         elif (self.menu_state == self.instructions):
             self.draw_instructions()
+
+    def unload(self) -> State:
+        from ..game import Game
+        mlx.close_window("MENU")
+        return (Game(self.config))

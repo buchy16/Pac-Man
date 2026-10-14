@@ -161,6 +161,12 @@ linked to this window ")
         return (True)
 
     def close_window(self, window_name: str) -> None:
+        """Close targeted window and remove all key hook and mouse hook
+        linked to this function
+
+        Args:
+            window_name (str): Window's name
+        """
         self.key_hook_functions = {key: item for key, item in
                                    self.key_hook_functions.items()
                                    if key != window_name}
@@ -178,7 +184,7 @@ linked to this window ")
             keynum (int): Value of the key catched (keysym_X11)
             window_name (str): name of the window
         """
-        if (keynum == 0 or self.KEYNAME[keynum] == "Escape"):
+        if (keynum == 0 or self.KEYNAME[keynum] == "Delete"):
             self.m.mlx_destroy_window(self.mlx_ptr, self.windows[window_name])
             self.m.mlx_loop_exit(self.mlx_ptr)
 

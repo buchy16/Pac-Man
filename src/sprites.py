@@ -66,7 +66,7 @@ J_WALK_SPRIT = {
                                       "assets/Entities/2J_West.png")[0]),
 }
 
-MAIN_MENU = {
+MENU = {
     "Start Game": (mlx.get_tools().
                    mlx_png_file_to_image(mlx.mlx_ptr,
                                          "assets/Texts/Start_game.png")[0]),
@@ -101,6 +101,12 @@ Instructions_b.png")[0]),
                                                "assets/Instructions.png")[0]),
     "PTS": (mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr,
                                                   "assets/Texts/PTS.png")[0]),
+    "Resume": (mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr,
+                                                     "assets/Texts/\
+Resume.png")[0]),
+    "Resume b": (mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr,
+                                                       "assets/Texts/\
+Resume_b.png")[0]),
 }
 
 DIGITS = {
@@ -169,3 +175,10 @@ for key in G_WALK_KEYS:
         img_path = f"assets/Entities/{key}_{direction.label}.png"
         image = mlx.get_tools().mlx_png_file_to_image(mlx.mlx_ptr, img_path)[0]
         G_WALK_SPRITES[key][direction] = image
+
+BACKGROUNDS = {
+    "Pause menu": (mlx.get_tools().mlx_png_file_to_image(
+        mlx.mlx_ptr,
+        "assets/Background/Pause_menu_Background.png"
+        )[0])
+}

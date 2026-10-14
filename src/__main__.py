@@ -1,10 +1,11 @@
 import commentjson
-from .Mlx import mlx
-from .menu import MainMenu
-from .parse_config import parse_validate_config, GameConfig
-from .game import Game
-from .utils import print_red
 from pydantic import ValidationError
+from .Mlx import mlx
+from .state import State
+from .menu import MainMenu
+# from .game import Game
+from .parse_config import parse_validate_config, GameConfig
+from .utils import print_red
 
 # On est pas en RGB mais en BGR
 
@@ -12,32 +13,22 @@ from pydantic import ValidationError
 class App():
     def __init__(self, config: GameConfig) -> None:
         self.config = config
-        self.main_menu = MainMenu(self.config)
-        self.game: Game | None = None
+        self.state: State = MainMenu(self.config)
 
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
 
     def update(self) -> None:
-        if (self.main_menu.game_started is True):
-            if (self.game is None):
-                self.game = Game((self.config.level[0].width,
-                                  self.config.level[0].height))
-            else:
-                self.game.update()
-        else:
-            self.main_menu.update()
+        if (self.state.update() == 1):
+            self.state = self.state.unload()
 
 # -----------------------------------------------------------------------------
 # -------------------------------     DRAW   ----------------------------------
 # -----------------------------------------------------------------------------
 
     def draw(self) -> None:
-        if (self.main_menu.game_started is True):
-            self.game.draw()
-        else:
-            self.main_menu.draw()
+        self.state.draw()
 
 
 def main():
