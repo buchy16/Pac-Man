@@ -1,6 +1,6 @@
 MYPY_FLAGS = --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 # permet `make run CONFIG=level2.json` sans toucher au Makefile :D
-CONFIG ?= config.json
+CONFIG ?= src/data/config.json
 
 all: install run
 
