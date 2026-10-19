@@ -94,20 +94,12 @@ class Ghost(Entity):
         """Returns: the corner furthest from Pac-Man"""
         furthest_corner: tuple[int, int] = None
         max_distance: int = -1
-        # pour chaque coin,
         for corner in self.CORNERS:
-            # calculer la Distance de Manhattan
             corner_dist: int = manhattan_dist((self.player.i, self.player.j), corner)
-            # si ce coin est plus loin que la distance max actuelle
             if corner_dist > max_distance:
-                # mettre à jour la distance max
                 max_distance = corner_dist
-                # noter que ce coin est le plus éĺoigné
                 furthest_corner = corner
-        # return (furthest_corner)
-        result = furthest_corner
-        assert result in self.CORNERS, f"{result} not in {self.CORNERS}"
-        return result
+        return (furthest_corner)
 
     def get_flee_target(self) -> tuple[int, int]:
         """determines the FRIGHTENED ghost's target on the grid
@@ -116,12 +108,10 @@ class Ghost(Entity):
         player_coord = (self.player.i, self.player.j)
         center_coord = (ceil(self.maze._width / 2) - 1,
                         ceil(self.maze._height / 2) - 1)
-        player_to_target = manhattan_dist(player_coord, self.target)
-        center_to_target = manhattan_dist(center_coord, self.target)
-        # s'il a atteint sa target
+        from_player_to_target = manhattan_dist(player_coord, self.target)
+        from_center_to_target = manhattan_dist(center_coord, self.target)
         if ((self.i, self.j == self.target)
-            # ou si Pacman est rentré dans le même quart que la cible
-            or player_to_target < center_to_target):
+            or from_player_to_target < from_center_to_target):
             self.target = self.get_furthest_corner()
         return (self.target)
 
@@ -140,7 +130,7 @@ class Ghost(Entity):
             if not_closed_cell(self.maze, target_row, target_col):
                 return (target_row, target_col)
 
-        # when direction==NONE, `DIR_MOVES.get` returns player's position...
+        # when direction==NONE, `DIR_MOVES.get()` returns player's position...
         # => belt, suspenders and mypy :D
         return (self.player.i, self.player.j)
 
@@ -152,7 +142,7 @@ class Ghost(Entity):
             # method for the FRIGHTENED mode, implemented by each ghost
             return self.get_flee_target()
         else:
-            # method for the CHASER mode, implemented by each ghost
+            # method for the CHASER mode (may be implemented by each ghost)
             return self.get_chase_target()
 
     def move(self) -> None:
@@ -269,18 +259,18 @@ class Ghost(Entity):
         previous_cells: dict[tuple[int, int], tuple[int, int] | None] = {}
         previous_cells[start] = None
 
-        estimated_start_to_goal = manhattan_dist(start, goal)
         to_visit_heap: list[tuple[int, int, tuple[int, int]]]
-        to_visit_heap = [(estimated_start_to_goal, 0, start)]
+        to_visit_heap = [(manhattan_dist(start, goal), 0, start)]
 
         while to_visit_heap:
             _, actual_cost_to_current, current_coord = heapq.heappop(
                 to_visit_heap
             )
-            current_i, current_j = current_coord
 
             if current_coord == goal:
                 break
+
+            current_i, current_j = current_coord
 
             # LOWER cost has already been recorded for this cell
             if actual_cost_to_current > intermediate_costs.get(
