@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 import commentjson
 import logging
@@ -16,27 +15,27 @@ from pydantic import (
 FILENAME_REGEX = r"^[a-zA-Z0-9_\-]+\.json$"
 MIN_LEVELS = 10
 DEFAULT_SIZE = 15
-DEFAULT_CONFIG = {
-  "highscore_filename": "highscores.json",
-  "level": [
-    {"id": 1, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
-    {"id": 2, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
-    {"id": 3, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
-    {"id": 4, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
-    {"id": 5, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
-    {"id": 6, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
-    {"id": 7, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
-    {"id": 8, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
-    {"id": 9, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
-    {"id": 10, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE}
-  ],
-#   "pacgum": 0,
-  "lives": 3,
-  "points_per_pacgum": 10,
-  "points_per_super_pacgum": 50,
-  "points_per_ghost": 200,
-  "seed": 42,
-  "level_max_time": 90
+DEFAULT_CONFIG: dict[str, Any] = {
+    "highscore_filename": "highscores.json",
+    "level": [
+        {"id": 1, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
+        {"id": 2, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
+        {"id": 3, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
+        {"id": 4, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
+        {"id": 5, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
+        {"id": 6, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
+        {"id": 7, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
+        {"id": 8, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
+        {"id": 9, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
+        {"id": 10, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE}
+    ],
+    #   "pacgum": 0,
+    "lives": 3,
+    "points_per_pacgum": 10,
+    "points_per_super_pacgum": 50,
+    "points_per_ghost": 200,
+    "seed": 42,
+    "level_max_time": 90
 }
 
 
@@ -77,7 +76,7 @@ def levels_fallback(
     return levels
 
 
-def fallback(default_value: Any):
+def fallback(default_value: Any) -> WrapValidator:
     def return_default(
         value_raw: Any,
         do_pydantic: ValidatorFunctionWrapHandler,
@@ -106,19 +105,19 @@ class ConfigModel(BaseModel):
             missing = sorted(expected - set(data))
             if unknown:
                 logging.info(f"\n\t{cls.__name__}: unknown keys "
-                                f"ignored: {', '.join(unknown)}")
+                             f"ignored: {', '.join(unknown)}")
             if missing:
                 logging.info(f"\n\t{cls.__name__}: missing keys, "
-                                f"defaults used: {', '.join(missing)}")
+                             f"defaults used: {', '.join(missing)}")
         return data
 
 
 class LvlConfig(ConfigModel):
     id: Annotated[int, Field(ge=1), fallback(1)] = 1
-    width: Annotated[int, Field(ge=14, le=30), fallback(DEFAULT_SIZE)
+    width: Annotated[int, Field(ge=3, le=15), fallback(DEFAULT_SIZE)
                      ] = DEFAULT_SIZE
-    height: Annotated[int, Field(ge=10, le=16), fallback(DEFAULT_SIZE)
-                     ] = DEFAULT_SIZE
+    height: Annotated[int, Field(ge=3, le=15), fallback(DEFAULT_SIZE)
+                      ] = DEFAULT_SIZE
 
 
 class GameConfig(ConfigModel):
@@ -137,7 +136,7 @@ class GameConfig(ConfigModel):
         int, Field(gt=0), fallback(DEFAULT_CONFIG["lives"]),
     ] = DEFAULT_CONFIG["lives"]
     points_per_pacgum: Annotated[
-        int, Field(gt=0),fallback(DEFAULT_CONFIG["points_per_pacgum"]),
+        int, Field(gt=0), fallback(DEFAULT_CONFIG["points_per_pacgum"]),
     ] = DEFAULT_CONFIG["points_per_pacgum"]
     points_per_super_pacgum: Annotated[
         int, Field(gt=0), fallback(DEFAULT_CONFIG["points_per_super_pacgum"]),
