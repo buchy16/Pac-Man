@@ -1,10 +1,11 @@
-import commentjson
+import sys
+import logging
 from .Mlx import mlx
 from .menu import MainMenu
-from .parse_config import parse_validate_config, GameConfig
+from .data.parse_config import get_valid_config, GameConfig
 from .game import Game
-from .utils import print_red
-from pydantic import ValidationError
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 # On est pas en RGB mais en BGR
 
@@ -40,20 +41,14 @@ class App():
             self.main_menu.draw()
 
 
-def main():
+def main(argv: list) -> None:
     print("begining tests")
-    try:
-        config = parse_validate_config("config.json")
-    except FileNotFoundError as err:
-        print_red(f"Config file is missing : {err}")
-        return
-    except commentjson.JSONLibraryException as e:
-        err = str(e).split("Traceback")[0].strip()
-        print_red(f"Config file has invalid syntax :\n{err}")
-        return
-    except ValidationError as err:
-        print_red(f"Config validation error : {err.errors()[0]['msg']}")
-        return
+    if len(argv) != 2:
+        spelling_fanatic = "argument" if len(argv) == 1 else "arguments"
+        logging.error(f"You gave {len(argv) - 1} {spelling_fanatic}, "
+                      "exactly 1 was required: TRY AGAIN")
+        sys.exit(1)
+    config = get_valid_config(argv[1])
 
     pac_man = App(config)
 
@@ -61,4 +56,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)

@@ -7,7 +7,7 @@ from .sprites import DIGITS
 # tout en fournissant les types 'GameConfig' et 'Maze' à VSCode et mypy,
 # on utilise TYPE_CHECKING qui est toujours False à l'exécution :
 if TYPE_CHECKING:
-    from .parse_config import GameConfig
+    from .data.parse_config import GameConfig
     from .game.maze import Maze
 
 
