@@ -31,6 +31,8 @@ Pour respecter la consigne, il a été développé en Python (3.10+), en utilisa
 ## Objectif
 Le joueur se déplace dans un labyrinthe pour y manger toutes les Pac-gommes, tout en évitant 4 fantômes. Lorsqu'il mange une Super Pac-gomme, ce sont les fantômes devenus comestibles qui évitent Pacman pendant quelques instants.
 
+<img src="/img/game.png" alt="Pacman game screenshot">
+
 ## Consignes principales
 + Un fichier JSON (avec commentaires) de configuration personnalisée, pour définir les paramètres du jeu.
 + Une génération de niveaux basée sur le package externe fourni "A-Maze-ing".
@@ -298,6 +300,7 @@ Les labyrinthes sont générés par le package **A-Maze-ing**, fourni pour le pr
 │       └── ... .png
 ├── doc/
 │   ├── Astar.md
+│   ├── config.md
 │   ├── bake_background.md
 │   ├── Pacman.excalidraw
 │   ├── subject_fr_v1.5.md
@@ -339,7 +342,7 @@ Les documents de gestion du projet sont disponibles dans le répertoire dédié,
 ## Usage IA
 *ToDo: description de la manière dont l'IA a été utilisée : pour quelles tâches et quelles parties du projet.*
 
-L'IA a été utilisé pour :
+L'IA a été utilisée pour :
 + finaliser la méthode qui permet d'assembler toutes les tuiles du labyrinthe en une seule image d'arrière-plan (voir [bake_background](/doc/bake_background.md))
 
 + corriger des erreurs `mypy`

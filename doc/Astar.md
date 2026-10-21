@@ -79,6 +79,7 @@ On stocke donc dans `to_visit_heap` des triplets `(f(Case_n), g(Case_n), coord_C
 + `f(Case_n)` = *estimation de la distance totale*
 + `g(Case_n)` = *coût réel depuis `Case_start` jusque `Case_n`*
 + coord_Case_n = *coordonnées de `Case_n`*
+
 et ces triplets seront triés d'abord par coût total, puis par coût intermédiaire réel.
 
 **A noter**
