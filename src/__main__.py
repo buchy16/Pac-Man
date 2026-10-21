@@ -2,7 +2,7 @@ import sys
 import logging
 from .Mlx import mlx
 from .menu import MainMenu
-from .parse_config import get_valid_config, GameConfig
+from .data.parse_config import get_valid_config, GameConfig
 from .game import Game
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

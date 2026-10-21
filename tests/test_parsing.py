@@ -3,8 +3,8 @@ import logging
 from _pytest.logging import LogCaptureFixture
 from pathlib import Path
 from src.__main__ import main
-from src.parse_config import get_valid_config
-from src.parse_config import DEFAULT_CONFIG, MIN_LEVELS, DEFAULT_SIZE
+from src.data.parse_config import get_valid_config
+from src.data.parse_config import DEFAULT_CONFIG, MIN_LEVELS, DEFAULT_SIZE
 
 
 # ===========================================================================

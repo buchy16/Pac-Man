@@ -1,7 +1,7 @@
 from typing import Callable
 from ..Mlx import mlx
 from ..sprites import MAIN_MENU
-from ..parse_config import GameConfig
+from ..data.parse_config import GameConfig
 from ..utils import display_nums
 
 # Srceen middle x coordinate
