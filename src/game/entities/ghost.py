@@ -30,6 +30,7 @@ class GhostState(Enum):
 class Ghost(Entity):
     DEATH_DELAY: int = 10  # in seconds
     SNAIL_SPEED: int = 1.5
+    FAST_SPEED: int = 0.75
     ROCKET_SPEED: int = 0.15
     CORNERS: list[tuple[int, int]] = [(0,0), (0, 14), (14, 14), (14, 0)]
 

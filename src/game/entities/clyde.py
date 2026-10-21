@@ -9,7 +9,7 @@ from ...utils import manhattan_dist, random_open_cell
 """
 when CHASER
     Clyde moves randomly
-    and targets Pacman at ROCKET_SPEED when it's within MAGNETIC_DISTANCE
+    and targets Pacman at FAST_SPEED when it's within MAGNETIC_DISTANCE
 when FRIGHTENED
     Clyde moves to the corner furthest from Pac-Man
     This target is updated when it is reached,
@@ -34,7 +34,7 @@ class Clyde(Ghost):
         clyde_coord = (self.i, self.j)
         player_coord = (self.player.i, self.player.j)
         if manhattan_dist(clyde_coord, player_coord) < self.MAGNETIC_DISTANCE:
-            self.speed = self.ROCKET_SPEED  # 0.75 
+            self.speed = self.FAST_SPEED  # 0.75 
             return (player_coord)
         elif (clyde_coord == self.target):
             self.speed = self.normal_speed
