@@ -1,5 +1,5 @@
 from .Mlx import mlx
-from .sprites import WALLS, J_WALK_SPRIT
+from .utils.sprites import WALLS, J_WALK_SPRIT
 from .game.maze import Maze
 
 __version__ = "1.0.0"

@@ -4,7 +4,7 @@ from .super_pacgum import SuperPacgum
 from ..entities import Player
 from ..maze import Maze
 from ...Mlx import mlx
-from ...sprites import PACGUMS
+from ...utils.sprites import PACGUMS
 
 # i = height (y)
 # j = width (x)
