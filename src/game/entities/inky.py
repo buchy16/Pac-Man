@@ -1,8 +1,8 @@
-from ...directions import Direction
+from ...utils.directions import Direction
 from .ghost import Ghost
 from .player import Player
 from ..maze import Maze
-from ...utils import random_open_cell
+from ...utils.utils import random_open_cell
 
 """
 when CHASER

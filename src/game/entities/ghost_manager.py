@@ -1,6 +1,6 @@
 from . import Player, Ghost, Blinky, Clyde, Inky, Pinky, GhostState
 from ..maze import Maze
-from ...directions import Direction
+from ...utils.directions import Direction
 
 
 class GhostManager:

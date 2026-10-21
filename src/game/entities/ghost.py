@@ -7,9 +7,9 @@ from .entity import Entity, Direction
 from .player import Player
 from ..maze import Maze
 from ... import mlx
-from ...utils import manhattan_dist, not_closed_cell
-from ...directions import DIR_MOVES
-from ...sprites import G_WALK_SPRITES
+from ...utils.utils import manhattan_dist, not_closed_cell
+from ...utils.directions import DIR_MOVES
+from ...utils.sprites import G_WALK_SPRITES
 
 
 class GhostState(Enum):

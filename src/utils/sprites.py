@@ -1,4 +1,4 @@
-from . import mlx
+from .. import mlx
 from .directions import Direction
 
 

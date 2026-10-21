@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from ..maze import Maze
-from ...directions import Direction
+from ...utils.directions import Direction
 
 
 class Entity(ABC):

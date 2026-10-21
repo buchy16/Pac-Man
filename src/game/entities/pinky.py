@@ -1,8 +1,8 @@
-from ...directions import Direction
+from ...utils.directions import Direction
 from .ghost import Ghost
 from .player import Player
 from ..maze import Maze
-from ...directions import DIR_MOVES
+from ...utils.directions import DIR_MOVES
 
 """
 when CHASER
