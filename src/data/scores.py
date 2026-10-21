@@ -5,6 +5,8 @@ from datetime import datetime
 from pathlib import Path
 import json
 
+
+PATH_SCORES = "src/data/highscores.json"
 MAX_USERNAME_LENGTH = 10
 
 logger = logging.getLogger(__name__)
@@ -80,7 +82,7 @@ class LoadResult:
 class HighScoreStorage:
     """Handles only reading and writing the JSON file to the disk."""
 
-    def __init__(self, file_path: str | Path = "../highscores.json") -> None:
+    def __init__(self, file_path: str | Path = PATH_SCORES) -> None:
         self.file_path = Path(file_path)
 
     def _json_item_to_highscore(self, item: object) -> HighScore | None:
@@ -255,7 +257,7 @@ if __name__ == "__main__":
     my_backup = HighScoreStorage()
 
     try:
-        my_backup.add_score(prompt_username(), 159753)
+        my_backup.add_score(prompt_username(), 4321)
     except (OSError, ValueError) as err:
             print(f"Highscore not saved:", err)
 
