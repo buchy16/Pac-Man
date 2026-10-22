@@ -29,14 +29,15 @@
 		+ Inky moves around at random
 		+ Clyde moves around at random and charges at Pac-Man when he is close
 	+ mode FRIGHTENED:
-		+ partent tous dans le coin opposé à Pacman, at SNAIL_SPEED
-		+ !ToDo: algos différents pour éviter la queue-leu-leu et Pacman qui se régale...
+		+ ~~partent tous dans le coin opposé à Pacman, at SNAIL_SPEED~~
+		+ !ToDo: pour éviter la queue-leu-leu et Pacman qui se régale...
+			=> revenir à l'original, chacun repart dans son coin,
+			et quand arrivé dans son coin, ou si pacman se rapproche : KOI KON FAI ?
 	+ mode DEAD:
 		+ Returns and remains at his corner, at ROCKET_SPEED, for DEATH_DELAY
 
-- [ ] tests
+- [x] tests
 	+ tests/test_parsing.py
-	+ To Do or not To Do tests pour le reste du code... ?
 
 - [ ] ReadMe
 	+ en cours...
