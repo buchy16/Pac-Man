@@ -224,14 +224,15 @@ A NOTER : puisque `get_valid_config()` retourne toujours une `GameConfig` valide
 
 Les labyrinthes sont générés par le package **A-Maze-ing**, fourni pour le projet et dont la modification n'était pas autorisée.
 
-+ Le paramètre `PERFECT` du générateur doit impérativement être défini sur `False`, pour que les labyrinthes contiennent des boucles, afin d’obtenir des couloirs compatibles avec le jeu
++ Le paramètre `PERFECT` du générateur doit impérativement être défini sur `False`, pour que les labyrinthes contiennent des boucles et forment des couloirs compatibles avec le jeu.
 
-+ Le niveau 1 utilise une seed fixe (`42` par défaut) ; les labyrinthes des niveaux suivants sont aléatoires.
++ Le labyrinthe est reproductible grâce à une seed fixe (`42` par défaut) ;
 
-- Un module de chargement (`<nom du module>`) adapte notre jeu à l'interface du package (et non l'inverse)..
-- Le chargeur convertit la sortie du générateur (`<format : murs hexagonaux, grille, ...>`) en représentation interne sous forme de grille utilisée par le jeu (murs / couloirs, positions des pac-gums, super pac-gums aux 4 coins, apparitions des fantômes aux 4 coins, apparition du joueur au centre).
++ Le module externe `MazeGenerator` génère la structure **logique** du labyrinthe (murs, chemins, entrée/sortie) ;
 
-+ Si le générateur échoue (exception, sortie non valide), l’erreur est détectée et gérée correctement : `<comportement de secours>`.
++ La classe `Maze` gère la présentation, elle convertit la structure générée en coordonnées écran et en image MLX ;
+
++ Si la génération d'un labyrinthe échoue, `?Komen kon gère?`.
 
 *[Back to top](<#table-of-contents>)*
 
@@ -244,6 +245,18 @@ Les labyrinthes sont générés par le package **A-Maze-ing**, fourni pour le pr
 
 ## Architecture logicielle générale
 *ToDo: vue d'ensemble de haut niveau de l'architecture logicielle (modules, classes, et leurs relations).*
+
+`Entity(ABC)`
+    `Player`
+    `Ghost`
+        `Blinky`, `Pinky`, `Inky` et `clyde`
+`Gum(ABC)`
+    `Pacgum`
+    `SuperPacgum`
+`PacgumManager`: placement, affichage et collecte des pacgums
+`GhostManager`: mouvements, collisions et état des fantômes
+=> voir sur ['excalidraw'](/doc/Pacman.excalidraw)
+
 
 !! A METTRE A JOUR
 ```text
