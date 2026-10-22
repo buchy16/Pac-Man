@@ -7,12 +7,12 @@ from .entities import GhostManager
 from ..menu.pause_menu import PausMenu
 from ..state import State
 from ..utils.utils import display_nums
-from ..utils.sprites import MENU
+from ..utils.sprites import MENU, HUD
 
 
 class Game(State):
     def __init__(self, config: GameConfig) -> None:
-        self.number = 0
+        self.level = 0
         mlx.new_window(1280, 720, "main")
         self.middle_X = int(1280 / 2)
         self.middle_Y = int(720 / 2)
@@ -22,6 +22,9 @@ class Game(State):
             size=(config.level[0].width, config.level[0].height),
             seed=config.seed
             )
+
+        self.timer = float(config.level_max_time)
+        self.last_second = mlx.timer
 
         self.player = Player(self.maze)
 
@@ -41,16 +44,46 @@ class Game(State):
         mlx.close_window("main")
         return (MainMenu(self.config))
 
+    def regenerate_maze(self) -> None:
+        level = self.level
+        self.maze = Maze(
+            size=(self.config.level[level].width,
+                  self.config.level[level].height),
+            seed=self.config.seed
+        )
+
+    def next_level(self) -> None:
+        self.level += 1
+        self.regenerate_maze()
+
+        # C'est pas très beau et très opti de tout recrer
+        self.player = Player(self.maze)
+        self.ghosts = GhostManager(self.player, self.maze)
+        # on pourrait ajouter une methode dans entity qui actualise le maze
+        # puis réinitialiser nos entitées exemple :
+        #   self.ghosts.set_maze(self.maze)
+        #   self.ghosts._reset_all_ghosts()
+        #   self.player.reset()
+        #   self.player.set_maze(self.maze)
+
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
 
     def update(self) -> int:
         if (self.pause_menu.pause is False):
+            # if the timer as finished, we return 1 to go back to the menu
+            if (self.timer < 0 or self.player.life <= 0):
+                return (1)
+
             self.player.move()
             # self.pacgums.display_pacgums()
             self.pacgums.update()
             self.ghosts.update()
+
+            if (mlx.timer - self.last_second >= 1.0):
+                self.timer -= 1
+                self.last_second = mlx.timer
         else:
             self.pause_menu.update_mouse()
             return (self.pause_menu.exiting)
@@ -60,6 +93,23 @@ class Game(State):
 # -------------------------------     DRAW   ----------------------------------
 # -----------------------------------------------------------------------------
 
+    def draw_pacman_lives(self, x: float, y: float) -> None:
+        if (self.player.life <= 0):
+            return
+        LIVE_W = 20
+        LIVE_H = 22
+
+        for k in range(0, self.player.life):
+            x_offset = (LIVE_W + 5) * k
+
+            mlx.get_tools().mlx_put_image_to_window(
+                mlx.mlx_ptr,
+                mlx.windows["main"],
+                HUD["Lives"],
+                int(x - (LIVE_W / 2) + x_offset),
+                int(y - (LIVE_H / 2))
+            )
+
     def draw_HUD(self) -> None:
         pts_offset = display_nums(10, 10, "main", str(self.player.score))
         mlx.get_tools().mlx_put_image_to_window(
@@ -68,6 +118,28 @@ class Game(State):
             MENU["PTS"],
             pts_offset,
             0
+        )
+
+        # 39 = pts_y + 10 + pcaman lives icon height
+        self.draw_pacman_lives(10, 39)
+
+        # 55 = pcaman lives icon y + pcaman lives icon height / 2 + 5
+        mlx.get_tools().mlx_string_put(
+            mlx.mlx_ptr,
+            mlx.windows["main"],
+            0,
+            55,
+            0x7FCB36,
+            f"Level {self.config.level[self.level].id}"
+        )
+        # 78 = I tried my best :c
+        mlx.get_tools().mlx_string_put(
+            mlx.mlx_ptr,
+            mlx.windows["main"],
+            0,
+            78,
+            0x0000FF,
+            f"time left: {int(self.timer)}"
         )
 
     def draw(self) -> None:

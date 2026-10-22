@@ -182,3 +182,10 @@ BACKGROUNDS = {
         "assets/Background/Pause_menu_Background.png"
         )[0])
 }
+
+HUD = {
+    "Lives": (mlx.get_tools().mlx_png_file_to_image(
+        mlx.mlx_ptr,
+        "assets/HUD/Lives.png"
+    )[0])
+}
