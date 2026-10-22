@@ -3,7 +3,7 @@ import logging
 from .Mlx import mlx
 from .menu import MainMenu
 from .data.parse_config import get_valid_config, GameConfig
-from .game import Game
+from .state import State
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -13,32 +13,22 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 class App():
     def __init__(self, config: GameConfig) -> None:
         self.config = config
-        self.main_menu = MainMenu(self.config)
-        self.game: Game | None = None
+        self.state: State = MainMenu(self.config)
 
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
 
     def update(self) -> None:
-        if (self.main_menu.game_started is True):
-            if (self.game is None):
-                self.game = Game((self.config.level[0].width,
-                                  self.config.level[0].height))
-            else:
-                self.game.update()
-        else:
-            self.main_menu.update()
+        if (self.state.update() == 1):
+            self.state = self.state.unload()
 
 # -----------------------------------------------------------------------------
-# -------------------------------     DRAW   ----------------------------------
+# -------------------------------    DRAW   -----------------------------------
 # -----------------------------------------------------------------------------
 
     def draw(self) -> None:
-        if (self.main_menu.game_started is True):
-            self.game.draw()
-        else:
-            self.main_menu.draw()
+        self.state.draw()
 
 
 def main(argv: list) -> None:
