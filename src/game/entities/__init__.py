@@ -1,6 +1,6 @@
 from .entity import Entity
 from .player import Player
-from .ghost import Ghost
+from .ghost import Ghost, GhostState
 from .blinky import Blinky
 from .clyde import Clyde
 from .inky import Inky
@@ -14,6 +14,7 @@ __all__ = [
     "Entity",
     "Player",
     "Ghost",
+    "GhostState",
     "Blinky",
     "Clyde",
     "Inky",

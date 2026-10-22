@@ -1,9 +1,9 @@
 from typing import Callable
-from src.Mlx import mlx
-from src.sprites import MENU
-from src.parse_config import GameConfig
-from src.utils import display_nums
-from src.state import State
+from ..Mlx import mlx
+from ..utils.sprites import MENU
+from ..data.parse_config import GameConfig
+from ..utils.utils import display_nums
+from ..state import State
 
 # Srceen middle x coordinate
 S_MIDDLE_X = 360

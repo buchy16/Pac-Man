@@ -1,11 +1,17 @@
-from ...directions import Direction
+from ...utils.directions import Direction
 from .ghost import Ghost
 from .player import Player
 from ..maze import Maze
-from ...utils import random_open_cell
+from ...utils.utils import random_open_cell
 
-
-"""Inky se balade aléatoirement"""
+"""
+when CHASER
+    Inky moves randomly
+when FRIGHTENED
+    Inky moves to the corner furthest from Pac-Man
+    This target is updated when it is reached,
+    or if Pac-Man has entered the same quarter of the maze as the target
+"""
 
 
 class Inky(Ghost):
@@ -14,11 +20,10 @@ class Inky(Ghost):
         super().__init__(maze, player, prefix, speed,
                          i_start, j_start, dir_start)
 
-        self.width, self.height = 26, 26
         self.target = (self.i_start, self.j_start)
 
-    def get_target(self) -> tuple[int, int]:
-        """determines the ghost's target on the grid
+    def get_chase_target(self) -> tuple[int, int]:
+        """determines the CHASER ghost's target on the grid
         Returns : the coordinates (i, j) of the cell to target
         """
         inky_coord = (self.i, self.j)

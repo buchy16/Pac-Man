@@ -1,4 +1,4 @@
-from . import mlx
+from .. import mlx
 from .directions import Direction
 
 
@@ -167,7 +167,7 @@ Super_Pacgum.png")[0]),
 DIRECTIONS = (Direction.NORTH, Direction.EAST,
               Direction.SOUTH, Direction.WEST)
 G_WALK_KEYS = ["1b", "2b", "1c", "2c", "1i", "2i", "1p", "2p",
-               "1blue", "2blue", "g"]
+               "1blue", "2blue", "1white", "2white", "eyes"]
 G_WALK_SPRITES: dict[str, dict[Direction, int]] = {}
 for key in G_WALK_KEYS:
     G_WALK_SPRITES[key] = {}

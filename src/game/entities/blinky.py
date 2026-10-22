@@ -1,10 +1,16 @@
-from ...directions import Direction
+from ...utils.directions import Direction
 from .ghost import Ghost
 from .player import Player
 from ..maze import Maze
 
-
-"""Blinky chasse Pacman"""
+"""
+when CHASER
+    Blinky targets Pacman
+when FRIGHTENED
+    Blinky moves to the corner furthest from Pac-Man
+    This target is updated when it is reached,
+    or if Pac-Man has entered the same quarter of the maze as the target
+"""
 
 
 class Blinky(Ghost):
@@ -13,11 +19,11 @@ class Blinky(Ghost):
         super().__init__(maze, player, prefix, speed,
                          i_start, j_start, dir_start)
 
-        self.width, self.height = 26, 26
         self.target = (self.player.i, self.player.j)
+        # self.is_frozen = True  # temp TEST
 
-    def get_target(self) -> tuple[int, int]:
-        """determines the ghost's target on the grid
+    def get_chase_target(self) -> tuple[int, int]:
+        """determines the CHASER ghost's target on the grid
         Returns : the coordinates (i, j) of the cell to target
         """
         return (self.player.i, self.player.j)

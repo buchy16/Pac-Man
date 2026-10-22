@@ -2,12 +2,12 @@ from ..Mlx import mlx
 from . import Maze
 from . import Player
 from . import PacgumManager
-from ..parse_config import GameConfig
+from ..data.parse_config import GameConfig
 from .entities import GhostManager
 from ..menu.pause_menu import PausMenu
 from ..state import State
-from src.utils import display_nums
-from src.sprites import MENU
+from ..utils.utils import display_nums
+from ..utils.sprites import MENU
 
 
 class Game(State):
@@ -61,7 +61,7 @@ class Game(State):
 # -----------------------------------------------------------------------------
 
     def draw_HUD(self) -> None:
-        pts_offset = display_nums(7, 7, "main", str(self.player.score))
+        pts_offset = display_nums(10, 10, "main", str(self.player.score))
         mlx.get_tools().mlx_put_image_to_window(
             mlx.mlx_ptr,
             mlx.windows["main"],

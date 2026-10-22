@@ -1,5 +1,5 @@
 from ..Mlx import mlx
-from ..sprites import MENU, BACKGROUNDS
+from ..utils.sprites import MENU, BACKGROUNDS
 
 
 # Srceen middle x and y coordinates

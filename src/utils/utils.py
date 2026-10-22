@@ -1,14 +1,14 @@
 from typing import TYPE_CHECKING
 import random
-from .Mlx import mlx
+from ..Mlx import mlx
 from .sprites import DIGITS
 
 # parsing.py importe déjà utils.py, donc pour ne PAS créer d'import circulaire
 # tout en fournissant les types 'GameConfig' et 'Maze' à VSCode et mypy,
 # on utilise TYPE_CHECKING qui est toujours False à l'exécution :
 if TYPE_CHECKING:
-    from .parse_config import GameConfig
-    from .game.maze import Maze
+    from ..data.parse_config import GameConfig
+    from ..game.maze import Maze
 
 
 def print_green(msg: str, end_msg: str = '\n') -> None:
