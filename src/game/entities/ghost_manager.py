@@ -78,7 +78,7 @@ class GhostManager:
             hunter.die()
         elif hunter.state == GhostState.CHASER:
             self._handle_pacman_death(name)
-        # else: ghost is DEAD, so nothing to do 
+        # else: ghost is DEAD, so nothing to do
 
     def _handle_pacman_death(self, killer_name: str) -> None:
         """Handles Pac-Man's death for the ghosts"""
