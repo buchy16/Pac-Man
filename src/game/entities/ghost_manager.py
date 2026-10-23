@@ -18,11 +18,11 @@ class GhostManager:
             "blinky": Blinky(self.maze, self.player,
                              "b", 1.25, 0, 0, Direction.EAST),
             "clyde": Clyde(self.maze, self.player,
-                           "c", 1.0, 0, 14, Direction.SOUTH),
+                           "c", 1.0, 0, maze._height - 1, Direction.SOUTH),
             "inky": Inky(self.maze, self.player,
-                         "i", 0.75, 14, 14, Direction.WEST),
+                         "i", 0.75, maze._width - 1, maze._height - 1, Direction.WEST),
             "pinky": Pinky(self.maze, self.player,
-                           "p", 1.0, 14, 0, Direction.NORTH),
+                           "p", 1.0, maze._width - 1, 0, Direction.NORTH),
         }
 
         # flag enabled/disabled when Pacman’s super-pacgum mode starts/ends
@@ -90,8 +90,9 @@ class GhostManager:
             self._reset_all_ghosts()
 
             # ToDo: re-centrer
-            self.player.i = 7  # temp pour DEBUG
-            self.player.j = 7  # temp pour DEBUG
+            # self.player.i = 7  # temp pour DEBUG
+            # self.player.j = 7  # temp pour DEBUG
+            self.player.reset()
 
         else:
             # ToDo: gestion de la fin de partie par le menu

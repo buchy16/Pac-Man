@@ -32,7 +32,7 @@ class Ghost(Entity):
     SNAIL_SPEED: int = 1.5
     FAST_SPEED: int = 0.75
     ROCKET_SPEED: int = 0.15
-    CORNERS: list[tuple[int, int]] = [(0,0), (0, 14), (14, 14), (14, 0)]
+    # CORNERS: list[tuple[int, int]] = [(0,0), (0, 14), (14, 14), (14, 0)]
 
     def __init__(self, maze: Maze, player: Player, prefix: str, speed: float,
                  i_start: int, j_start: int, dir_start: Direction) -> None:
@@ -66,13 +66,22 @@ class Ghost(Entity):
         self.direction_start = dir_start
 
         self.i, self.j = self.i_start, self.j_start
+        print(f"debug {self.prefix} i = {self.i}, j = {self.j}")
         self.direction = self.direction_start
-        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
+        # self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]  # on dirait que tu as oublié que j doit etre avant i pour acceder a une valeur dans une matrice, on commence par la hauteur
+        self.x, self.y = self.maze.smaze[self.j][self.i]["coor"]
         self.target: tuple[int, int]
         self.state = GhostState.CHASER
         self.is_frozen: bool = False
         self.last_s = mlx.timer
         self.last_death = 0
+
+        self.CORNERS: list[tuple[int, int]] = [
+            (0, 0),
+            (0, maze._height - 1),
+            (maze._width - 1, maze._height - 1),
+            (maze._width - 1, 0)
+            ]
 
     def set_state(self, new_state: GhostState) -> None:
         """Allows GhostManager to change ghost's behaviour"""
@@ -192,7 +201,8 @@ class Ghost(Entity):
 
             self.last_s = mlx.timer
 
-        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
+        # self.x, self.y = self.maze.smaze[self.i][self.j]["coor"] pb i j ici aussi
+        self.x, self.y = self.maze.smaze[self.j][self.i]["coor"]
 
     def hit_player(self) -> bool:
         """
