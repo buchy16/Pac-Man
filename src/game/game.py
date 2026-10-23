@@ -7,7 +7,7 @@ from .entities import GhostManager
 from ..menu.pause_menu import PausMenu
 from ..state import State
 from ..utils.utils import display_nums
-from ..utils.sprites import MENU, HUD
+from ..utils.sprites import MENU, HUD, BACKGROUNDS
 
 
 class Game(State):
@@ -32,11 +32,13 @@ class Game(State):
 
         self.ghosts = GhostManager(self.player, self.maze)
 
+        self.game_ended = False
+
         self.pause_menu = PausMenu()
         mlx.add_key_hook_function(self.open_pause_menu, "main")
 
     def open_pause_menu(self, keynum: int) -> None:
-        if (mlx.KEYNAME[keynum] == "Escape"):
+        if (mlx.KEYNAME[keynum] == "Escape" and self.game_ended is False):
             self.pause_menu.activate_pause()
 
     def unload(self) -> State:
@@ -70,12 +72,21 @@ class Game(State):
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
 
-    def update(self) -> int:
-        if (self.pause_menu.pause is False):
-            # if the timer as finished, we return 1 to go back to the menu
-            if (self.timer < 0 or self.player.life <= 0):
-                return (1)
+    def is_game_ended(self) -> bool:
+        if (self.timer < 0 or self.player.life <= 0):
+            self.game_ended = True
+            return (True)
+        return (False)
 
+    def update(self) -> int:
+        # if the timer as finished or pacman is dead,
+        # we wait 2s befor sending 1 to return to the main menu
+        if (self.is_game_ended()):
+            if (mlx.timer - self.last_second >= 2.0):
+                return (1)
+            return (0)
+
+        if (self.pause_menu.pause is False):
             self.player.move()
             # self.pacgums.display_pacgums()
             self.pacgums.update()
@@ -92,6 +103,15 @@ class Game(State):
 # -----------------------------------------------------------------------------
 # -------------------------------     DRAW   ----------------------------------
 # -----------------------------------------------------------------------------
+
+    def draw_game_over(self) -> None:
+        mlx.get_tools().mlx_put_image_to_window(
+            mlx.mlx_ptr,
+            mlx.windows["main"],
+            BACKGROUNDS["Game over"],
+            0,
+            0
+        )
 
     def draw_pacman_lives(self, x: float, y: float) -> None:
         if (self.player.life <= 0):
@@ -143,15 +163,14 @@ class Game(State):
         )
 
     def draw(self) -> None:
-        self.maze.draw_maze()
+        if (self.game_ended is False):
+            self.maze.draw_maze()
+            self.pacgums.draw()
+            self.player.draw()
+            self.ghosts.draw()
+            self.draw_HUD()
 
-        self.pacgums.draw()
-
-        self.player.draw()
-
-        self.ghosts.draw()
-
-        self.draw_HUD()
-
-        if (self.pause_menu.pause is True):
-            self.pause_menu.draw_paus_menu()
+            if (self.pause_menu.pause is True):
+                self.pause_menu.draw_paus_menu()
+        else:
+            self.draw_game_over()

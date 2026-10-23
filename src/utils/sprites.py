@@ -180,7 +180,11 @@ BACKGROUNDS = {
     "Pause menu": (mlx.get_tools().mlx_png_file_to_image(
         mlx.mlx_ptr,
         "assets/Background/Pause_menu_Background.png"
-        )[0])
+        )[0]),
+    "Game over": (mlx.get_tools().mlx_png_file_to_image(
+        mlx.mlx_ptr,
+        "assets/Background/Game_over.png"
+    )[0])
 }
 
 HUD = {
