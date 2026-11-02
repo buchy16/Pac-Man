@@ -10,6 +10,21 @@ if TYPE_CHECKING:
     from ..data.parse_config import GameConfig
     from ..game.maze import Maze
 
+SPECIAL_CHAR = {
+    "space": " ",
+    "minus": "-",
+    "KP_Insert": "0",
+    "KP_End": "1",
+    "KP_Down": "2",
+    "KP_Page_Down": "3",
+    "KP_Left": "4",
+    "KP_Begin": "5",
+    "KP_Right": "6",
+    "KP_Home": "7",
+    "KP_Up": "8",
+    "KP_Page_Up": "9"
+}
+
 
 def print_green(msg: str, end_msg: str = '\n') -> None:
     """Print msg in green"""

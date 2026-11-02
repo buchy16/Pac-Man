@@ -33,17 +33,16 @@ class Player(Entity):
         self.timer = Player.SUPER_P_TIMER
 
     def _update_direction(self, keynum: int) -> None:
-        # print("hi ?")
-        if (mlx.KEYNAME[keynum] == "w"):
+        if (mlx.KEYNAME[keynum] == "Up"):
             self.direction = Direction.NORTH
             # print("North")
-        elif (mlx.KEYNAME[keynum] == "s"):
+        elif (mlx.KEYNAME[keynum] == "Down"):
             self.direction = Direction.SOUTH
             # print("South")
-        elif (mlx.KEYNAME[keynum] == "a"):
+        elif (mlx.KEYNAME[keynum] == "Left"):
             self.direction = Direction.WEST
             # print("WEST")
-        elif (mlx.KEYNAME[keynum] == "d"):
+        elif (mlx.KEYNAME[keynum] == "Right"):
             self.direction = Direction.EAST
             # print("Est")
 

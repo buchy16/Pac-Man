@@ -4,6 +4,7 @@ from . import Player
 from . import PacgumManager
 from ..data.parse_config import GameConfig
 from .entities import GhostManager
+from .cheat import Cheat
 from ..menu.pause_menu import PausMenu
 from ..state import State
 from ..utils.utils import display_nums
@@ -39,17 +40,24 @@ class Game(State):
 
         self.ghosts = GhostManager(self.player, self.maze)
 
+        self.cheat_mod = Cheat(self.player, self.ghosts)
+
         self.game_ended = False
 
         self.pause_menu = PausMenu()
         mlx.add_key_hook_function(self.open_pause_menu, "main")
         mlx.add_key_hook_function(self.level_debug, "main")
+        mlx.add_key_hook_function(self.enable_disable_cheat, "main")
 
         self.debug_eatall = False
 
     def open_pause_menu(self, keynum: int) -> None:
         if (mlx.KEYNAME[keynum] == "Escape" and self.game_ended is False):
             self.pause_menu.activate_pause()
+
+    def enable_disable_cheat(self, keynum: int) -> None:
+        if (mlx.KEYNAME[keynum] == "F3"):
+            self.cheat_mod.enable_disable()
 
     def unload(self) -> State:
         from ..menu.main_menu import MainMenu
@@ -66,13 +74,13 @@ class Game(State):
             size=(self.config.level[self.level].width,
                   self.config.level[self.level].height),
             seed=self.config.seed)
-        # self.ghosts._reset_all_ghosts()
+        self.ghosts._reset_all_ghosts()
         # ^
         # |
         # |
         # Peut pas faire ça car le i_start et j_start  des phantomes
         # correspondent à l'ancien labyrithe après le changement de celui-ci
-        self.ghosts = GhostManager(self.player, self.maze)  # <- temporaire
+        # self.ghosts = GhostManager(self.player, self.maze)  # <- temporaire
 
         self.player.reset()
 
@@ -212,11 +220,13 @@ class Game(State):
             self.ghosts.draw()
             self.draw_HUD()
 
+            self.cheat_mod.draw()
+
             if (self.pause_menu.pause is True):
                 self.pause_menu.draw_paus_menu()
 
 # -----------------------------------------------------------------------------
-# -------------------------------     DRAW   ----------------------------------
+# -------------------------------     DEBUG   ---------------------------------
 # -----------------------------------------------------------------------------
 
     def level_debug(self, keynum: int) -> None:
