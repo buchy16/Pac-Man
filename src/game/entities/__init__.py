@@ -1,10 +1,10 @@
 from .entity import Entity
 from .player import Player
 from .ghost import Ghost, GhostState
-from .blinky import Blinky
-from .clyde import Clyde
-from .inky import Inky
-from .pinky import Pinky
+# from .blinky import Blinky
+# from .clyde import Clyde
+# from .inky import Inky
+# from .pinky import Pinky
 from .ghost_manager import GhostManager
 
 
@@ -15,9 +15,9 @@ __all__ = [
     "Player",
     "Ghost",
     "GhostState",
-    "Blinky",
-    "Clyde",
-    "Inky",
-    "Pinky",
+    # "Blinky",
+    # "Clyde",
+    # "Inky",
+    # "Pinky",
     "GhostManager",
 ]

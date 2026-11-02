@@ -2,7 +2,6 @@ from . import Entity
 from ... import Maze
 from ... import J_WALK_SPRIT
 from ... import mlx
-from enum import Enum, auto
 from math import ceil
 from ...utils.directions import Direction
 
@@ -11,15 +10,9 @@ from ...utils.directions import Direction
 # j = width (x)
 
 
-# class Direction(Enum):
-#     NORTH = auto()
-#     SOUTH = auto()
-#     WEST = auto()
-#     EST = auto()
-#     NONE = auto()
-
-
 class Player(Entity):
+    SUPER_P_TIMER = 15.0
+
     def __init__(self, maze: Maze, life: int = 3) -> None:
         super().__init__(maze)
         self.life = life
@@ -37,6 +30,7 @@ class Player(Entity):
         )
 
         self.last_s = mlx.timer
+        self.timer = Player.SUPER_P_TIMER
 
     def _update_direction(self, keynum: int) -> None:
         # print("hi ?")
@@ -53,8 +47,24 @@ class Player(Entity):
             self.direction = Direction.EAST
             # print("Est")
 
+    def reset(self) -> None:
+        self.i = ceil(self.maze._height / 2) - 1
+        self.j = ceil(self.maze._width / 2) - 1
+        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
+        self.direction: Direction = Direction.NONE
+
+    def super_pacgam(self) -> None:
+        if (self.super_pacgum is True):
+            if (self.timer <= 0):
+                self.super_pacgum = False
+                self.timer = Player.SUPER_P_TIMER
+            else:
+                self.timer -= 1
+
     def move(self) -> None:
         if (mlx.timer - self.last_s >= 1):
+            self.super_pacgam()
+
             if (self.direction == Direction.SOUTH and
                     self.maze.smaze[self.i][self.j]["code"] & 0b0100 == 0):
                 self.i = (self.i + 1) % self.maze._height

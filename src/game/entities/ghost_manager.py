@@ -1,4 +1,5 @@
-from . import Player, Ghost, Blinky, Clyde, Inky, Pinky, GhostState
+from . import Player, Ghost, GhostState
+from .ghost_characters import Blinky, Clyde, Inky, Pinky
 from ..maze import Maze
 from ...utils.directions import Direction
 
@@ -10,44 +11,89 @@ class GhostManager:
     #   re-centrer Pacman quand il perd une vie
     #   ou gérer la fin de partie s'il n'en a plus
 
-    def __init__(self, player: Player, maze: Maze):
+    def __init__(self, player: Player, maze: Maze) -> None:
         self.player = player
         self.maze = maze
 
+        self.corners: list[tuple[int, int]] = [
+            (0, 0),
+            (0, self.maze._width - 1),
+            (self.maze._height - 1, self.maze._width - 1),
+            (self.maze._height - 1, 0)
+        ]
+
+        pinky = Pinky(self.maze, self.player, "p", 1.0,
+                      self.corners[0], Direction.EAST)
+        blinky = Blinky(self.maze, self.player, "b", 1.0,
+                        self.corners[1], Direction.SOUTH)
+        inky = Inky(self.maze, self.player, "i", 1.0,
+                    self.corners[2], Direction.WEST)
+        clyde = Clyde(self.maze, self.player, "c", 1.0,
+                      self.corners[3], Direction.NORTH)
+
+        # INJECTION DE DÉPENDANCE : fournir à Inky l'accès à l'instance blinky
+        inky.set_blinky_ptr(blinky)
+
         self.ghosts: dict[str, Ghost] = {
-            "blinky": Blinky(self.maze, self.player,
-                             "b", 1.25, 0, 0, Direction.EAST),
-            "clyde": Clyde(self.maze, self.player,
-                           "c", 1.0, 0, 14, Direction.SOUTH),
-            "inky": Inky(self.maze, self.player,
-                         "i", 0.75, 14, 14, Direction.WEST),
-            "pinky": Pinky(self.maze, self.player,
-                           "p", 1.0, 14, 0, Direction.NORTH),
+            "pinky": pinky,
+            "blinky": blinky,
+            "inky": inky,
+            "clyde": clyde,
         }
 
         # flag enabled/disabled when Pacman’s super-pacgum mode starts/ends
         # (to preserve the DEAD status of a ghost killed during this mode)
         self._is_superpacgum_active = False
 
+# ===========================================================================
+#                                                              SET ALL GHOSTS
+# ===========================================================================
+
     def _set_all_ghosts_state(self, new_state: GhostState) -> None:
         """to assign the new state to (almost) all ghosts
             when super-pacgum mode starts/ends
         """
         for ghost in self.ghosts.values():
+            # ToDo : intégrer ici _set_all_ghosts_freeze()
+
             # a dead ghost must remain dead even if Pac-Man eats another pacgum
             if ghost.state != GhostState.DEAD:
-                ghost.set_state(new_state)
+                # only for draw()
+                ghost.state = new_state
+                # for speed and strategy()
+                if new_state == GhostState.FRIGHTENED:
+                    ghost.strategy = ghost.flee_strategy
+                    ghost.speed = ghost.SNAIL_SPEED
+                elif new_state == GhostState.CHASER:
+                    ghost.strategy = ghost.chase_strategy
+                    ghost.speed = ghost.normal_speed
 
     def _reset_all_ghosts(self) -> None:
         """reset ghosts on the maze"""
-        for ghost in self.ghosts.values():
-            ghost.i, ghost.j = ghost.i_start, ghost.j_start
-            ghost.set_state(GhostState.CHASER)
 
+        self.corners = [
+            (0, 0),
+            (0, self.maze._width - 1),
+            (self.maze._height - 1, self.maze._width - 1),
+            (self.maze._height - 1, 0)
+        ]
+
+        for name, ghost in self.ghosts.items():
+            ghost.reset(self.corners, name)
+
+        # All ghosts are CHASER again: if Pac-Man still has his super-pacgum
+        # power, update() must see it as "just started" and frighten them
+        # self._is_superpacgum_active = False
+
+    # ToDo : à intégrer dans _set_all_ghosts_state()
     def _set_all_ghosts_freeze(self, being_frozen: bool) -> None:
         """freeze / unfreeze all ghosts"""
         for ghost in self.ghosts.values():
             ghost.is_frozen = being_frozen
+
+# ===========================================================================
+#                                                               UPDATE & DRAW
+# ===========================================================================
 
     def update(self) -> None:
         """update ghosts status and handles the game logic in every frame."""
@@ -72,6 +118,10 @@ class GhostManager:
         for ghost in self.ghosts.values():
             ghost.draw()
 
+# ===========================================================================
+#                                                            PACMAN COLLISION
+# ===========================================================================
+
     def collision(self, name: str, hunter: Ghost) -> None:
         """Handles the collision based on the ghost's current state"""
         if hunter.state == GhostState.FRIGHTENED:
@@ -88,10 +138,7 @@ class GhostManager:
 
         if self.player.life > 0:
             self._reset_all_ghosts()
-
-            # ToDo: re-centrer
-            self.player.i = 7  # temp pour DEBUG
-            self.player.j = 7  # temp pour DEBUG
+            self.player.reset()
 
         else:
             # ToDo: gestion de la fin de partie par le menu

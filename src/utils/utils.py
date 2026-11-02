@@ -51,9 +51,9 @@ def manhattan_dist(a: tuple[int, int], b: tuple[int, int]) -> int:
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
-def random_cell(nb_col: int = 15, nb_row: int = 15) -> tuple[int, int]:
-    i = random.randint(0, nb_col - 1)
-    j = random.randint(0, nb_row - 1)
+def random_cell(nb_col: int, nb_row: int) -> tuple[int, int]:
+    i = random.randint(0, nb_row - 1)
+    j = random.randint(0, nb_col - 1)
     return (i, j)
 
 
@@ -64,6 +64,6 @@ def not_closed_cell(maze: "Maze", i: int, j: int) -> bool:
 
 def random_open_cell(maze: "Maze") -> tuple[int, int]:
     while True:
-        i, j = random_cell()
+        i, j = random_cell(maze._width, maze._height)
         if not_closed_cell(maze, i, j):
             return (i, j)
