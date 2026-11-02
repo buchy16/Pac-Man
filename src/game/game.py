@@ -16,6 +16,8 @@ PTS_LENGHT = 34
 class Game(State):
     def __init__(self, config: GameConfig) -> None:
         self.level = 0
+        self.last_level = len(config.level) - 1
+
         mlx.new_window(1280, 720, "main")
         self.middle_X = int(1280 / 2)
         self.middle_Y = int(720 / 2)
@@ -43,6 +45,8 @@ class Game(State):
         mlx.add_key_hook_function(self.open_pause_menu, "main")
         mlx.add_key_hook_function(self.level_debug, "main")
 
+        self.debug_eatall = False
+
     def open_pause_menu(self, keynum: int) -> None:
         if (mlx.KEYNAME[keynum] == "Escape" and self.game_ended is False):
             self.pause_menu.activate_pause()
@@ -54,6 +58,10 @@ class Game(State):
 
     def next_level(self) -> None:
         self.level += 1
+        if (self.level > self.last_level):
+            return
+
+        self.debug_eatall = False
         self.maze.regenerate_maze(
             size=(self.config.level[self.level].width,
                   self.config.level[self.level].height),
@@ -72,11 +80,6 @@ class Game(State):
                                      self.config.points_per_pacgum,
                                      self.config.points_per_super_pacgum)
 
-    def level_debug(self, keynum: int) -> None:
-        if (mlx.KEYNAME[keynum] == "n" and self.game_ended is False):
-            print('CHANGING\n===============>>')
-            self.next_level()
-
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
 # -----------------------------------------------------------------------------
@@ -88,9 +91,9 @@ class Game(State):
         return (False)
 
     def update(self) -> int:
-        # if the timer as finished or pacman is dead,
-        # we wait 2s befor sending 1 to return to the main menu
-        if (self.is_game_ended()):
+        # if the timer as finished or pacman is dead or all level are passed,
+        # we wait 3s befor sending 1 to return to the main menu
+        if (self.is_game_ended() or self.level > self.last_level):
             if (mlx.timer - self.last_second >= 3.0):
                 return (1)
             return (0)
@@ -99,6 +102,10 @@ class Game(State):
             self.player.move()
             self.pacgums.update()
             self.ghosts.update()
+            self.debug_eat()
+
+            if (self.pacgums.all_gums_eaten() is True):
+                self.next_level()
 
             if (mlx.timer - self.last_second >= 1.0):
                 self.timer -= 1
@@ -133,6 +140,15 @@ class Game(State):
             MENU["PTS"],
             pts_offset,
             360 - 7
+        )
+
+    def draw_win(self) -> None:
+        mlx.get_tools().mlx_put_image_to_window(
+            mlx.mlx_ptr,
+            mlx.windows["main"],
+            BACKGROUNDS["You won"],
+            0,
+            0
         )
 
     def draw_pacman_lives(self, x: float, y: float) -> None:
@@ -185,7 +201,11 @@ class Game(State):
         )
 
     def draw(self) -> None:
-        if (self.game_ended is False):
+        if (self.game_ended is True):
+            self.draw_game_over()
+        elif (self.level > self.last_level):
+            self.draw_win()
+        else:
             self.maze.draw_maze()
             self.pacgums.draw()
             self.player.draw()
@@ -194,5 +214,26 @@ class Game(State):
 
             if (self.pause_menu.pause is True):
                 self.pause_menu.draw_paus_menu()
-        else:
-            self.draw_game_over()
+
+# -----------------------------------------------------------------------------
+# -------------------------------     DRAW   ----------------------------------
+# -----------------------------------------------------------------------------
+
+    def level_debug(self, keynum: int) -> None:
+        if (mlx.KEYNAME[keynum] == "n" and self.game_ended is False):
+            self.debug_eatall = True
+            for line in self.pacgums.pacgums:
+                for gum in line:
+                    if (gum.was_eaten is False):
+                        gum.was_eaten = True
+                        self.pacgums.update_img()
+                        return
+
+    def debug_eat(self) -> None:
+        if (self.debug_eatall is True):
+            for line in self.pacgums.pacgums:
+                for gum in line:
+                    if (gum.was_eaten is False):
+                        gum.was_eaten = True
+                        self.pacgums.update_img()
+                        return
