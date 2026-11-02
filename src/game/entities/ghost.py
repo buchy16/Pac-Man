@@ -33,7 +33,7 @@ class Ghost(Entity):
     ROCKET_SPEED: float = 0.15
 
     def __init__(self, maze: Maze, player: Player, prefix: str, speed: float,
-                 i_start: int, j_start: int, dir_start: Direction,
+                 corner_start: tuple[int, int], dir_start: Direction,
                  chase_strategy: TargetStrategy,
                  flee_strategy: TargetStrategy) -> None:
         """Initialize a ghost instance
@@ -44,7 +44,7 @@ class Ghost(Entity):
         player: The player the ghost may chase.
         prefix: Sprite key, identifying this ghost's sprites.
         speed: Duration between moves, in seconds.
-        i_start, j_start, dir_start: Starting row, column and direction.
+        corner_start, dir_start: Starting (row,column) and direction.
         chase_strategy: Targeting used when the ghost is CHASER.
         flee_strategy: Targeting used when the ghost is FRIGHTENED
                        (also used to go back home when DEAD).
@@ -65,13 +65,13 @@ class Ghost(Entity):
         self.prefix = prefix
         self.normal_speed = speed
         self.speed = speed
-        self.i_start, self.j_start = i_start, j_start
+        self.i_corner, self.j_corner = corner_start
         self.direction_start = dir_start
 
-        self.i, self.j = self.i_start, self.j_start
+        self.i, self.j = corner_start
         self.direction = self.direction_start
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
-        self.target: tuple[int, int] = (self.i_start, self.j_start)
+        self.target: tuple[int, int] = corner_start
         self.state = GhostState.CHASER
         self.is_frozen: bool = False
         self.last_s = mlx.timer
@@ -80,6 +80,39 @@ class Ghost(Entity):
         self.chase_strategy: TargetStrategy = chase_strategy
         self.flee_strategy: TargetStrategy = flee_strategy
         self.strategy: TargetStrategy = self.chase_strategy
+
+
+# ===========================================================================
+#                                                       
+# ===========================================================================
+
+    def _get_corner(self, ghost_name: str) -> int:
+        if ghost_name == "pinky":
+            return (0)
+        if ghost_name == "blinky":
+            return (1)
+        if ghost_name == "inky":
+            return (2)
+        if ghost_name == "clyde":
+            return (3)
+        return (0)
+
+
+    def reset(self, corners: list[tuple[int, int]], name: str) -> None:
+        """Puts the ghost back on its starting square, as a fresh CHASER.
+        (is_frozen is left untouched: it is controlled by the cheat mode)
+        """
+        id_corner = self._get_corner(name)
+        self.i_corner, self.j_corner = corners[id_corner]
+        self.i, self.j = corners[id_corner]
+        self.direction = self.direction_start
+        self.target = corners[id_corner]
+        self.state = GhostState.CHASER
+        self.strategy = self.chase_strategy
+        self.speed = self.normal_speed
+        self.last_death = 0.0
+        self.last_s = mlx.timer
+        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
 
 
 # ===========================================================================
@@ -99,19 +132,6 @@ class Ghost(Entity):
         self.speed = self.ROCKET_SPEED
         self.last_death = mlx.timer
 
-    def reset(self) -> None:
-        """Puts the ghost back on its starting square, as a fresh CHASER.
-        (is_frozen is left untouched: it is controlled by the cheat mode)
-        """
-        self.i, self.j = self.i_start, self.j_start
-        self.direction = self.direction_start
-        self.target = (self.i_start, self.j_start)
-        self.state = GhostState.CHASER
-        self.strategy = self.chase_strategy
-        self.speed = self.normal_speed
-        self.last_death = 0.0
-        self.last_s = mlx.timer
-        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
 
 # ===========================================================================
 #                                                                 MOVE & DRAW

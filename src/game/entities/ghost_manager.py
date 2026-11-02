@@ -16,15 +16,21 @@ class GhostManager:
         self.player = player
         self.maze = maze
 
+        self.corners: list[tuple[int, int]] = [
+            (0, 0),
+            (0, self.maze._width - 1),
+            (self.maze._height - 1, self.maze._width - 1),
+            (self.maze._height - 1, 0)
+        ]
+
         pinky = Pinky(self.maze, self.player, "p", 1.0,
-                      0, 0, Direction.EAST)
-        blinky = Blinky(self.maze, self.player, "b", 1.25,
-                        0, self.maze._width - 1, Direction.SOUTH)
-        inky = Inky(self.maze, self.player, "i", 0.75,
-                    self.maze._height - 1, self.maze._width - 1,
-                    Direction.WEST)
+                      self.corners[0], Direction.EAST)
+        blinky = Blinky(self.maze, self.player, "b", 1.0,
+                        self.corners[1], Direction.SOUTH)
+        inky = Inky(self.maze, self.player, "i", 1.0,
+                    self.corners[2], Direction.WEST)
         clyde = Clyde(self.maze, self.player, "c", 1.0,
-                      self.maze._height - 1, 0, Direction.NORTH)
+                      self.corners[3], Direction.NORTH)
 
         # INJECTION DE DÉPENDANCE : fournir à Inky l'accès à l'instance blinky
         inky.set_blinky_ptr(blinky)
@@ -65,12 +71,20 @@ class GhostManager:
 
     def _reset_all_ghosts(self) -> None:
         """reset ghosts on the maze"""
-        for ghost in self.ghosts.values():
-            ghost.reset()
+
+        self.corners = [
+            (0, 0),
+            (0, self.maze._width - 1),
+            (self.maze._height - 1, self.maze._width - 1),
+            (self.maze._height - 1, 0)
+        ]
+
+        for name, ghost in self.ghosts.items():
+            ghost.reset(self.corners, name)
 
         # All ghosts are CHASER again: if Pac-Man still has his super-pacgum
         # power, update() must see it as "just started" and frighten them
-        self._is_superpacgum_active = False
+        # self._is_superpacgum_active = False
 
     # ToDo : à intégrer dans _set_all_ghosts_state()
     def _set_all_ghosts_freeze(self, being_frozen: bool) -> None:

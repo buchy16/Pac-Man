@@ -44,7 +44,7 @@ class CornerTarget(TargetStrategy):
         """
         Returns : the coordinates (i, j) of the ghost corner
         """
-        return (ghost.i_start, ghost.j_start)
+        return ((ghost.i_corner, ghost.j_corner))
 
 
 # --------------------------------------------------- strategy: NEARBY PACMAN
