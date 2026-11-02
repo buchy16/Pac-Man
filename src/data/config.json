@@ -3,7 +3,7 @@
     "highscore_filename": "highscores.json",
     # many levels
     "level": [
-        {"id": 1, "width": 15, "height": 15},
+        {"id": 1, "width": 15, "height": 10},
         {"id": 2, "width": 15, "height": 15},
         {"id": 3, "width": 15, "height": 15},
         {"id": 4, "width": 15, "height": 15},

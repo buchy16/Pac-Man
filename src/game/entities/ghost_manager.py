@@ -1,3 +1,4 @@
+from math import ceil
 from . import Player, Ghost, Blinky, Clyde, Inky, Pinky, GhostState
 from ..maze import Maze
 from ...utils.directions import Direction
@@ -16,11 +17,11 @@ class GhostManager:
 
         self.ghosts: dict[str, Ghost] = {
             "blinky": Blinky(self.maze, self.player,
-                             "b", 1.25, 0, 14, Direction.SOUTH),
+                             "b", 1.25, 0, self.maze._width - 1, Direction.SOUTH),
             "clyde": Clyde(self.maze, self.player,
-                           "c", 1.0, 14, 0, Direction.NORTH),
+                           "c", 1.0, self.maze._height - 1, 0, Direction.NORTH),
             "inky": Inky(self.maze, self.player,
-                         "i", 0.75, 14, 14, Direction.WEST),
+                         "i", 0.75, self.maze._height - 1, self.maze._width - 1, Direction.WEST),
             "pinky": Pinky(self.maze, self.player,
                            "p", 1.0, 0, 0, Direction.EAST),
         }
@@ -90,8 +91,8 @@ class GhostManager:
             self._reset_all_ghosts()
 
             # ToDo: re-centrer
-            self.player.i = 7  # temp pour DEBUG
-            self.player.j = 7  # temp pour DEBUG
+            self.player.i = ceil(self.maze._height / 2) - 1  # temp pour DEBUG
+            self.player.j = ceil(self.maze._width / 2) - 1  # temp pour DEBUG
 
         else:
             # ToDo: gestion de la fin de partie par le menu

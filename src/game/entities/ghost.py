@@ -8,7 +8,7 @@ from .entity import Entity, Direction
 from .player import Player
 from ..maze import Maze
 from ... import mlx
-from ...utils.utils import manhattan_dist, not_closed_cell
+from ...utils.utils import manhattan_dist, not_closed_cell, random_open_cell
 from ...utils.directions import DIR_MOVES
 from ...utils.sprites import G_WALK_SPRITES
 
@@ -103,50 +103,14 @@ class Ghost(Entity):
                 furthest_corner = corner
         return (furthest_corner)
 
-    # def get_flee_target(self) -> tuple[int, int]:
-    #     """determines the FRIGHTENED ghost's target on the grid :
-    #         the corner furthest from Pac-Man
-    #     Returns : the coordinates (i, j) of the cell to target
-    #     """
-    #     player_coord = (self.player.i, self.player.j)
-    #     center_coord = (ceil(self.maze._width / 2) - 1,
-    #                     ceil(self.maze._height / 2) - 1)
-    #     player_to_target = manhattan_dist(player_coord, self.target)
-    #     center_to_target = manhattan_dist(center_coord, self.target)
-    #     # s'il a atteint sa target
-    #     if ((self.i, self.j == self.target)
-    #         # ou si Pacman est rentré dans le même quart que la cible
-    #         or player_to_target < center_to_target):
-    #         self.target = self.get_furthest_corner()
-    #     return (self.target)
-
     def get_flee_target(self) -> tuple[int, int]:
-        """determines the FRIGHTENED ghost's target on the grid :
-            the cell furthest from Pac-Man
+        """determines the FRIGHTENED ghost's target on the grid
         Returns : the coordinates (i, j) of the cell to target
         """
-        from_which_to_explore: deque = deque([(self.player.i, self.player.j, 0)])
-        discovered: set[tuple[int, int]] = {(self.player.i, self.player.j)}
-        
-        furthest_cell = (self.player.i, self.player.j)
-
-        while from_which_to_explore:
-            current_i, current_j, nb_steps = from_which_to_explore.popleft()
-            furthest_cell = (current_i, current_j) # Se met à jour jusqu'à la dernière itération
-
-            for wall, (di, dj) in DIR_MOVES.items():
-                neighbour_i, neighbour_j = current_i + di, current_j + dj
-
-                if (
-                    (neighbour_i, neighbour_j) not in discovered
-                    and 0 <= neighbour_i < self.maze._height
-                    and 0 <= neighbour_j < self.maze._width
-                    and (self.maze.smaze[current_i][current_j]["code"] & wall == 0)
-                ):
-                    discovered.add((neighbour_i, neighbour_j))
-                    from_which_to_explore.append((neighbour_i, neighbour_j, nb_steps + 1))
-
-        return furthest_cell
+        ghost_coord = (self.i, self.j)
+        if (ghost_coord == self.target):
+            self.target = random_open_cell(self.maze)
+        return (self.target)
 
     def get_ahead_magnetic_target(self, dist: int, behind: bool = False) -> tuple[int, int]:
         """Returns:
