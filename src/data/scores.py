@@ -8,6 +8,7 @@ import json
 
 PATH_SCORES = "src/data/highscores.json"
 MAX_USERNAME_LENGTH = 10
+MAX_STORED_SCORES = 10
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +67,16 @@ class HighScore:
 # ---------------------------------------------------------------------------
 #                                                                     STORAGE
 # ---------------------------------------------------------------------------
+
+def sorted_limit_best(entries: list[HighScore], limit: int) -> list[HighScore]:
+    """Returns the `limit` best scores, sorted from highest to lowest.
+
+    `sorted` is stable: on equal scores, the entry that comes first in
+    `entries` (the oldest one) stays ahead of the others, so a new score
+    never replaces an older one with the same value.
+    """
+    return sorted(entries, key=lambda e: e.score, reverse=True)[:limit]
+
 
 @dataclass(frozen=True)
 class LoadResult:
@@ -191,8 +202,11 @@ class HighScoreStorage:
             raise OSError(f"Unable to save scores: {err}") from err
 
     def add_score(self, username: str, score: int) -> None:
-        """Validates and saves a new score."""
-        user_err = username_errors(username.strip())
+        """Validates and saves a new score.
+
+        Only the best MAX_STORED_SCORES scores are kept in the file.
+        """
+        user_err = username_errors(username)
 
         if user_err:
             raise ValueError(f"Invalid username: {user_err}")
@@ -207,12 +221,13 @@ class HighScoreStorage:
 
         entries = result.entries
         entries.append(HighScore(username=username.strip(), score=score))
-        self._write_all(entries)
+        self._write_all(sorted_limit_best(entries, MAX_STORED_SCORES))
 
-    def get_top_scores(self, limit: int = 10) -> list[HighScore]:
+    def get_top_scores(
+        self, limit: int = MAX_STORED_SCORES
+    ) -> list[HighScore]:
         """Returns the best scores, sorted from highest to lowest."""
-        all_scores = self.load_scores()
-        return sorted(all_scores, key=lambda e: e.score, reverse=True)[:limit]
+        return sorted_limit_best(self.load_scores(), limit)
 
 # ---------------------------------------------------------------------------
 #                                                                         CLI
