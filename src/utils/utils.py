@@ -22,7 +22,9 @@ SPECIAL_CHAR = {
     "KP_Right": "6",
     "KP_Home": "7",
     "KP_Up": "8",
-    "KP_Page_Up": "9"
+    "KP_Page_Up": "9",
+    "period": ".",
+    "KP_Delete": "."
 }
 
 

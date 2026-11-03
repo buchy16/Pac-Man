@@ -16,6 +16,7 @@ class Player(Entity):
     def __init__(self, maze: Maze, life: int = 3) -> None:
         super().__init__(maze)
         self.life = life
+        self.invincible = False
         self.super_pacgum = False
         self.score = 0
 
@@ -24,6 +25,8 @@ class Player(Entity):
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.direction: Direction = Direction.NONE
 
+        self.speed = 1.0
+
         mlx.add_key_hook_function(
             self._update_direction,
             "main"
@@ -31,6 +34,18 @@ class Player(Entity):
 
         self.last_s = mlx.timer
         self.timer = Player.SUPER_P_TIMER
+
+    # @property
+    # def life(self) -> int:
+    #     return (self._life)
+
+    # @life.setter
+    # def life(self, arg: int) -> None:
+    #     try:
+    #         if (self.invincible is False):
+    #             self._life = int(arg)
+    #     except (ValueError):
+    #         pass
 
     def _update_direction(self, keynum: int) -> None:
         if (mlx.KEYNAME[keynum] == "Up"):
@@ -61,7 +76,7 @@ class Player(Entity):
                 self.timer -= 1
 
     def move(self) -> None:
-        if (mlx.timer - self.last_s >= 1):
+        if (mlx.timer - self.last_s >= self.speed):
             self.super_pacgam()
 
             if (self.direction == Direction.SOUTH and

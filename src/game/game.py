@@ -30,6 +30,7 @@ class Game(State):
             )
 
         self.timer = float(config.level_max_time)
+        self.timer_game_ended = 3.0
         self.last_second = mlx.timer
 
         self.player = Player(self.maze)
@@ -40,7 +41,7 @@ class Game(State):
 
         self.ghosts = GhostManager(self.player, self.maze)
 
-        self.cheat_mod = Cheat(self.player, self.ghosts)
+        self.cheat_mod = Cheat(self.player, self.ghosts, self.pacgums)
 
         self.game_ended = False
 
@@ -48,8 +49,6 @@ class Game(State):
         mlx.add_key_hook_function(self.open_pause_menu, "main")
         mlx.add_key_hook_function(self.level_debug, "main")
         mlx.add_key_hook_function(self.enable_disable_cheat, "main")
-
-        self.debug_eatall = False
 
     def open_pause_menu(self, keynum: int) -> None:
         if (mlx.KEYNAME[keynum] == "Escape" and self.game_ended is False):
@@ -69,7 +68,6 @@ class Game(State):
         if (self.level > self.last_level):
             return
 
-        self.debug_eatall = False
         self.maze.regenerate_maze(
             size=(self.config.level[self.level].width,
                   self.config.level[self.level].height),
@@ -87,6 +85,7 @@ class Game(State):
         self.pacgums = PacgumManager(self.player, self.maze,
                                      self.config.points_per_pacgum,
                                      self.config.points_per_super_pacgum)
+        self.cheat_mod.set_new_pacgums(self.pacgums)
 
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
@@ -102,7 +101,12 @@ class Game(State):
         # if the timer as finished or pacman is dead or all level are passed,
         # we wait 3s befor sending 1 to return to the main menu
         if (self.is_game_ended() or self.level > self.last_level):
-            if (mlx.timer - self.last_second >= 3.0):
+            # update game ended timer (3s)
+            if (mlx.timer - self.last_second >= 1.0):
+                self.timer_game_ended -= 1
+                self.last_second = mlx.timer
+
+            if (self.timer_game_ended <= 0):
                 return (1)
             return (0)
 
@@ -110,7 +114,7 @@ class Game(State):
             self.player.move()
             self.pacgums.update()
             self.ghosts.update()
-            self.debug_eat()
+            self.cheat_mod.update()
 
             if (self.pacgums.all_gums_eaten() is True):
                 self.next_level()
@@ -199,6 +203,7 @@ class Game(State):
             f"Level {self.config.level[self.level].id}"
         )
         # 78 = I tried my best :c
+        # draw timer
         mlx.get_tools().mlx_string_put(
             mlx.mlx_ptr,
             mlx.windows["main"],
@@ -228,22 +233,3 @@ class Game(State):
 # -----------------------------------------------------------------------------
 # -------------------------------     DEBUG   ---------------------------------
 # -----------------------------------------------------------------------------
-
-    def level_debug(self, keynum: int) -> None:
-        if (mlx.KEYNAME[keynum] == "n" and self.game_ended is False):
-            self.debug_eatall = True
-            for line in self.pacgums.pacgums:
-                for gum in line:
-                    if (gum.was_eaten is False):
-                        gum.was_eaten = True
-                        self.pacgums.update_img()
-                        return
-
-    def debug_eat(self) -> None:
-        if (self.debug_eatall is True):
-            for line in self.pacgums.pacgums:
-                for gum in line:
-                    if (gum.was_eaten is False):
-                        gum.was_eaten = True
-                        self.pacgums.update_img()
-                        return
