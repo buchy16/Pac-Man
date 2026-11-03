@@ -41,10 +41,16 @@
 
 - [ ] ReadMe
 	+ en cours...
+	? gif animé du jeu
 
 # both
 
 - [ ] répartition tâches, urls
+[pytest Tutorial: Effective Python Testing – Real Python](https://realpython.com/pytest-python-testing/)
 
+- [ ] Itch.io
 - [ ] Makefile
 	+ reste à faire : packaging
+
+- [ ] ? mod op git dans doc/git.md
+- [ ] ? musique
