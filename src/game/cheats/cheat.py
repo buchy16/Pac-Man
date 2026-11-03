@@ -12,8 +12,18 @@ from src.game.cheats.commands import (
 
 
 class Cheat():
+    """Manage cheat-mode commands, keyboard input, and their game effects.
+    """
+
     def __init__(self, player: Player, ghosts: GhostManager,
                  pacgums: PacgumManager) -> None:
+        """Initialize the cheat manager and its registered commands.
+
+        Args:
+            player: Player whose state can be modified by cheat commands.
+            ghosts: Ghost manager used by ghost-related commands.
+            pacgums: Pacgum manager used to skip the current level.
+        """
         self.player = player
         self.ghosts = ghosts
         self.pacgums = pacgums
@@ -45,6 +55,7 @@ class Cheat():
 # -----------------------------------------------------------------------------
 
     def enable_disable(self) -> None:
+        """Toggle cheat mode and register or remove the keyboard listener."""
         if (self.enable is False):
             mlx.add_key_hook_function(
                 self.listen_keyboard,
@@ -63,7 +74,11 @@ class Cheat():
             self.enable = False
 
     def listen_keyboard(self, keynum: int) -> None:
-        # print(f"[{mlx.KEYNAME[keynum]}]")
+        """Process a key event and update the current command buffer.
+
+        Args:
+            keynum: Numeric key identifier provided by the graphical library.
+        """
         key = mlx.KEYNAME[keynum]
 
         if (key == "BackSpace"):
@@ -91,6 +106,7 @@ class Cheat():
 # -----------------------------------------------------------------------------
 
     def command_analyser(self) -> None:
+        """Parse and execute the command currently stored in the buffer."""
         if (len(self.buffer) <= 0):
             return
 
@@ -117,10 +133,15 @@ class Cheat():
 # -----------------------------------------------------------------------------
 
     def update(self) -> None:
+        """Apply pending cheat effects during the game update loop."""
         if (self.skiping_level is True):
             self.skip_level()
 
     def skip_level(self) -> None:
+        """Mark the next remaining pacgum as eaten.
+
+        Once every pacgum has been eaten, clear the pending level-skip state.
+        """
         for line in self.pacgums.pacgums:
             for gum in line:
                 if (gum.was_eaten is False):
@@ -134,6 +155,7 @@ class Cheat():
 # -----------------------------------------------------------------------------
 
     def draw_input(self) -> None:
+        """Draw the current command buffer and its blinking cursor."""
         position = "" if (mlx.timer % 1 >= 0.5) else "|"
         mlx.get_tools().mlx_string_put(
             mlx.mlx_ptr,
@@ -145,6 +167,7 @@ class Cheat():
         )
 
     def draw(self) -> None:
+        """Draw the cheat input when cheat mode is enabled."""
         if (self.enable is True):
             self.draw_input()
 
@@ -153,10 +176,21 @@ class Cheat():
 # -----------------------------------------------------------------------------
 
     def set_new_pacgums(self, new_pacgums: PacgumManager) -> None:
+        """Replace the pacgum manager used by the level-skip effect.
+
+        Args:
+            new_pacgums: Pacgum manager for the newly loaded level.
+        """
         self.skiping_level = False
         self.pacgums = new_pacgums
 
     def warn(self, msg: str, additional: str | None = None) -> None:
+        """Log a red warning related to cheat-mode commands.
+
+        Args:
+            msg: Main warning message.
+            additional: Optional text appended to the warning.
+        """
         msg = "\033[31m" + msg + "\033[0m"
         if (additional is not None):
             msg += " " + additional
@@ -164,6 +198,13 @@ class Cheat():
 
     def inform(self, msg: str, color: Color = Color.NONE,
                additional: str | None = None) -> None:
+        """Log an informational cheat-mode message.
+
+        Args:
+            msg: Main informational message.
+            color: Color used to display the message.
+            additional: Optional text appended to the message.
+        """
         msg = color.value + msg + "\033[0m"
         if (additional is not None):
             msg += " " + additional
