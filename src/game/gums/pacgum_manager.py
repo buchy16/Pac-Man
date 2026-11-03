@@ -38,13 +38,13 @@ class PacgumManager():
 
         # matrix of the same size as the maze
         # Contains a pacgum or None if nothing
-        self.pacgums: list[list[Gum | None]] = self.init_pacgums(pacgum_pts,
-                                                                 s_pacgum_pts)
+        self.pacgums: list[list[Gum]] = self.init_pacgums(pacgum_pts,
+                                                          s_pacgum_pts)
 
-        self.pacgums_img = self.update_img(self.maze._width, self.maze._height)
+        self.pacgums_img = self.create_img(self.maze._width, self.maze._height)
 
     def init_pacgums(self, pacgum_pts: int,
-                     s_pacgum_pts: int) -> list[list[Gum | None]]:
+                     s_pacgum_pts: int) -> list[list[Gum]]:
         """Build the pacgum matrix from the maze layout.
 
         Parameters
@@ -60,14 +60,16 @@ class PacgumManager():
             A 2D matrix containing pacgums, super pacgums, or ``None`` where
             no collectible should exist.
         """
-        matrix = []
+        matrix: list[list[Gum]] = []
 
         for i in range(0, self.maze._height):
             line = []
             for j in range(0, self.maze._width):
                 # if the cell is fuly closed, no pacgum, None insted
                 if (self.maze.maze[i][j] == 0b1111):
-                    line.append(None)
+                    gum = Pacgum(self.maze, i, j, pacgum_pts)
+                    gum.was_eaten = True
+                    line.append(gum)
                 else:
                     line.append(Pacgum(self.maze, i, j, pacgum_pts))
             matrix.append(line)
@@ -82,13 +84,13 @@ class PacgumManager():
                                      self.maze._width - 1, s_pacgum_pts)
 
         # remove the pacgum where the player spawn
-        matrix[self.player.i][self.player.j] = None
+        matrix[self.player.i][self.player.j].was_eaten = True
 
         return (matrix)
 
-    def update_img(self, tiles_width: int, tiles_height: int,
+    def create_img(self, tiles_width: int, tiles_height: int,
                    tile_size: int = 48) -> int:
-        """Rebuild the pacgum layer image from the current matrix.
+        """Build the pacgum layer image from the current matrix.
 
         Parameters
         ----------
@@ -115,10 +117,11 @@ class PacgumManager():
         for i in range(tiles_height):
             for j in range(tiles_width):
                 cell = self.pacgums[i][j]
-                if (isinstance(cell, SuperPacgum)):
-                    tile_img = PACGUMS["Super pacgum"]
-                elif (isinstance(cell, Pacgum)):
-                    tile_img = PACGUMS["Pacgum"]
+                if (cell.was_eaten is False):
+                    if (isinstance(cell, SuperPacgum)):
+                        tile_img = PACGUMS["Super pacgum"]
+                    elif (isinstance(cell, Pacgum)):
+                        tile_img = PACGUMS["Pacgum"]
                 else:
                     tile_img = PACGUMS["No pacgum"]
 
@@ -138,6 +141,12 @@ class PacgumManager():
 
         return pg_img
 
+    def update_img(self) -> None:
+        """Rebuild the pacgum layer image from the current matrix
+        """
+        self.pacgums_img = self.create_img(self.maze._width,
+                                           self.maze._height)
+
     def colsion_cell(self) -> None:
         """Handle a pacgum collision on the player current tile.
 
@@ -146,11 +155,10 @@ class PacgumManager():
         """
         pacgum = self.pacgums[self.player.i][self.player.j]
 
-        if (pacgum is not None):
+        if (pacgum.was_eaten is False):
             pacgum.eaten(self.player)
-            self.pacgums[self.player.i][self.player.j] = None
-            self.pacgums_img = self.update_img(self.maze._width,
-                                               self.maze._height)
+            self.pacgums[self.player.i][self.player.j].was_eaten = True
+            self.update_img()
 
     def update(self) -> None:
         """Update the pacgum manager state for the current frame.
@@ -176,3 +184,15 @@ class PacgumManager():
                 print(f"[{gum.points}] ", end="")
             print()
         print()
+
+    def all_gums_eaten(self) -> bool:
+        """Check if all pacgums were eaten (set to None)
+
+        Returns:
+            bool: True if all pacgums were eaten, else False
+        """
+        for i in range(0, self.maze._height):
+            for j in range(0, self.maze._width):
+                if (self.pacgums[i][j].was_eaten is False):
+                    return (False)
+        return (True)
