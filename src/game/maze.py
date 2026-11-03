@@ -135,3 +135,33 @@ class Maze(MazeGenerator):
             self.x,
             self.y
         )
+
+    def regenerate_maze(self, size: tuple[int, int] = (15, 15),
+                        perfect: bool = False,
+                        entry_cell: tuple[int, int] = (0, 0),
+                        exit_cell: tuple[int, int] = (-1, -1),
+                        seed: int = 0) -> None:
+        # ---------------------------------------------------------------------
+        # Original Maze re-generation
+        self._width = size[0]
+        self._height = size[1]
+        self._perfect = perfect
+        self._seed = seed
+        self._entryx = (entry_cell[0]
+                        if 0 <= entry_cell[0] < self._width else 0)
+        self._entryy = (entry_cell[1]
+                        if 0 <= entry_cell[1] < self._height else 0)
+        self._exitx = (exit_cell[0]
+                       if 0 <= exit_cell[0] < self._width else self._width-1)
+        self._exity = (exit_cell[1]
+                       if 0 <= exit_cell[1] < self._height else self._height-1)
+        self._maze: list[list[int]] = []
+        self._path: list[list[int]] = []
+        self._shortest_path: str | bool = False
+        self.generate(self._seed)
+
+        # ---------------------------------------------------------------------
+        # Custom Maze re-generation
+        self.x, self.y = self.set_coordinates()
+        self.smaze = self.generate_smaze()
+        self.maze_img = self.bake_background(self._width, self._height, 48)
