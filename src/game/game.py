@@ -4,7 +4,7 @@ from . import Player
 from . import PacgumManager
 from ..data.parse_config import GameConfig
 from .entities import GhostManager
-from .cheat import Cheat
+from .cheats.cheat import Cheat
 from ..menu.pause_menu import PausMenu
 from ..state import State
 from ..utils.utils import display_nums
@@ -47,7 +47,6 @@ class Game(State):
 
         self.pause_menu = PausMenu()
         mlx.add_key_hook_function(self.open_pause_menu, "main")
-        mlx.add_key_hook_function(self.level_debug, "main")
         mlx.add_key_hook_function(self.enable_disable_cheat, "main")
 
     def open_pause_menu(self, keynum: int) -> None:
@@ -119,7 +118,8 @@ class Game(State):
             if (self.pacgums.all_gums_eaten() is True):
                 self.next_level()
 
-            if (mlx.timer - self.last_second >= 1.0):
+            if (self.cheat_mod.timer_frozen is False and
+               mlx.timer - self.last_second >= 1.0):
                 self.timer -= 1
                 self.last_second = mlx.timer
         else:

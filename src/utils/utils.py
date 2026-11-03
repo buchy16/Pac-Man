@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+from enum import Enum
 import random
 from ..Mlx import mlx
 from .sprites import DIGITS
@@ -26,6 +27,12 @@ SPECIAL_CHAR = {
     "period": ".",
     "KP_Delete": "."
 }
+
+
+class Color(Enum):
+    GREEN = "\033[32m"
+    RED = "\033[31m"
+    NONE = "\033[0m"
 
 
 def print_green(msg: str, end_msg: str = '\n') -> None:

@@ -35,18 +35,6 @@ class Player(Entity):
         self.last_s = mlx.timer
         self.timer = Player.SUPER_P_TIMER
 
-    # @property
-    # def life(self) -> int:
-    #     return (self._life)
-
-    # @life.setter
-    # def life(self, arg: int) -> None:
-    #     try:
-    #         if (self.invincible is False):
-    #             self._life = int(arg)
-    #     except (ValueError):
-    #         pass
-
     def _update_direction(self, keynum: int) -> None:
         if (mlx.KEYNAME[keynum] == "Up"):
             self.direction = Direction.NORTH
@@ -66,6 +54,11 @@ class Player(Entity):
         self.j = ceil(self.maze._width / 2) - 1
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.direction: Direction = Direction.NONE
+
+    def player_hit(self) -> None:
+        if (self.invincible is False):
+            self.life -= 1
+            self.reset()
 
     def super_pacgam(self) -> None:
         if (self.super_pacgum is True):
