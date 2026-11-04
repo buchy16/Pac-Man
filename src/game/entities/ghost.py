@@ -138,9 +138,6 @@ class Ghost(Entity):
         if not frozen call find_path(), in order to move to the next square
         when self.speed has elapsed since the last move
         """
-        # frozen ghost can't move
-        if (self.is_frozen):
-            return
 
         # dead ghost can rise from its ashes
         if (self.state == GhostState.DEAD
@@ -148,6 +145,10 @@ class Ghost(Entity):
             self.strategy = self.chase_strategy
             self.speed = self.normal_speed
             self.state = GhostState.CHASER
+
+        # frozen ghost can't move
+        if (self.is_frozen):
+            return
 
         if mlx.timer - self.last_s >= self.speed:
             # Targeting depends on ghost's strategy
