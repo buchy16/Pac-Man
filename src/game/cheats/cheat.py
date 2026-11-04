@@ -100,7 +100,8 @@ class Cheat():
                 self.buffer += key
 
         elif (key in SPECIAL_CHAR.keys()):
-            self.buffer += SPECIAL_CHAR[key]
+            if (len(self.buffer) <= 25):
+                self.buffer += SPECIAL_CHAR[key]
 
 # -----------------------------------------------------------------------------
 # -------------------------------   COMMAND   ---------------------------------
