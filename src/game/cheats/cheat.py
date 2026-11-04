@@ -7,7 +7,7 @@ from src.utils.utils import SPECIAL_CHAR, Color
 from src.game.cheats.commands import (
     Kill, SetPlayerLife, SetPlayerScore, SetPlayerSpeed, FreezeGhosts,
     SetPlayerInvincible, StopTimer, SkipingLevel, Help, ResetAll,
-    Command
+    Command, Super
     )
 
 
@@ -47,7 +47,8 @@ class Cheat():
             "speed": SetPlayerSpeed(self),
             "freeze": FreezeGhosts(self),
             "invincible": SetPlayerInvincible(self),
-            "stop-timer": StopTimer(self)
+            "stop-timer": StopTimer(self),
+            "super": Super(self)
         }
 
 # -----------------------------------------------------------------------------
