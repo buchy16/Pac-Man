@@ -134,11 +134,10 @@ class GhostManager:
         """Handles Pac-Man's death for the ghosts"""
         print(f"DEBUG\t{killer_name} a tué Pacman !")
 
-        self.player.life -= 1
+        self.player.player_hit()
 
         if self.player.life > 0:
             self._reset_all_ghosts()
-            self.player.reset()
 
         else:
             # ToDo: gestion de la fin de partie par le menu

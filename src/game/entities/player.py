@@ -16,6 +16,7 @@ class Player(Entity):
     def __init__(self, maze: Maze, life: int = 3) -> None:
         super().__init__(maze)
         self.life = life
+        self.invincible = False
         self.super_pacgum = False
         self.score = 0
 
@@ -23,6 +24,8 @@ class Player(Entity):
         self.j = ceil(self.maze._width / 2) - 1
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.direction: Direction = Direction.NONE
+
+        self.speed = 1.0
 
         mlx.add_key_hook_function(
             self._update_direction,
@@ -33,17 +36,16 @@ class Player(Entity):
         self.timer = Player.SUPER_P_TIMER
 
     def _update_direction(self, keynum: int) -> None:
-        # print("hi ?")
-        if (mlx.KEYNAME[keynum] == "w"):
+        if (mlx.KEYNAME[keynum] == "Up"):
             self.direction = Direction.NORTH
             # print("North")
-        elif (mlx.KEYNAME[keynum] == "s"):
+        elif (mlx.KEYNAME[keynum] == "Down"):
             self.direction = Direction.SOUTH
             # print("South")
-        elif (mlx.KEYNAME[keynum] == "a"):
+        elif (mlx.KEYNAME[keynum] == "Left"):
             self.direction = Direction.WEST
             # print("WEST")
-        elif (mlx.KEYNAME[keynum] == "d"):
+        elif (mlx.KEYNAME[keynum] == "Right"):
             self.direction = Direction.EAST
             # print("Est")
 
@@ -52,6 +54,11 @@ class Player(Entity):
         self.j = ceil(self.maze._width / 2) - 1
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.direction: Direction = Direction.NONE
+
+    def player_hit(self) -> None:
+        if (self.invincible is False):
+            self.life -= 1
+            self.reset()
 
     def super_pacgam(self) -> None:
         if (self.super_pacgum is True):
@@ -62,7 +69,7 @@ class Player(Entity):
                 self.timer -= 1
 
     def move(self) -> None:
-        if (mlx.timer - self.last_s >= 1):
+        if (mlx.timer - self.last_s >= self.speed):
             self.super_pacgam()
 
             if (self.direction == Direction.SOUTH and
