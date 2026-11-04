@@ -43,3 +43,4 @@ class SuperPacgum(Gum):
         """
         player.score += self.points
         player.super_pacgum = True
+        player.timer = Player.SUPER_P_TIMER

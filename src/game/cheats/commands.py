@@ -335,3 +335,33 @@ class StopTimer(Command):
                 self.inform("FALSE", Color.RED, ": timer stoped")
         except (ValueError, IndexError):
             self.warn("invalide arguments")
+
+
+class Super(Command):
+    def __init__(self, cheat: "Cheat") -> None:
+        """Initialize the Super command.
+
+        Args:
+            cheat: Cheat manager whose player is targeted.
+        """
+        super().__init__(cheat)
+        self.manual = "super:\nSet Pacman to super Pacman or not" \
+                      "\nargs:\n\t bool: bool"
+
+    def execut(self, args: list[str] = []) -> None:
+        """Set whether player is in state super Pacman.
+
+        Args:
+            args: A list whose first item must be ``true`` or ``false``.
+        """
+        try:
+            if (args[0] == "true"):
+                self.cheat.player.super_pacgum = True
+                self.cheat.player.timer = self.cheat.player.SUPER_P_TIMER
+            elif (args[0] == "false"):
+                self.cheat.player.super_pacgum = False
+                self.cheat.player.timer = self.cheat.player.SUPER_P_TIMER
+            else:
+                raise ValueError()
+        except (ValueError, IndexError):
+            self.warn("invalide arguments")

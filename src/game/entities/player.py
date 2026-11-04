@@ -33,6 +33,7 @@ class Player(Entity):
         )
 
         self.last_s = mlx.timer
+        self.last_s_sp = mlx.timer  # last second for super pacgum
         self.timer = Player.SUPER_P_TIMER
 
     def _update_direction(self, keynum: int) -> None:
@@ -55,6 +56,9 @@ class Player(Entity):
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.direction: Direction = Direction.NONE
 
+        self.super_pacgum = False
+        self.timer = self.SUPER_P_TIMER
+
     def player_hit(self) -> None:
         if (self.invincible is False):
             self.life -= 1
@@ -69,9 +73,13 @@ class Player(Entity):
                 self.timer -= 1
 
     def move(self) -> None:
-        if (mlx.timer - self.last_s >= self.speed):
-            self.super_pacgam()
+        time = mlx.timer
 
+        if (time - self.last_s_sp >= 1.0):
+            self.super_pacgam()
+            self.last_s_sp = time
+
+        if (time - self.last_s >= self.speed):
             if (self.direction == Direction.SOUTH and
                     self.maze.smaze[self.i][self.j]["code"] & 0b0100 == 0):
                 self.i = (self.i + 1) % self.maze._height
@@ -87,7 +95,7 @@ class Player(Entity):
             elif (self.direction == Direction.EAST and
                     self.maze.smaze[self.i][self.j]["code"] & 0b0010 == 0):
                 self.j = (self.j + 1) % self.maze._width
-            self.last_s = mlx.timer
+            self.last_s = time
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
 
     def draw_Est(self) -> None:

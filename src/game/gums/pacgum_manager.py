@@ -186,7 +186,7 @@ class PacgumManager():
         print()
 
     def all_gums_eaten(self) -> bool:
-        """Check if all pacgums were eaten (set to None)
+        """Check if all pacgums were eaten
 
         Returns:
             bool: True if all pacgums were eaten, else False
