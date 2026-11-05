@@ -23,6 +23,7 @@ class Player(Entity):
         self.i = ceil(self.maze._height / 2) - 1
         self.j = ceil(self.maze._width / 2) - 1
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
+        self.destination = (self.i, self.j)
         self.direction: Direction = Direction.NONE
 
         self.speed = 1.0

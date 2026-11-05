@@ -1,7 +1,7 @@
 import heapq
 import math
 from enum import Enum, auto
-from .entity import Entity, Direction
+from .entity import Entity, Direction, Slide_State
 from .player import Player
 from .targets import TargetStrategy
 from ..maze import Maze
@@ -71,6 +71,8 @@ class Ghost(Entity):
         self.i, self.j = corner_start
         self.direction = self.direction_start
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
+        self.destination = (self.i, self.j)
+
         self.target: tuple[int, int] = corner_start
         self.state = GhostState.CHASER
         self.is_frozen: bool = False
@@ -151,14 +153,15 @@ class Ghost(Entity):
             return
 
         if mlx.timer - self.last_s >= self.speed:
+            self.last_s = mlx.timer
+
+        if (self.slide_state == Slide_State.NONE):
             # Targeting depends on ghost's strategy
             self.target = self.strategy.get_target(self)
             path = self.find_path((self.i, self.j), self.target)
-
             # Only if start ≠ finish (there is a cell between start and finish)
             if len(path) > 1:
                 next_i, next_j = path[1]
-
                 if next_i > self.i:
                     self.direction = Direction.SOUTH
                 elif next_i < self.i:
@@ -167,12 +170,9 @@ class Ghost(Entity):
                     self.direction = Direction.EAST
                 elif next_j < self.j:
                     self.direction = Direction.WEST
-
-                self.i, self.j = next_i, next_j
-
-            self.last_s = mlx.timer
-
-        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
+                self.set_destination(next_i, next_j)
+        else:
+            self.slide(self.prefix)
 
     def draw(self) -> None:
         """

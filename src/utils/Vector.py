@@ -107,7 +107,12 @@ class Vector():
 
 
 if (__name__ == "__main__"):
-    v1 = Vector(-2, 0)
-    v2 = Vector(0, -2)
+    target_x = 10
+    target_y = 5
 
-    print(v1.get_angle(v2))
+    x = 11
+    y = 8
+
+    move = 2
+
+    print(x < target_x + move and x > target_x - move)
