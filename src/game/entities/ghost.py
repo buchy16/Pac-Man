@@ -155,7 +155,7 @@ class Ghost(Entity):
             self.target = self.strategy.get_target(self)
             path = self.find_path((self.i, self.j), self.target)
 
-            # Only if start≠finish (there is a cell between start and finish)
+            # Only if start ≠ finish (there is a cell between start and finish)
             if len(path) > 1:
                 next_i, next_j = path[1]
 
