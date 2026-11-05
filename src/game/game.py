@@ -5,10 +5,11 @@ from . import PacgumManager
 from ..data.parse_config import GameConfig
 from .entities import GhostManager
 from .cheats.cheat import Cheat
+from .hud import Hud
 from ..menu.pause_menu import PausMenu
 from ..state import State
 from ..utils.utils import display_nums
-from ..utils.sprites import MENU, HUD, BACKGROUNDS
+from ..utils.sprites import MENU, BACKGROUNDS
 
 
 PTS_LENGHT = 34
@@ -34,6 +35,8 @@ class Game(State):
         self.last_second = mlx.timer
 
         self.player = Player(self.maze)
+
+        self.hud = Hud(self.player, self.config.level[self.level].id)
 
         self.pacgums = PacgumManager(self.player, self.maze,
                                      config.points_per_pacgum,
@@ -71,20 +74,16 @@ class Game(State):
             size=(self.config.level[self.level].width,
                   self.config.level[self.level].height),
             seed=self.config.seed)
-        self.ghosts._reset_all_ghosts()
-        # ^
-        # |
-        # |
-        # Peut pas faire ça car le i_start et j_start  des phantomes
-        # correspondent à l'ancien labyrithe après le changement de celui-ci
-        # self.ghosts = GhostManager(self.player, self.maze)  # <- temporaire
 
+        self.ghosts._reset_all_ghosts()
         self.player.reset()
 
         self.pacgums = PacgumManager(self.player, self.maze,
                                      self.config.points_per_pacgum,
                                      self.config.points_per_super_pacgum)
         self.cheat_mod.set_new_pacgums(self.pacgums)
+
+        self.hud.set_level(self.config.level[self.level].id)
 
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
@@ -114,6 +113,7 @@ class Game(State):
             self.pacgums.update()
             self.ghosts.update()
             self.cheat_mod.update()
+            self.hud.update()
 
             if (self.pacgums.all_gums_eaten() is True):
                 self.next_level()
@@ -163,56 +163,6 @@ class Game(State):
             0
         )
 
-    def draw_pacman_lives(self, x: float, y: float) -> None:
-        if (self.player.life <= 0):
-            return
-        LIVE_W = 20
-        LIVE_H = 22
-
-        for k in range(0, self.player.life):
-            x_offset = (LIVE_W + 5) * k
-
-            mlx.get_tools().mlx_put_image_to_window(
-                mlx.mlx_ptr,
-                mlx.windows["main"],
-                HUD["Lives"],
-                int(x - (LIVE_W / 2) + x_offset),
-                int(y - (LIVE_H / 2))
-            )
-
-    def draw_HUD(self) -> None:
-        pts_offset = display_nums(10, 10, "main", str(self.player.score))
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            MENU["PTS"],
-            pts_offset,
-            0
-        )
-
-        # 39 = pts_y + 10 + pcaman lives icon height
-        self.draw_pacman_lives(10, 39)
-
-        # 55 = pcaman lives icon y + pcaman lives icon height / 2 + 5
-        mlx.get_tools().mlx_string_put(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            0,
-            55,
-            0x7FCB36,
-            f"Level {self.config.level[self.level].id}"
-        )
-        # 78 = I tried my best :c
-        # draw timer
-        mlx.get_tools().mlx_string_put(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            0,
-            78,
-            0x0000FF,
-            f"time left: {int(self.timer)}"
-        )
-
     def draw(self) -> None:
         if (self.game_ended is True):
             self.draw_game_over()
@@ -223,13 +173,9 @@ class Game(State):
             self.pacgums.draw()
             self.player.draw()
             self.ghosts.draw()
-            self.draw_HUD()
+            self.hud.draw(self.timer)
 
             self.cheat_mod.draw()
 
             if (self.pause_menu.pause is True):
                 self.pause_menu.draw_paus_menu()
-
-# -----------------------------------------------------------------------------
-# -------------------------------     DEBUG   ---------------------------------
-# -----------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 from enum import Enum
 import random
+import logging
 from ..Mlx import mlx
 from .sprites import DIGITS
 
@@ -28,6 +29,8 @@ SPECIAL_CHAR = {
     "KP_Delete": "."
 }
 
+DIGIT_IMG_SIZE = 14
+
 
 class Color(Enum):
     GREEN = "\033[32m"
@@ -51,17 +54,44 @@ def print_config(config: "GameConfig") -> None:
         print(f"{attribute.capitalize()}: {value}")
 
 
+def build_digit_img(nums: str) -> None:
+    nb_tiles_width = len(nums)
+
+    total_w = nb_tiles_width * DIGIT_IMG_SIZE
+    total_h = DIGIT_IMG_SIZE
+    img = mlx.get_tools().mlx_new_image(mlx.mlx_ptr, total_w, total_h)
+    bg_addr, bg_bpp, bg_line, _ = mlx.get_tools().mlx_get_data_addr(img)
+    bytes_per_px = bg_bpp // 8
+    x, y = 0, 0
+    for i in range(nb_tiles_width):
+        tile_img = DIGITS[nums[i]]
+        tile_addr, _, tile_line, _ = (mlx.get_tools().
+                                      mlx_get_data_addr(tile_img))
+        row_bytes = DIGIT_IMG_SIZE * bytes_per_px
+        for line in range(DIGIT_IMG_SIZE):
+            src_start = line * tile_line
+            src = tile_addr[src_start:src_start + row_bytes]
+            dst_start = (y + line) * bg_line + x * bytes_per_px
+            bg_addr[dst_start:dst_start + row_bytes] = src
+        x += DIGIT_IMG_SIZE
+
+    return (img)
+
+
 def display_nums(x: int, y: int, window: str, nums: str) -> int:
-    for digit in nums:
+    try:
+        img = build_digit_img(nums)
         mlx.get_tools().mlx_put_image_to_window(
             mlx.mlx_ptr,
             mlx.windows[window],
-            DIGITS[digit],
+            img,
             x - 7,
             y - 7
-        )
-        x += 14
-    return (x)
+            )
+    except (KeyError):
+        logging.warning("ERROR WHILE DISPLAYING DIGITS")
+    finally:
+        return (x + (len(nums) * DIGIT_IMG_SIZE))
 
 
 def manhattan_dist(a: tuple[int, int], b: tuple[int, int]) -> int:
