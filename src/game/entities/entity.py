@@ -48,8 +48,9 @@ class Entity(ABC):
         self.j_start: int
 
         self.destination: tuple[int, int]
+        self.start_pos: tuple[int, int]
+        self.time_start: float | None = None
         self.slide_state = Slide_State.NONE
-        self.slide_last_s = mlx.timer
 
         self.speed = 1.0
 
@@ -70,31 +71,29 @@ class Entity(ABC):
         pass
 
     def slide(self, prefix: str) -> None:
-        if (mlx.timer - self.slide_last_s >= TICK_DELAY):
-            next_i, next_j = self.destination
-            next_x, next_y = self.maze.smaze[next_i][next_j]["coor"]
+        dest_x, dest_y = self.maze.smaze[self.destination[0]][self.destination[1]]['coor']
+        pp = min((mlx.timer - self.time_start) / self.speed, 1.0)
 
-            vector = Vector(next_x - self.x, next_y - self.y)
-            step = (TICK_DELAY * 48) / 1
-            vector = vector.unit_vector() * step
+        self.x = round(self.start_pos[0] + ((dest_x - self.start_pos[0]) * pp))
+        self.y = round(self.start_pos[1] + ((dest_y - self.start_pos[1]) * pp))
 
-            x, y = vector.apply((self.x, self.y))
-            x, y = int(x), int(y)
-            # if ((x < next_x + step and x > next_x - step) and
-            #    (y < next_y + step and y > next_y - step)):
-            if (abs(x - next_x) < step and abs(y - next_y) < step):
-                print(f"Correction needed player will be at ({x}, {y})", end="")
-                x, y = next_x, next_y
-            self.x, self.y = x, y
+        if (pp >= 1.0):
+            self.x = dest_x
+            self.y = dest_y
+            self.i, self.j = self.destination
+            self.slide_state = Slide_State.NONE
+            self.time_start = mlx.timer
 
-            print(f"{prefix} actual = ({self.x}, {self.y}), target = ({next_x}, {next_y})")
-            self.slide_last_s = mlx.timer
-
-            # Check if the entity reached its destination
-            if (next_x == self.x and next_y == self.y):
-                self.i, self.j = next_i, next_j
-                self.slide_state = Slide_State.NONE
+        # print(f"{prefix}: current = ({self.x}, {self.y}), target = ({dest_x}, {dest_y}), p = {pp}")
 
     def set_destination(self, i: int, j: int) -> None:
         self.destination = (i, j)
+        self.start_pos = (self.x, self.y)
         self.slide_state = Slide_State.SLIDING
+
+        if (self.time_start is None):
+            self.time_start = mlx.timer
+
+    def reset_sliding(self) -> None:
+        self.slide_state = Slide_State.NONE
+        self.time_start = None

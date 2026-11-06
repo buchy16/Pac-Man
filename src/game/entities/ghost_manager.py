@@ -1,5 +1,4 @@
 from . import Player, Ghost, GhostState
-from .entity import Slide_State
 from .ghost_characters import Blinky, Clyde, Inky, Pinky
 from ..maze import Maze
 from ...utils.directions import Direction
@@ -81,7 +80,7 @@ class GhostManager:
 
         for name, ghost in self.ghosts.items():
             ghost.reset(self.corners, name)
-            ghost.slide_state = Slide_State.NONE
+            ghost.reset_sliding()
 
         # All ghosts are CHASER again: if Pac-Man still has his super-pacgum
         # power, update() must see it as "just started" and frighten them
