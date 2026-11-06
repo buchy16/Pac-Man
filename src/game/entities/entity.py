@@ -73,6 +73,12 @@ class Entity(ABC):
         pass
 
     def slide(self, prefix: str) -> None:
+        """Applique x fois un déplacement de n pixel
+        proportionnellement a un temps donné (speed) ou x est égale à la
+        distance a parcourir
+        Exemple : si j'ai 48 pixel à parcourir et que speed = 1s, alors en 1s
+        je dois avoir parcouru 48 pixel
+        """
         pp: float  # pp for Progress_Percentage
         dest_i, dest_j = self.destination
         dest_x, dest_y = self.maze.smaze[dest_i][dest_j]['coor']
@@ -83,7 +89,9 @@ class Entity(ABC):
         # a parcourir pour la même vitesse, 48px toutes les 1s)
         slide_duration = self.speed * (self.dist / 48)
         if slide_duration > 0:
-            pp = min((mlx.timer - self.time_start) / self.speed, 1.0)
+            # pourcentage du temps actuelle par rapport a la durée donné pour
+            # parcourir la distance
+            pp = min((mlx.timer - self.time_start) / slide_duration, 1.0)
         else:
             pp = 1.0
 
@@ -93,6 +101,7 @@ class Entity(ABC):
         self.x = round(self.start_pos[0] + ((dest_x - self.start_pos[0]) * pp))
         self.y = round(self.start_pos[1] + ((dest_y - self.start_pos[1]) * pp))
 
+        # on a atteint le temps imparti
         if (pp >= 1.0):
             self.x = dest_x
             self.y = dest_y
