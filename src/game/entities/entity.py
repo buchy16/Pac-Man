@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from enum import Enum, auto
 from ..maze import Maze
 from ...utils.directions import Direction
-from ...utils.Vector import Vector
 from ...Mlx import mlx
+from ...utils.utils import manhattan_dist
 
 
 class Slide_State(Enum):
@@ -47,9 +47,11 @@ class Entity(ABC):
         self.i_start: int
         self.j_start: int
 
+        # smooth slide
         self.destination: tuple[int, int]
         self.start_pos: tuple[int, int]
         self.time_start: float | None = None
+        self.dist: int
         self.slide_state = Slide_State.NONE
 
         self.speed = 1.0
@@ -71,25 +73,43 @@ class Entity(ABC):
         pass
 
     def slide(self, prefix: str) -> None:
-        dest_x, dest_y = self.maze.smaze[self.destination[0]][self.destination[1]]['coor']
-        pp = min((mlx.timer - self.time_start) / self.speed, 1.0)
+        pp: float  # pp for Progress_Percentage
+        dest_i, dest_j = self.destination
+        dest_x, dest_y = self.maze.smaze[dest_i][dest_j]['coor']
 
+        # 48 is the size of a cell
+        # if speed = 1s and dist = 48 then slide_duration = 1s
+        # but if dist = 24 then slide_duration = 0.5s (on a 2x moins de pixel
+        # a parcourir pour la même vitesse, 48px toutes les 1s)
+        slide_duration = self.speed * (self.dist / 48)
+        if slide_duration > 0:
+            pp = min((mlx.timer - self.time_start) / self.speed, 1.0)
+        else:
+            pp = 1.0
+
+        # on applique le pp en multipliant la distance entre origine et arrivé
+        # par le pp pour obtenir une portion proportionnelle au temps qu'il
+        # nous reste pour parcourir notre distance
         self.x = round(self.start_pos[0] + ((dest_x - self.start_pos[0]) * pp))
         self.y = round(self.start_pos[1] + ((dest_y - self.start_pos[1]) * pp))
 
         if (pp >= 1.0):
             self.x = dest_x
             self.y = dest_y
-            self.i, self.j = self.destination
+            self.i, self.j = dest_i, dest_j
             self.slide_state = Slide_State.NONE
             self.time_start = mlx.timer
 
         # print(f"{prefix}: current = ({self.x}, {self.y}), target = ({dest_x}, {dest_y}), p = {pp}")
 
-    def set_destination(self, i: int, j: int) -> None:
+    def set_destination(self, i: int, j: int, prefix: str) -> None:
+        # print(f"{prefix} destination initialised !")
         self.destination = (i, j)
         self.start_pos = (self.x, self.y)
         self.slide_state = Slide_State.SLIDING
+
+        dest_x, dest_y = self.maze.smaze[i][j]['coor']
+        self.dist = manhattan_dist((dest_x, dest_y), (self.x, self.y))
 
         if (self.time_start is None):
             self.time_start = mlx.timer

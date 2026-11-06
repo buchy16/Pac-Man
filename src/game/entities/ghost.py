@@ -170,7 +170,10 @@ class Ghost(Entity):
                     self.direction = Direction.EAST
                 elif next_j < self.j:
                     self.direction = Direction.WEST
-                self.set_destination(next_i, next_j)
+                self.set_destination(next_i, next_j, self.prefix)
+            else:
+                self.reset_sliding()
+
         if (self.slide_state == Slide_State.SLIDING):
             self.slide(self.prefix)
 
