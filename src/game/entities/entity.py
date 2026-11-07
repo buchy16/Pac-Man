@@ -21,6 +21,7 @@ class Entity(ABC):
     and the common attributes shared by Pacman and ghosts.
     """
     ENTITY_SIZE: int = 26
+    ENTITY_COLLISION_MARGIN = 4
 
     def __init__(self, maze: Maze) -> None:
         """Initialize an entity (player / ghost) instance.
@@ -50,7 +51,7 @@ class Entity(ABC):
         # smooth slide
         self.destination: tuple[int, int]
         self.start_pos: tuple[int, int]
-        self.time_start: float | None = None
+        self.time_start: float
         self.dist: int
         self.slide_state = Slide_State.NONE
 
@@ -107,7 +108,6 @@ class Entity(ABC):
             self.y = dest_y
             self.i, self.j = dest_i, dest_j
             self.slide_state = Slide_State.NONE
-            self.time_start = mlx.timer
 
         # print(f"{prefix}: current = ({self.x}, {self.y}), target = ({dest_x}, {dest_y}), p = {pp}")
 
@@ -120,9 +120,7 @@ class Entity(ABC):
         dest_x, dest_y = self.maze.smaze[i][j]['coor']
         self.dist = manhattan_dist((dest_x, dest_y), (self.x, self.y))
 
-        if (self.time_start is None):
-            self.time_start = mlx.timer
+        self.time_start = mlx.timer
 
     def reset_sliding(self) -> None:
         self.slide_state = Slide_State.NONE
-        self.time_start = None

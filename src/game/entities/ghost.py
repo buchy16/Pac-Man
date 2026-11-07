@@ -123,7 +123,14 @@ class Ghost(Entity):
         Returns:
             True when Pac-Man and the ghost are on the same square on the grid
         """
-        return (self.i == self.player.i and self.j == self.player.j)
+        player_w = self.player.width - self.ENTITY_COLLISION_MARGIN
+        player_h = self.player.height - self.ENTITY_COLLISION_MARGIN
+        ghost_w = self.width - self.ENTITY_COLLISION_MARGIN
+        ghost_h = self.height - self.ENTITY_COLLISION_MARGIN
+
+        bool_x = (self.x + ghost_w / 2 > self.player.x - player_w / 2) and (self.x - ghost_w / 2 < self.player.x + player_w / 2)
+        bool_y = (self.y + ghost_h / 2 > self.player.y - player_h / 2) and (self.y - ghost_h / 2 < self.player.y + player_h / 2)
+        return (bool_x and bool_y)
 
     def die(self) -> None:
         """Changes the state of the dying ghost and starts the timer."""
@@ -155,6 +162,9 @@ class Ghost(Entity):
         if mlx.timer - self.last_s >= self.speed:
             self.last_s = mlx.timer
 
+        if (self.slide_state == Slide_State.SLIDING):
+            self.slide(self.prefix)
+
         if (self.slide_state == Slide_State.NONE):
             # Targeting depends on ghost's strategy
             self.target = self.strategy.get_target(self)
@@ -173,9 +183,6 @@ class Ghost(Entity):
                 self.set_destination(next_i, next_j, self.prefix)
             else:
                 self.reset_sliding()
-
-        if (self.slide_state == Slide_State.SLIDING):
-            self.slide(self.prefix)
 
     def draw(self) -> None:
         """

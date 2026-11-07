@@ -4,6 +4,7 @@ from ... import J_WALK_SPRIT
 from ... import mlx
 from math import ceil
 from ...utils.directions import Direction
+from .entity import Slide_State
 
 
 # i = height (y)
@@ -25,6 +26,7 @@ class Player(Entity):
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.destination = (self.i, self.j)
         self.direction: Direction = Direction.NONE
+        self.draw_direction = self.direction
 
         self.speed = 1.0
 
@@ -33,8 +35,7 @@ class Player(Entity):
             "main"
         )
 
-        self.last_s = mlx.timer
-        self.last_s_sp = mlx.timer  # last second for super pacgum
+        self.last_s = mlx.timer  # last second for super pacgum
         self.timer = Player.SUPER_P_TIMER
 
     def _update_direction(self, keynum: int) -> None:
@@ -56,6 +57,8 @@ class Player(Entity):
         self.j = ceil(self.maze._width / 2) - 1
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.direction: Direction = Direction.NONE
+        self.draw_direction = self.destination
+        self.slide_state = Slide_State.NONE
 
         self.super_pacgum = False
         self.timer = self.SUPER_P_TIMER
@@ -76,28 +79,33 @@ class Player(Entity):
     def move(self) -> None:
         time = mlx.timer
 
-        if (time - self.last_s_sp >= 1.0):
+        if (time - self.last_s >= 1.0):
             self.super_pacgam()
-            self.last_s_sp = time
+            self.last_s = time
 
-        if (time - self.last_s >= self.speed):
+        if (self.slide_state == Slide_State.SLIDING):
+            self.slide("pacman")
+
+        if (self.slide_state == Slide_State.NONE):
+            next_i, next_j = self.i, self.j
             if (self.direction == Direction.SOUTH and
                     self.maze.smaze[self.i][self.j]["code"] & 0b0100 == 0):
-                self.i = (self.i + 1) % self.maze._height
+                next_i = (self.i + 1) % self.maze._height
 
             elif (self.direction == Direction.NORTH and
                     self.maze.smaze[self.i][self.j]["code"] & 0b0001 == 0):
-                self.i = (self.i - 1) % self.maze._height
+                next_i = (self.i - 1) % self.maze._height
 
             elif (self.direction == Direction.WEST and
                     self.maze.smaze[self.i][self.j]["code"] & 0b1000 == 0):
-                self.j = (self.j - 1) % self.maze._width
+                next_j = (self.j - 1) % self.maze._width
 
             elif (self.direction == Direction.EAST and
                     self.maze.smaze[self.i][self.j]["code"] & 0b0010 == 0):
-                self.j = (self.j + 1) % self.maze._width
-            self.last_s = time
-        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
+                next_j = (self.j + 1) % self.maze._width
+
+            self.draw_direction = self.direction
+            self.set_destination(next_i, next_j, "pacman")
 
     def draw_Est(self) -> None:
         if (mlx.timer % 0.80 < 0.20):
@@ -236,13 +244,11 @@ class Player(Entity):
             )
 
     def draw(self) -> None:
-        x, y = self.maze.smaze[self.i][self.j]["coor"]
-
-        if (self.direction == Direction.WEST):
+        if (self.draw_direction == Direction.WEST):
             self.draw_West()
-        elif (self.direction == Direction.NORTH):
+        elif (self.draw_direction == Direction.NORTH):
             self.draw_North()
-        elif (self.direction == Direction.SOUTH):
+        elif (self.draw_direction == Direction.SOUTH):
             self.draw_South()
         else:
             self.draw_Est()
