@@ -17,7 +17,7 @@ PTS_LENGHT = 34
 
 class Game(State):
     def __init__(self, config: GameConfig) -> None:
-        self.level = 0
+        self.level = 9
         self.last_level = len(config.level) - 1
 
         mlx.new_window(1280, 720, "main")

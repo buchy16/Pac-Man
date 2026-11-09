@@ -2,7 +2,7 @@ from typing import Callable
 from ..Mlx import mlx
 from ..utils.sprites import MENU
 from ..data.parse_config import GameConfig
-from ..utils.utils import display_nums
+from ..utils.utils import display_nums, display_string
 from ..state import State
 
 # Srceen middle x coordinate
@@ -251,14 +251,16 @@ class MainMenu(State):
         Returns:
             None.
         """
-        mlx.get_tools().mlx_string_put(
-            mlx.mlx_ptr,
-            mlx.windows["MENU"],
-            220,
-            S_MIDDLE_X,
-            0x0000FF,
-            "Score will be dispalyed here"
-        )
+        # mlx.get_tools().mlx_string_put(
+        #     mlx.mlx_ptr,
+        #     mlx.windows["MENU"],
+        #     220,
+        #     S_MIDDLE_X,
+        #     0x0000FF,
+        #     "Score will be dispalyed here"
+        # )
+        display_string(220, S_MIDDLE_X, "MENU", "Hello world")
+
         # Draw a bigger version of the button if the mouse is on the surface
         # area of the button Exit
         if ((self.x >= S_MIDDLE_X - HALF_WIDTH and self.x <=
