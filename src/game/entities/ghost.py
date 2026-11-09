@@ -121,15 +121,18 @@ class Ghost(Entity):
     def hit_player(self) -> bool:
         """
         Returns:
-            True when Pac-Man and the ghost are on the same square on the grid
+            True when Pac-Man's sprite and the ghost's sprite are
+            on the same square on the grid
         """
         player_w = self.player.width - self.ENTITY_COLLISION_MARGIN
         player_h = self.player.height - self.ENTITY_COLLISION_MARGIN
         ghost_w = self.width - self.ENTITY_COLLISION_MARGIN
         ghost_h = self.height - self.ENTITY_COLLISION_MARGIN
 
-        bool_x = (self.x + ghost_w / 2 > self.player.x - player_w / 2) and (self.x - ghost_w / 2 < self.player.x + player_w / 2)
-        bool_y = (self.y + ghost_h / 2 > self.player.y - player_h / 2) and (self.y - ghost_h / 2 < self.player.y + player_h / 2)
+        bool_x = ((self.x + ghost_w / 2 > self.player.x - player_w / 2) and
+                  (self.x - ghost_w / 2 < self.player.x + player_w / 2))
+        bool_y = ((self.y + ghost_h / 2 > self.player.y - player_h / 2) and
+                  (self.y - ghost_h / 2 < self.player.y + player_h / 2))
         return (bool_x and bool_y)
 
     def die(self) -> None:
@@ -163,7 +166,7 @@ class Ghost(Entity):
             self.last_s = mlx.timer
 
         if (self.slide_state == Slide_State.SLIDING):
-            self.slide(self.prefix)
+            self.slide()
 
         if (self.slide_state == Slide_State.NONE):
             # Targeting depends on ghost's strategy
@@ -180,7 +183,7 @@ class Ghost(Entity):
                     self.direction = Direction.EAST
                 elif next_j < self.j:
                     self.direction = Direction.WEST
-                self.set_destination(next_i, next_j, self.prefix)
+                self.set_destination(next_i, next_j)
             else:
                 self.reset_sliding()
 

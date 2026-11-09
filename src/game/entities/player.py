@@ -84,7 +84,7 @@ class Player(Entity):
             self.last_s = time
 
         if (self.slide_state == Slide_State.SLIDING):
-            self.slide("pacman")
+            self.slide()
 
         if (self.slide_state == Slide_State.NONE):
             next_i, next_j = self.i, self.j
@@ -105,7 +105,7 @@ class Player(Entity):
                 next_j = (self.j + 1) % self.maze._width
 
             self.draw_direction = self.direction
-            self.set_destination(next_i, next_j, "pacman")
+            self.set_destination(next_i, next_j)
 
     def draw_Est(self) -> None:
         if (mlx.timer % 0.80 < 0.20):

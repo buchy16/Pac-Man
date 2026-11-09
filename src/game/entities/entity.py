@@ -73,7 +73,7 @@ class Entity(ABC):
         """
         pass
 
-    def slide(self, prefix: str) -> None:
+    def slide(self) -> None:
         """Applique x fois un déplacement de n pixel
         proportionnellement a un temps donné (speed) ou x est égale à la
         distance a parcourir
@@ -109,10 +109,13 @@ class Entity(ABC):
             self.i, self.j = dest_i, dest_j
             self.slide_state = Slide_State.NONE
 
-        # print(f"{prefix}: current = ({self.x}, {self.y}), target = ({dest_x}, {dest_y}), p = {pp}")
+    def set_destination(self, i: int, j: int) -> None:
+        """Set all parameters for a sliding effect to cell i, j
 
-    def set_destination(self, i: int, j: int, prefix: str) -> None:
-        # print(f"{prefix} destination initialised !")
+        Args:
+            i (int): row
+            j (int): column
+        """
         self.destination = (i, j)
         self.start_pos = (self.x, self.y)
         self.slide_state = Slide_State.SLIDING
@@ -123,4 +126,6 @@ class Entity(ABC):
         self.time_start = mlx.timer
 
     def reset_sliding(self) -> None:
+        """Reset slide effect
+        """
         self.slide_state = Slide_State.NONE
