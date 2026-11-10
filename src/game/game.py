@@ -3,8 +3,10 @@ from . import Maze
 from . import Player
 from . import PacgumManager
 from ..data.parse_config import GameConfig
+from ..data.scores import HighScoreStorage
 from .entities import GhostManager
 from .cheats.cheat import Cheat
+from .end_screen import EndScreen
 from .hud import Hud
 from ..menu.pause_menu import PausMenu
 from ..state import State
@@ -16,7 +18,8 @@ PTS_LENGHT = 34
 
 
 class Game(State):
-    def __init__(self, config: GameConfig) -> None:
+    def __init__(self, config: GameConfig,
+                 hight_score: HighScoreStorage) -> None:
         self.level = 9
         self.last_level = len(config.level) - 1
 
@@ -25,13 +28,13 @@ class Game(State):
         self.middle_Y = int(720 / 2)
 
         self.config = config
+        self.hight_score = hight_score
         self.maze = Maze(
             size=(config.level[0].width, config.level[0].height),
             seed=config.seed
             )
 
         self.timer = float(config.level_max_time)
-        self.timer_game_ended = 3.0
         self.last_second = mlx.timer
 
         self.player = Player(self.maze)
@@ -48,6 +51,8 @@ class Game(State):
 
         self.game_ended = False
 
+        self.end_screen = EndScreen(self.hight_score, self.player)
+
         self.pause_menu = PausMenu()
         mlx.add_key_hook_function(self.open_pause_menu, "main")
         mlx.add_key_hook_function(self.enable_disable_cheat, "main")
@@ -63,7 +68,7 @@ class Game(State):
     def unload(self) -> State:
         from ..menu.main_menu import MainMenu
         mlx.close_window("main")
-        return (MainMenu(self.config))
+        return (MainMenu(self.config, self.hight_score))
 
     def next_level(self) -> None:
         self.level += 1
@@ -100,14 +105,11 @@ class Game(State):
         # if the timer as finished or pacman is dead or all level are passed,
         # we wait 3s befor sending 1 to return to the main menu
         if (self.is_game_ended() or self.level > self.last_level):
-            # update game ended timer (3s)
-            if (mlx.timer - self.last_second >= 1.0):
-                self.timer_game_ended -= 1
-                self.last_second = mlx.timer
-
-            if (self.timer_game_ended <= 0):
-                return (1)
-            return (0)
+            if (self.end_screen.enable is False):
+                self.end_screen.enable_disable()
+                if (self.cheat_mod.enable is True):
+                    self.cheat_mod.enable_disable()
+            return (self.end_screen.update())
 
         if (self.pause_menu.pause is False):
             self.player.move()
@@ -141,8 +143,8 @@ class Game(State):
             0
         )
         score_lenght = len(str(self.player.score)) * 14 + PTS_LENGHT
-        pts_offset = display_nums(
-            640 - int((score_lenght / 2)) + 7,
+        pts_offset = display_nums.display(
+            640 - int((score_lenght / 2)),
             360,
             "main",
             str(self.player.score)
@@ -166,9 +168,9 @@ class Game(State):
 
     def draw(self) -> None:
         if (self.game_ended is True):
-            self.draw_game_over()
+            self.end_screen.draw(BACKGROUNDS["Game over"])
         elif (self.level > self.last_level):
-            self.draw_win()
+            self.end_screen.draw(BACKGROUNDS["You won"])
         else:
             self.maze.draw_maze()
             self.pacgums.draw()

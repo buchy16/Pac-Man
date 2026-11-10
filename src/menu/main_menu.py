@@ -2,6 +2,7 @@ from typing import Callable
 from ..Mlx import mlx
 from ..utils.sprites import MENU
 from ..data.parse_config import GameConfig
+from ..data.scores import HighScoreStorage
 from ..utils.utils import display_nums, display_string
 from ..state import State
 
@@ -29,7 +30,7 @@ class MainMenu(State):
         y: Current mouse y coordinate in the menu window.
     """
 
-    def __init__(self, config: GameConfig) -> None:
+    def __init__(self, config: GameConfig, scores: HighScoreStorage) -> None:
         """Initialize the main menu window and input handlers.
 
         Args:
@@ -39,6 +40,8 @@ class MainMenu(State):
             None.
         """
         self.config = config
+        self.scores_cls = scores
+        self.scores = scores.get_top_scores()
 
         mlx.new_window(720, 720, "MENU")
         self.to_draw: Callable = self.draw_MENU
@@ -251,15 +254,29 @@ class MainMenu(State):
         Returns:
             None.
         """
-        # mlx.get_tools().mlx_string_put(
-        #     mlx.mlx_ptr,
-        #     mlx.windows["MENU"],
-        #     220,
-        #     S_MIDDLE_X,
-        #     0x0000FF,
-        #     "Score will be dispalyed here"
-        # )
-        display_string(220, S_MIDDLE_X, "MENU", "Hello world")
+        y = int(360 - (420 / 2))
+        MAX_USERNAME_LENGHT = 14 * 10
+        PTS_LENGHT = 34
+
+        for hight_score in self.scores:
+            if (hight_score.score > 999999999999999999999999):
+                score = 999999999999999999999999
+            else:
+                score = hight_score.score
+            display_string.display(80, y, "MENU", hight_score.username)
+            display_nums.display(
+                80 + MAX_USERNAME_LENGHT + 48,
+                y,
+                "MENU",
+                str(score))
+            mlx.get_tools().mlx_put_image_to_window(
+                mlx.mlx_ptr,
+                mlx.windows["MENU"],
+                MENU["PTS"],
+                (720 - 80) - PTS_LENGHT,
+                y - 7
+            )
+            y += 42
 
         # Draw a bigger version of the button if the mouse is on the surface
         # area of the button Exit
@@ -297,20 +314,20 @@ class MainMenu(State):
             0
         )
         # Display point per pacgum followed by PTS
-        x_pts = display_nums(110 + 242, 391, "MENU",
-                             str(self.config.points_per_pacgum))
+        x_pts = display_nums.display(110 + 242, 391, "MENU",
+                                     str(self.config.points_per_pacgum))
         mlx.get_tools().mlx_put_image_to_window(mlx.mlx_ptr,
                                                 mlx.windows["MENU"],
                                                 MENU["PTS"],
-                                                x_pts, 391 - 7)
+                                                x_pts + 7, 391 - 7)
 
         # Display point per pacgum followed by PTS
-        x_pts = display_nums(110 + 242, 428, "MENU",
-                             str(self.config.points_per_super_pacgum))
+        x_pts = display_nums.display(110 + 242, 428, "MENU",
+                                     str(self.config.points_per_super_pacgum))
         mlx.get_tools().mlx_put_image_to_window(mlx.mlx_ptr,
                                                 mlx.windows["MENU"],
                                                 MENU["PTS"],
-                                                x_pts, 428 - 7)
+                                                x_pts + 7, 428 - 7)
 
         # Draw a bigger version of the button if the mouse is on the surface
         # area of the button Exit
@@ -350,4 +367,4 @@ class MainMenu(State):
     def unload(self) -> State:
         from ..game import Game
         mlx.close_window("MENU")
-        return (Game(self.config))
+        return (Game(self.config, self.scores_cls))
