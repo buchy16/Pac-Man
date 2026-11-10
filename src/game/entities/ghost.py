@@ -1,7 +1,7 @@
 import heapq
 import math
 from enum import Enum, auto
-from .entity import Entity, Direction
+from .entity import Entity, Direction, Slide_State
 from .player import Player
 from .targets import TargetStrategy
 from ..maze import Maze
@@ -71,6 +71,8 @@ class Ghost(Entity):
         self.i, self.j = corner_start
         self.direction = self.direction_start
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
+        self.destination = (self.i, self.j)
+
         self.target: tuple[int, int] = corner_start
         self.state = GhostState.CHASER
         self.is_frozen: bool = False
@@ -119,9 +121,19 @@ class Ghost(Entity):
     def hit_player(self) -> bool:
         """
         Returns:
-            True when Pac-Man and the ghost are on the same square on the grid
+            True when Pac-Man's sprite and the ghost's sprite are
+            on the same square on the grid
         """
-        return (self.i == self.player.i and self.j == self.player.j)
+        player_w = self.player.width - self.ENTITY_COLLISION_MARGIN
+        player_h = self.player.height - self.ENTITY_COLLISION_MARGIN
+        ghost_w = self.width - self.ENTITY_COLLISION_MARGIN
+        ghost_h = self.height - self.ENTITY_COLLISION_MARGIN
+
+        bool_x = ((self.x + ghost_w / 2 > self.player.x - player_w / 2) and
+                  (self.x - ghost_w / 2 < self.player.x + player_w / 2))
+        bool_y = ((self.y + ghost_h / 2 > self.player.y - player_h / 2) and
+                  (self.y - ghost_h / 2 < self.player.y + player_h / 2))
+        return (bool_x and bool_y)
 
     def die(self) -> None:
         """Changes the state of the dying ghost and starts the timer."""
@@ -138,9 +150,6 @@ class Ghost(Entity):
         if not frozen call find_path(), in order to move to the next square
         when self.speed has elapsed since the last move
         """
-        # frozen ghost can't move
-        if (self.is_frozen):
-            return
 
         # dead ghost can rise from its ashes
         if (self.state == GhostState.DEAD
@@ -149,15 +158,23 @@ class Ghost(Entity):
             self.speed = self.normal_speed
             self.state = GhostState.CHASER
 
+        # frozen ghost can't move
+        if (self.is_frozen):
+            return
+
         if mlx.timer - self.last_s >= self.speed:
+            self.last_s = mlx.timer
+
+        if (self.slide_state == Slide_State.SLIDING):
+            self.slide()
+
+        if (self.slide_state == Slide_State.NONE):
             # Targeting depends on ghost's strategy
             self.target = self.strategy.get_target(self)
             path = self.find_path((self.i, self.j), self.target)
-
-            # Only if start≠finish (there is a cell between start and finish)
+            # Only if start ≠ finish (there is a cell between start and finish)
             if len(path) > 1:
                 next_i, next_j = path[1]
-
                 if next_i > self.i:
                     self.direction = Direction.SOUTH
                 elif next_i < self.i:
@@ -166,12 +183,9 @@ class Ghost(Entity):
                     self.direction = Direction.EAST
                 elif next_j < self.j:
                     self.direction = Direction.WEST
-
-                self.i, self.j = next_i, next_j
-
-            self.last_s = mlx.timer
-
-        self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
+                self.set_destination(next_i, next_j)
+            else:
+                self.reset_sliding()
 
     def draw(self) -> None:
         """
