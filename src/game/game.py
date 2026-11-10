@@ -70,6 +70,7 @@ class Game(State):
         if (self.level > self.last_level):
             return
 
+        self.timer = float(self.config.level_max_time)
         self.maze.regenerate_maze(
             size=(self.config.level[self.level].width,
                   self.config.level[self.level].height),

@@ -80,6 +80,7 @@ class GhostManager:
 
         for name, ghost in self.ghosts.items():
             ghost.reset(self.corners, name)
+            ghost.reset_sliding()
 
         # All ghosts are CHASER again: if Pac-Man still has his super-pacgum
         # power, update() must see it as "just started" and frighten them
