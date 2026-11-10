@@ -3,7 +3,7 @@ import math
 from enum import Enum, auto
 from .entity import Entity, Direction
 from .player import Player
-from .targets import TargetStrategy
+from .targets import TargetStrategy, CornerTarget
 from ..maze import Maze
 from ... import mlx
 from ...utils.utils import manhattan_dist
@@ -79,6 +79,7 @@ class Ghost(Entity):
 
         self.chase_strategy: TargetStrategy = chase_strategy
         self.flee_strategy: TargetStrategy = flee_strategy
+        self.home_strategy: TargetStrategy = CornerTarget()
         self.strategy: TargetStrategy = self.chase_strategy
 
 # ===========================================================================
@@ -126,6 +127,7 @@ class Ghost(Entity):
     def die(self) -> None:
         """Changes the state of the dying ghost and starts the timer."""
         self.state = GhostState.DEAD
+        self.strategy = self.home_strategy
         self.speed = self.ROCKET_SPEED
         self.last_death = mlx.timer
 
