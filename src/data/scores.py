@@ -274,9 +274,9 @@ if __name__ == "__main__":
     try:
         my_backup.add_score(prompt_username(), 4321)
     except (OSError, ValueError) as err:
-            print(f"Highscore not saved:", err)
+        print("Highscore not saved:", err)
 
     try:
         display_best_scores(my_backup.get_top_scores())
     except (OSError, ValueError) as err:
-            print(f"Highscores can not be displayed:", err)
+        print("Highscores can not be displayed:", err)
