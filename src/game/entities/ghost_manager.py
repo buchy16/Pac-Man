@@ -80,6 +80,7 @@ class GhostManager:
 
         for name, ghost in self.ghosts.items():
             ghost.reset(self.corners, name)
+            ghost.reset_sliding()
 
         # All ghosts are CHASER again: if Pac-Man still has his super-pacgum
         # power, update() must see it as "just started" and frighten them
@@ -134,11 +135,10 @@ class GhostManager:
         """Handles Pac-Man's death for the ghosts"""
         print(f"DEBUG\t{killer_name} a tué Pacman !")
 
-        self.player.life -= 1
+        self.player.player_hit()
 
         if self.player.life > 0:
             self._reset_all_ghosts()
-            self.player.reset()
 
         else:
             # ToDo: gestion de la fin de partie par le menu

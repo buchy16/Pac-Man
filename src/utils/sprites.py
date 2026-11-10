@@ -130,6 +130,8 @@ DIGITS = {
          mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/8.png")[0]),
    "9": (mlx.get_tools().
          mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/9.png")[0]),
+   "-": (mlx.get_tools().
+         mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/-.png")[0])
 }
 
 PACGUMS = {
@@ -195,5 +197,9 @@ HUD = {
     "Lives": (mlx.get_tools().mlx_png_file_to_image(
         mlx.mlx_ptr,
         "assets/HUD/Lives.png"
-    )[0])
+    )[0]),
+    "exp": mlx.get_tools().mlx_png_file_to_image(
+        mlx.mlx_ptr,
+        "assets/HUD/exp(lives).png"
+    )[0]
 }
