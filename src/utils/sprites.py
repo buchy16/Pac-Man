@@ -208,3 +208,22 @@ HUD = {
         "assets/HUD/exp(lives).png"
     )[0]
 }
+
+
+def second_impact() -> None:
+    """Destroy all assets to free the memory
+    """
+    dict_assets = [J_WALK_SPRIT, MENU, DIGITS, PACGUMS, BACKGROUNDS, HUD]
+
+    for dict_asset in dict_assets:
+        for asset in dict_asset.values():
+            mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, asset)
+
+    for asset in WALLS.values():
+        mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, asset[0])
+
+    for ghost_asstes in G_WALK_SPRITES.values():
+        for asset in ghost_asstes.values():
+            mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, asset)
+
+    mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, ALPHA)

@@ -73,6 +73,7 @@ class Hud():
             # prevent drawing an absurd amount of life icons
             if (self.player.life > 12):
                 self.player_life = 12
+            self.destroy_img()
             self.set_lives_img(self.player_life, 1)
 
     def draw_pacman_lives(self) -> None:
@@ -140,3 +141,8 @@ class Hud():
             0x0000FF,
             f"time left: {int(timer)}"
         )
+
+    def destroy_img(self) -> None:
+        """Destroy the life image and free memory
+        """
+        mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, self.life_img)

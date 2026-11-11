@@ -144,6 +144,7 @@ class PacgumManager():
     def update_img(self) -> None:
         """Rebuild the pacgum layer image from the current matrix
         """
+        self.destroy_img()
         self.pacgums_img = self.create_img(self.maze._width,
                                            self.maze._height)
 
@@ -196,3 +197,8 @@ class PacgumManager():
                 if (self.pacgums[i][j].was_eaten is False):
                     return (False)
         return (True)
+
+    def destroy_img(self) -> None:
+        """Destroy pacgums image and free memory
+        """
+        mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, self.pacgums_img)

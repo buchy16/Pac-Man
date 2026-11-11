@@ -6,6 +6,7 @@ from .data.parse_config import get_valid_config, GameConfig
 from .data.scores import HighScoreStorage
 from .state import State
 from .utils.utils import display_string, display_nums
+from .utils.sprites import second_impact
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -49,6 +50,7 @@ def main(argv: list) -> None:
 
     display_string.unload_assets()
     display_nums.unload_assets()
+    second_impact()
 
 
 if __name__ == "__main__":

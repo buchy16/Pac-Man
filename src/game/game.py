@@ -20,7 +20,7 @@ PTS_LENGHT = 34
 class Game(State):
     def __init__(self, config: GameConfig,
                  hight_score: HighScoreStorage) -> None:
-        self.level = 9
+        self.level = 0
         self.last_level = len(config.level) - 1
 
         mlx.new_window(1280, 720, "main")
@@ -103,12 +103,18 @@ class Game(State):
 
     def update(self) -> int:
         # if the timer as finished or pacman is dead or all level are passed,
-        # we wait 3s befor sending 1 to return to the main menu
         if (self.is_game_ended() or self.level > self.last_level):
             if (self.end_screen.enable is False):
+                # destroy all bake_background to free memory
+                self.maze.destroy_background()
+                self.pacgums.destroy_img()
+                self.hud.destroy_img()
+
                 self.end_screen.enable_disable()
+
                 if (self.cheat_mod.enable is True):
                     self.cheat_mod.enable_disable()
+
             return (self.end_screen.update())
 
         if (self.pause_menu.pause is False):
