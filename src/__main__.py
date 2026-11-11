@@ -35,7 +35,7 @@ class App():
         self.state.draw()
 
 
-def main(argv: list) -> None:
+def main(argv: list[str]) -> None:
     print("begining tests")
     if len(argv) != 2:
         spelling_fanatic = "argument" if len(argv) == 1 else "arguments"

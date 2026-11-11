@@ -8,7 +8,7 @@ class Hud():
     LIVE_W = 26
     LIVE_H = 22
 
-    def __init__(self, player: Player, level_id: str) -> None:
+    def __init__(self, player: Player, level_id: int) -> None:
         """_summary_
 
         Args:
@@ -22,7 +22,7 @@ class Hud():
 
         self.level_id = level_id
 
-    def set_level(self, level_id: str) -> None:
+    def set_level(self, level_id: int) -> None:
         """Change the level to display
 
         Args:

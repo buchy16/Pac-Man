@@ -111,7 +111,7 @@ class Help(Command):
         super().__init__(cheat)
         self.manual = "help:\nDsiplay all commad manual"
 
-    def execut(self, args: list[str] = []):
+    def execut(self, args: list[str] = []) -> None:
         """Log the manual for all registered cheat commands.
 
         Args:
@@ -255,10 +255,10 @@ class FreezeGhosts(Command):
                 self.cheat.ghosts._set_all_ghosts_freeze(True)
                 return
 
-            target, boolean = args
+            target, boolean_arg = args
             target = target.lower()
-            if (boolean == "true" or boolean == "false"):
-                boolean = boolean == "true"
+            if (boolean_arg == "true" or boolean_arg == "false"):
+                boolean = boolean_arg == "true"
             else:
                 raise ValueError()
 

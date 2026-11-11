@@ -30,3 +30,7 @@ mazegenerator = { path = "modules/mazegenerator-2.1.0-py3-none-any.whl" }
 pythonpath = ["."]
 # afficher le nom de chaque fonction pdt les tests
 addopts = "-v"
+
+[[tool.mypy.overrides]]
+module = ["keysymdef.*", "mlx.*", "commentjson.*", "mazegenerator.*"]
+ignore_missing_imports = true

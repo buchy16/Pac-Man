@@ -20,7 +20,7 @@ BG_HALF_HEIGHT = 360
 
 
 class PausMenu():
-    def __init__(self):
+    def __init__(self) -> None:
         self.x = 0
         self.y = 0
 
@@ -28,7 +28,7 @@ class PausMenu():
 
         self.exiting = 0  # 0 flase, 1 true
 
-    def update_mouse(self):
+    def update_mouse(self) -> None:
         _, x, y = mlx.get_tools().mlx_mouse_get_pos(mlx.windows["main"])
         self.x = x
         self.y = y

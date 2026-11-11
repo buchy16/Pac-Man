@@ -1,5 +1,6 @@
 """Build and display cached text and numeric images."""
 
+import logging
 from abc import ABC, abstractmethod
 from ..Mlx import mlx
 from .sprites import DIGITS, ALPHA
@@ -12,7 +13,7 @@ class Displayer(ABC):
 
     def __init__(self) -> None:
         """Initialize the cache used to store generated images."""
-        self.assests_save = {}
+        self.assests_save: dict[str, int] = {}
 
     @abstractmethod
     def _build_img(self, string: str) -> None:
@@ -24,20 +25,23 @@ class Displayer(ABC):
         if (len(string) <= 0):
             return (0)
 
-        string = string.lower()
+        try:
+            string = string.lower()
 
-        # build the image and add it to the dictionary if it
-        # doesn't already exist
-        if (self.assests_save.get(string) is None):
-            self._build_img(string)
+            # build the image and add it to the dictionary if it
+            # doesn't already exist
+            if (self.assests_save.get(string) is None):
+                self._build_img(string)
 
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows[window],
-            self.assests_save[string],
-            x,
-            y - 7
-            )
+            mlx.get_tools().mlx_put_image_to_window(
+                mlx.mlx_ptr,
+                mlx.windows[window],
+                self.assests_save[string],
+                x,
+                y - 7
+                )
+        except (KeyError):
+            logging.error(f"Can't display {string}")
         return (x + (len(string) * self.DIGIT_ALPHA_SIZE))
 
     def unload_assets(self) -> None:
@@ -84,7 +88,8 @@ class DisplayString(Displayer):
                     bg_addr[dst_start:dst_start + row_bytes] = src
             x += self.DIGIT_ALPHA_SIZE
 
-        self.assests_save[string] = img
+        if (img is not None):
+            self.assests_save[string] = img
 
 
 class DisplayNums(Displayer):
@@ -116,4 +121,5 @@ class DisplayNums(Displayer):
                 bg_addr[dst_start:dst_start + row_bytes] = src
             x += self.DIGIT_ALPHA_SIZE
 
-        self.assests_save[string] = img
+        if (img is not None):
+            self.assests_save[string] = img

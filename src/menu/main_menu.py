@@ -23,7 +23,6 @@ class MainMenu(State):
 
     Attributes:
         config: Game configuration used to render the instruction screen.
-        to_draw: Callable used by the game loop to draw the current menu state.
         menu_state: Current handler for menu interactions.
         game_started: Flag indicating whether the game has been launched.
         x: Current mouse x coordinate in the menu window.
@@ -44,7 +43,6 @@ class MainMenu(State):
         self.scores = scores.get_top_scores()
 
         mlx.new_window(720, 720, "MENU")
-        self.to_draw: Callable = self.draw_MENU
         mlx.add_mouse_hook_function(self._update_menu, "MENU")
 
         self.menu_state = self.MENU
@@ -154,7 +152,7 @@ class MainMenu(State):
            (y >= 700 - HALF_HEIGHT and y <= 700 + HALF_HEIGHT))):
             self.menu_state = self.MENU
 
-    def draw_MENU(self):
+    def draw_MENU(self) -> None:
         """Draw the main menu screen.
 
         Returns:
@@ -248,7 +246,7 @@ class MainMenu(State):
                 700 - HALF_HEIGHT
             )
 
-    def draw_scores_viwer(self):
+    def draw_scores_viwer(self) -> None:
         """Draw the highscores screen.
 
         Returns:

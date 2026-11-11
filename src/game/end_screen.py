@@ -9,7 +9,8 @@ class EndScreen():
     """Manage the score-registration screen displayed at the end of a game."""
 
     def __init__(self, hight_score: HighScoreStorage, player: Player):
-        """Initialize the end screen with score storage and the current player."""
+        """Initialize the end screen with score storage and the
+        current player."""
         self.hight_score = hight_score
         self.player = player
 

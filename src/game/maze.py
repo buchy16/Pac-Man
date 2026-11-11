@@ -57,7 +57,8 @@ class Maze(MazeGenerator):
         for i in range(0, self._height):
             line = []
             for j in range(0, self._width):
-                line.append({"code": self._maze[i][j], "coor": (x, y)})
+                data: MazeContent = {"code": self._maze[i][j], "coor": (x, y)}
+                line.append(data)
                 x += 48
             result.append(line)
             y += 48
@@ -100,7 +101,8 @@ class Maze(MazeGenerator):
         """
         total_w = tiles_width * tile_size
         total_h = tiles_height * tile_size
-        bg_img = mlx.get_tools().mlx_new_image(mlx.mlx_ptr, total_w, total_h)
+        bg_img: int = mlx.get_tools().mlx_new_image(mlx.mlx_ptr,
+                                                    total_w, total_h)
         bg_addr, bg_bpp, bg_line, _ = mlx.get_tools().mlx_get_data_addr(bg_img)
         bytes_per_px = bg_bpp // 8
         x, y = 0, 0
