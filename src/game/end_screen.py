@@ -6,7 +6,10 @@ from .entities.player import Player
 
 
 class EndScreen():
+    """Manage the score-registration screen displayed at the end of a game."""
+
     def __init__(self, hight_score: HighScoreStorage, player: Player):
+        """Initialize the end screen with score storage and the current player."""
         self.hight_score = hight_score
         self.player = player
 
@@ -20,6 +23,7 @@ class EndScreen():
         self.buffer = ""
 
     def enable_disable(self) -> None:
+        """Enable or disable keyboard input handling for the end screen."""
         if (self.enable is False):
             self.enable = True
             mlx.add_key_hook_function(
@@ -34,7 +38,8 @@ class EndScreen():
             )
 
     def listen_keyboard(self, keynum: int) -> None:
-        """Process a key event and update the current command buffer.
+        """Process a key event and update the current name buffer.
+
         Args:
             keynum: Numeric key identifier provided by the graphical library.
         """
@@ -55,8 +60,12 @@ class EndScreen():
                 self.buffer += SPECIAL_CHAR[key]
 
     def register(self) -> None:
+        """Register the current player's score with the entered name."""
         try:
-            self.hight_score.add_score(self.buffer, self.player.score)
+            if (self.player.score < 0):
+                self.hight_score.add_score(self.buffer, 0)
+            else:
+                self.hight_score.add_score(self.buffer, self.player.score)
             self.register_status = 1
         except (ValueError):
             self.error = True
@@ -64,6 +73,12 @@ class EndScreen():
             self.buffer = ""
 
     def update(self) -> int:
+        """Update the error-message timer and return the registration status.
+
+        Returns:
+            The registration status, where zero means that registration is
+            pending and one means that it has completed.
+        """
         if (self.error is True and mlx.timer - self.last_second >= 1.0):
             self.last_second = mlx.timer
             self.timer_error -= 1.0
@@ -74,11 +89,17 @@ class EndScreen():
         return (self.register_status)
 
     def draw(self, background: int) -> None:
+        """Draw the end screen, score, messages, and entered name.
+
+        Args:
+            background: Image identifier for the screen background.
+        """
         PTS_LENGHT = 34
         X_MIDDLE_SCREEN = 640
         Y_MIDDLE_SCREEN = 360
         CHAR_SIZE = 14
 
+        #  display win or lose background
         mlx.get_tools().mlx_put_image_to_window(
             mlx.mlx_ptr,
             mlx.windows["main"],
@@ -86,6 +107,8 @@ class EndScreen():
             0,
             0
         )
+
+        # display player score followed by PTS
         score_lenght = len(str(self.player.score)) * CHAR_SIZE + PTS_LENGHT
         pts_offset = display_nums.display(
             X_MIDDLE_SCREEN - int((score_lenght / 2)),
@@ -108,6 +131,13 @@ class EndScreen():
                 "main",
                 "invalid name"
             )
+        elif (self.player.score < 0):
+            display_string.display(
+                int(X_MIDDLE_SCREEN - (37 * CHAR_SIZE / 2)),
+                720 - 180 - 48,
+                "main",
+                "score invalid. score will be set to 0"
+                )
         else:
             display_string.display(
                 int(X_MIDDLE_SCREEN - (15 * CHAR_SIZE / 2)),
@@ -115,6 +145,7 @@ class EndScreen():
                 "main",
                 "enter your name"
             )
+        # display what the user is typing
         display_string.display(
             int(X_MIDDLE_SCREEN - (len(self.buffer) * CHAR_SIZE / 2)),
             720 - 180,

@@ -44,13 +44,12 @@ class Displayer(ABC):
         """Destroy all images currently stored in the cache."""
         for asset in self.assests_save.values():
             mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, asset)
-            print("Assest deleted")
 
 
 class DisplayString(Displayer):
     """Create images containing alphabetic characters and digits."""
 
-    alpha_char = "abcdefghijklmnopqrstuvwxyz 0123456789"
+    alpha_char = "abcdefghijklmnopqrstuvwxyz 0123456789-."
 
     def __init__(self) -> None:
         """Initialize the string displayer and its image cache."""
