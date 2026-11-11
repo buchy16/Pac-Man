@@ -1,3 +1,4 @@
+import random
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
@@ -45,6 +46,60 @@ class CornerTarget(TargetStrategy):
         Returns : the coordinates (i, j) of the ghost corner
         """
         return ((ghost.i_corner, ghost.j_corner))
+
+
+# ------------------------------------------------------------ strategy: FLEE
+class FleeTarget(TargetStrategy):
+    def get_target(self, ghost: 'Ghost') -> tuple[int, int]:
+        """
+        Returns : the coordinates (i, j) of the next valid cell pour laquelle
+        la dist Manh est max par rapport à la prochaine case de pacman
+        """
+        # for shorter lines...
+        pacman = ghost.player
+        maze = ghost.maze
+
+        # distance de manhattan maximum
+        dist_max = maze._height + maze._width
+
+        # prochaine case (si accessible) de Pacman
+        di, dj = DIR_MOVES.get(pacman.direction, (0, 0))
+        pacman_current = maze.smaze[pacman.i][pacman.j]["code"]
+        if (pacman_current & pacman.direction) == 0:
+            pacman_ahead = (pacman.i + di, pacman.j + dj)
+        else:
+            pacman_ahead = (pacman.i, pacman.j)
+
+
+        # dictionnaire des cellules accessibles pour ghost
+        ghost_current = maze.smaze[ghost.i][ghost.j]["code"]
+        valid_neighbours: dict[tuple[int, int], int] = {}
+        for wall, (di, dj) in DIR_MOVES.items():
+            if (ghost_current & wall) == 0:
+                ghost_next = (ghost.i + di, ghost.j + dj)
+                valid_neighbours[ghost_next] = manhattan_dist(ghost_next, pacman_ahead)
+
+        # no valid_neighbours is NOT possible... despite, belt and braces :
+        if not valid_neighbours:
+            return (ghost.i, ghost.j)
+
+        # Trouver la distance maximale
+        dist_max = max(valid_neighbours.values())
+        best_neighbours = [coord for coord, dist in valid_neighbours.items()
+                           if dist == dist_max]
+
+        # si une distance est supérieure à toutes les autres
+        if len(best_neighbours) == 1:
+            return (best_neighbours[0])
+
+        # distances ex aequo : conserver direction si possible
+        di, dj = DIR_MOVES.get(ghost.direction, (0, 0))
+        ghost_ahead = (ghost.i + di, ghost.j + dj)
+        if ghost_ahead in best_neighbours:
+            return ghost_ahead
+
+        # distances ex aequo & impossible de conserver direction : aléatoire
+        return random.choice(best_neighbours)
 
 
 # --------------------------------------------------- strategy: NEARBY PACMAN
