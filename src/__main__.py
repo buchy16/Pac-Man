@@ -3,7 +3,9 @@ import logging
 from .Mlx import mlx
 from .menu import MainMenu
 from .data.parse_config import get_valid_config, GameConfig
+from .data.scores import HighScoreStorage
 from .state import State
+from .utils.utils import display_string, display_nums
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -13,7 +15,8 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 class App():
     def __init__(self, config: GameConfig) -> None:
         self.config = config
-        self.state: State = MainMenu(self.config)
+        self.scores = HighScoreStorage()
+        self.state: State = MainMenu(self.config, self.scores)
 
 # -----------------------------------------------------------------------------
 # -------------------------------   UPDATE   ----------------------------------
@@ -43,6 +46,9 @@ def main(argv: list) -> None:
     pac_man = App(config)
 
     mlx.run(pac_man.update, pac_man.draw)
+
+    display_string.unload_assets()
+    display_nums.unload_assets()
 
 
 if __name__ == "__main__":

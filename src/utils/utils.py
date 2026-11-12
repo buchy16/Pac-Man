@@ -1,9 +1,7 @@
 from typing import TYPE_CHECKING
 from enum import Enum
 import random
-import logging
-from ..Mlx import mlx
-from .sprites import DIGITS
+from .text_digit_displayer import DisplayString, DisplayNums
 
 # parsing.py importe déjà utils.py, donc pour ne PAS créer d'import circulaire
 # tout en fournissant les types 'GameConfig' et 'Maze' à VSCode et mypy,
@@ -30,6 +28,7 @@ SPECIAL_CHAR = {
 }
 
 DIGIT_IMG_SIZE = 14
+ALPHA_IMG_SIZE = 14
 
 
 class Color(Enum):
@@ -52,46 +51,6 @@ def print_config(config: "GameConfig") -> None:
     """Affiche tous les attributs de la config, un par ligne (debug)."""
     for attribute, value in config.__dict__.items():
         print(f"{attribute.capitalize()}: {value}")
-
-
-def build_digit_img(nums: str) -> None:
-    nb_tiles_width = len(nums)
-
-    total_w = nb_tiles_width * DIGIT_IMG_SIZE
-    total_h = DIGIT_IMG_SIZE
-    img = mlx.get_tools().mlx_new_image(mlx.mlx_ptr, total_w, total_h)
-    bg_addr, bg_bpp, bg_line, _ = mlx.get_tools().mlx_get_data_addr(img)
-    bytes_per_px = bg_bpp // 8
-    x, y = 0, 0
-    for i in range(nb_tiles_width):
-        tile_img = DIGITS[nums[i]]
-        tile_addr, _, tile_line, _ = (mlx.get_tools().
-                                      mlx_get_data_addr(tile_img))
-        row_bytes = DIGIT_IMG_SIZE * bytes_per_px
-        for line in range(DIGIT_IMG_SIZE):
-            src_start = line * tile_line
-            src = tile_addr[src_start:src_start + row_bytes]
-            dst_start = (y + line) * bg_line + x * bytes_per_px
-            bg_addr[dst_start:dst_start + row_bytes] = src
-        x += DIGIT_IMG_SIZE
-
-    return (img)
-
-
-def display_nums(x: int, y: int, window: str, nums: str) -> int:
-    try:
-        img = build_digit_img(nums)
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows[window],
-            img,
-            x - 7,
-            y - 7
-            )
-    except (KeyError):
-        logging.warning("ERROR WHILE DISPLAYING DIGITS")
-    finally:
-        return (x + (len(nums) * DIGIT_IMG_SIZE))
 
 
 def manhattan_dist(a: tuple[int, int], b: tuple[int, int]) -> int:
@@ -121,3 +80,7 @@ def random_open_cell(maze: "Maze") -> tuple[int, int]:
         i, j = random_cell(maze._width, maze._height)
         if not_closed_cell(maze, i, j):
             return (i, j)
+
+
+display_nums = DisplayNums()
+display_string = DisplayString()

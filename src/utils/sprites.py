@@ -134,6 +134,11 @@ DIGITS = {
          mlx_png_file_to_image(mlx.mlx_ptr, "assets/Texts/-.png")[0])
 }
 
+ALPHA = mlx.get_tools().mlx_png_file_to_image(
+    mlx.mlx_ptr,
+    "assets/Texts/Alpha.png"
+)[0]
+
 PACGUMS = {
     "Pacgum": (mlx.get_tools().
                mlx_png_file_to_image(mlx.mlx_ptr,
