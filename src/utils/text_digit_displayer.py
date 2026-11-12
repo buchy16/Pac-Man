@@ -9,7 +9,7 @@ from .sprites import DIGITS, ALPHA
 class Displayer(ABC):
     """Provide shared image-building and display functionality."""
 
-    DIGIT_ALPHA_SIZE = 14
+    CHAR_SIZE = 14
 
     def __init__(self) -> None:
         """Initialize the cache used to store generated images."""
@@ -42,7 +42,7 @@ class Displayer(ABC):
                 )
         except (KeyError):
             logging.error(f"Can't display {string}")
-        return (x + (len(string) * self.DIGIT_ALPHA_SIZE))
+        return (x + (len(string) * self.CHAR_SIZE))
 
     def unload_assets(self) -> None:
         """Destroy all images currently stored in the cache."""
@@ -63,8 +63,8 @@ class DisplayString(Displayer):
         """Build and cache an image from the alphabet sprite atlas."""
         nb_tiles_width = len(string)
 
-        total_w = nb_tiles_width * self.DIGIT_ALPHA_SIZE
-        total_h = self.DIGIT_ALPHA_SIZE
+        total_w = nb_tiles_width * self.CHAR_SIZE
+        total_h = self.CHAR_SIZE
         atals = ALPHA
 
         img = mlx.get_tools().mlx_new_image(mlx.mlx_ptr, total_w, total_h)
@@ -80,13 +80,13 @@ class DisplayString(Displayer):
                 # target the first pixel of the letter
                 letter_pos = (img_y * atlas_line) + (img_x * bytes_per_px)
 
-                row_bytes = self.DIGIT_ALPHA_SIZE * bytes_per_px
-                for line in range(self.DIGIT_ALPHA_SIZE):
+                row_bytes = self.CHAR_SIZE * bytes_per_px
+                for line in range(self.CHAR_SIZE):
                     src_start = letter_pos + (line * atlas_line)
                     src = atlas_addr[src_start:src_start + row_bytes]
                     dst_start = line * bg_line + x * bytes_per_px
                     bg_addr[dst_start:dst_start + row_bytes] = src
-            x += self.DIGIT_ALPHA_SIZE
+            x += self.CHAR_SIZE
 
         if (img is not None):
             self.assests_save[string] = img
@@ -103,8 +103,8 @@ class DisplayNums(Displayer):
         """Build and cache an image from the digit sprites."""
         nb_tiles_width = len(string)
 
-        total_w = nb_tiles_width * self.DIGIT_ALPHA_SIZE
-        total_h = self.DIGIT_ALPHA_SIZE
+        total_w = nb_tiles_width * self.CHAR_SIZE
+        total_h = self.CHAR_SIZE
         img = mlx.get_tools().mlx_new_image(mlx.mlx_ptr, total_w, total_h)
         bg_addr, bg_bpp, bg_line, _ = mlx.get_tools().mlx_get_data_addr(img)
         bytes_per_px = bg_bpp // 8
@@ -113,13 +113,13 @@ class DisplayNums(Displayer):
             tile_img = DIGITS[string[i]]
             tile_addr, _, tile_line, _ = (mlx.get_tools().
                                           mlx_get_data_addr(tile_img))
-            row_bytes = self.DIGIT_ALPHA_SIZE * bytes_per_px
-            for line in range(self.DIGIT_ALPHA_SIZE):
+            row_bytes = self.CHAR_SIZE * bytes_per_px
+            for line in range(self.CHAR_SIZE):
                 src_start = line * tile_line
                 src = tile_addr[src_start:src_start + row_bytes]
                 dst_start = line * bg_line + x * bytes_per_px
                 bg_addr[dst_start:dst_start + row_bytes] = src
-            x += self.DIGIT_ALPHA_SIZE
+            x += self.CHAR_SIZE
 
         if (img is not None):
             self.assests_save[string] = img

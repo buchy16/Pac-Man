@@ -71,8 +71,8 @@ class Hud():
             self.player_life = self.player.life
 
             # prevent drawing an absurd amount of life icons
-            if (self.player.life > 12):
-                self.player_life = 12
+            if (self.player.life > 10):
+                self.player_life = 10
             self.destroy_img()
             self.set_lives_img(self.player_life, 1)
 
@@ -88,12 +88,12 @@ class Hud():
             0,
             int(39 - (self.LIVE_H / 2))
         )
-        if (self.player.life > 12):
+        if (self.player.life > 10):
             mlx.get_tools().mlx_put_image_to_window(
                     mlx.mlx_ptr,
                     mlx.windows["main"],
                     HUD["exp"],
-                    12 * self.LIVE_W,
+                    10 * self.LIVE_W,
                     int(39 - (self.LIVE_H / 2))
             )
 

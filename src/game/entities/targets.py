@@ -70,14 +70,14 @@ class FleeTarget(TargetStrategy):
         else:
             pacman_ahead = (pacman.i, pacman.j)
 
-
         # dictionnaire des cellules accessibles pour ghost
         ghost_current = maze.smaze[ghost.i][ghost.j]["code"]
         valid_neighbours: dict[tuple[int, int], int] = {}
         for wall, (di, dj) in DIR_MOVES.items():
             if (ghost_current & wall) == 0:
                 ghost_next = (ghost.i + di, ghost.j + dj)
-                valid_neighbours[ghost_next] = manhattan_dist(ghost_next, pacman_ahead)
+                valid_neighbours[ghost_next] = manhattan_dist(ghost_next,
+                                                              pacman_ahead)
 
         # no valid_neighbours is NOT possible... despite, belt and braces :
         if not valid_neighbours:

@@ -8,14 +8,14 @@ from .entities.player import Player
 class EndScreen():
     """Manage the score-registration screen displayed at the end of a game."""
 
-    def __init__(self, hight_score: HighScoreStorage, player: Player):
+    def __init__(self, high_score: HighScoreStorage, player: Player):
         """Initialize the end screen with score storage and the
         current player."""
-        self.hight_score = hight_score
+        self.high_score = high_score
         self.player = player
 
         self.enable = False
-        self.error = False
+        self.error = 0  # 0 no error, 1 error, 2 critical error
         self.register_status = 0
 
         self.last_second = mlx.timer
@@ -64,12 +64,16 @@ class EndScreen():
         """Register the current player's score with the entered name."""
         try:
             if (self.player.score < 0):
-                self.hight_score.add_score(self.buffer, 0)
+                self.high_score.add_score(self.buffer, 0)
             else:
-                self.hight_score.add_score(self.buffer, self.player.score)
+                self.high_score.add_score(self.buffer, self.player.score)
             self.register_status = 1
-        except (ValueError):
-            self.error = True
+        except (ValueError, OSError) as e:
+            if (isinstance(e, OSError)):
+                # if OSError, we can't register the player, critical error
+                self.error = 2
+            else:
+                self.error = 1
         finally:
             self.buffer = ""
 
@@ -80,12 +84,15 @@ class EndScreen():
             The registration status, where zero means that registration is
             pending and one means that it has completed.
         """
-        if (self.error is True and mlx.timer - self.last_second >= 1.0):
+        if (self.error > 0 and mlx.timer - self.last_second >= 1.0):
             self.last_second = mlx.timer
             self.timer_error -= 1.0
 
             if (self.timer_error <= 0):
-                self.error = False
+                # if critical error, exit game
+                if (self.error == 2):
+                    return (1)
+                self.error = 0
                 self.timer_error = 4.0
         return (self.register_status)
 
@@ -125,13 +132,20 @@ class EndScreen():
             Y_MIDDLE_SCREEN - 7
         )
 
-        if (self.error is True):
+        if (self.error == 1):
             display_string.display(
                 int(X_MIDDLE_SCREEN - (12 * CHAR_SIZE / 2)),
                 720 - 180 - 48,
                 "main",
                 "invalid name"
             )
+        elif (self.error == 2):
+            display_string.display(
+                int(X_MIDDLE_SCREEN - (37 * CHAR_SIZE / 2)),
+                720 - 180 - 48,
+                "main",
+                "Critical error. can not register"
+                )
         elif (self.player.score < 0):
             display_string.display(
                 int(X_MIDDLE_SCREEN - (37 * CHAR_SIZE / 2)),

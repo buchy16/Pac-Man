@@ -10,8 +10,7 @@ from .end_screen import EndScreen
 from .hud import Hud
 from ..menu.pause_menu import PausMenu
 from ..state import State
-from ..utils.utils import display_nums
-from ..utils.sprites import MENU, BACKGROUNDS
+from ..utils.sprites import BACKGROUNDS
 
 
 PTS_LENGHT = 34
@@ -45,7 +44,9 @@ class Game(State):
                                      config.points_per_pacgum,
                                      config.points_per_super_pacgum)
 
-        self.ghosts = GhostManager(self.player, self.maze)
+        self.ghosts = GhostManager(self.player,
+                                   self.maze,
+                                   config.points_per_ghost)
 
         self.cheat_mod = Cheat(self.player, self.ghosts, self.pacgums)
 
@@ -139,38 +140,6 @@ class Game(State):
 # -----------------------------------------------------------------------------
 # -------------------------------     DRAW   ----------------------------------
 # -----------------------------------------------------------------------------
-
-    def draw_game_over(self) -> None:
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            BACKGROUNDS["Game over"],
-            0,
-            0
-        )
-        score_lenght = len(str(self.player.score)) * 14 + PTS_LENGHT
-        pts_offset = display_nums.display(
-            640 - int((score_lenght / 2)),
-            360,
-            "main",
-            str(self.player.score)
-            )
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            MENU["PTS"],
-            pts_offset,
-            360 - 7
-        )
-
-    def draw_win(self) -> None:
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            BACKGROUNDS["You won"],
-            0,
-            0
-        )
 
     def draw(self) -> None:
         if (self.game_ended is True):

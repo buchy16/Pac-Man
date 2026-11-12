@@ -203,10 +203,10 @@ HUD = {
         mlx.mlx_ptr,
         "assets/HUD/Lives.png"
     )[0]),
-    "exp": mlx.get_tools().mlx_png_file_to_image(
+    "exp": (mlx.get_tools().mlx_png_file_to_image(
         mlx.mlx_ptr,
         "assets/HUD/exp(lives).png"
-    )[0]
+    )[0])
 }
 
 
