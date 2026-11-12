@@ -41,6 +41,7 @@ def username_errors(raw_user: object) -> str | None:
 
     return None
 
+
 def score_errors(raw_score: object) -> str | None:
     """Checks whether a score is valid (an integer >= 0)."""
     if type(raw_score) is not int:
@@ -48,6 +49,7 @@ def score_errors(raw_score: object) -> str | None:
     if raw_score < 0:
         return "The score can not be negative."
     return None
+
 
 @dataclass(frozen=True)
 class HighScore:
@@ -151,7 +153,6 @@ class HighScoreStorage:
                 "%d Invalid entry(ies) ignored in the score file.",
                 nb_corrupted,
             )
-
         return LoadResult(entries=valid_entries, corrupted=nb_corrupted > 0)
 
     def load_scores(self) -> list["HighScore"]:
@@ -232,6 +233,7 @@ class HighScoreStorage:
 # ---------------------------------------------------------------------------
 #                                                                         CLI
 # ---------------------------------------------------------------------------
+
 
 def prompt_username() -> str:
     """Requires a valid username to be entered."""

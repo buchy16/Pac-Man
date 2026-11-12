@@ -1,6 +1,6 @@
 from .targets import (
     NearbyTarget, PacmanTarget, TrickyTarget, RandomOrChargeTarget,
-    CornerTarget
+    FleeTarget
 )
 from .ghost import Ghost
 from .player import Player
@@ -25,7 +25,7 @@ class Pinky(Ghost):
             maze, player, prefix, speed, corner_start, dir_start,
             chase_strategy=NearbyTarget(dist=self.MAGNETIC_DISTANCE,
                                         behind=False),
-            flee_strategy=CornerTarget()
+            flee_strategy=FleeTarget()
         )
 
 
@@ -44,7 +44,7 @@ class Blinky(Ghost):
         super().__init__(
             maze, player, prefix, speed, corner_start, dir_start,
             chase_strategy=PacmanTarget(),
-            flee_strategy=CornerTarget()
+            flee_strategy=FleeTarget()
         )
 
 
@@ -69,7 +69,7 @@ class Inky(Ghost):
         super().__init__(
             maze, player, prefix, speed, corner_start, dir_start,
             chase_strategy=self.tricky_target,
-            flee_strategy=CornerTarget()
+            flee_strategy=FleeTarget()
         )
 
         # will need blinky's position to calculate his target
@@ -98,5 +98,5 @@ class Clyde(Ghost):
         super().__init__(
             maze, player, prefix, speed, corner_start, dir_start,
             chase_strategy=RandomOrChargeTarget(dist=self.MAGNETIC_DISTANCE),
-            flee_strategy=CornerTarget()
+            flee_strategy=FleeTarget()
         )

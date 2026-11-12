@@ -63,14 +63,12 @@ class Cheat():
                 "main"
             )
             self.enable = True
-            # logging.info("(cheat): \033[32mactivated\033[0m")
             self.inform("activated", Color.GREEN)
         else:
             mlx.rm_key_hook_function(
                 self.listen_keyboard,
                 "main"
             )
-            # logging.info("(cheat): \033[31mdeactivated\033[0m")
             self.inform("deactivated", Color.RED)
             self.enable = False
 
