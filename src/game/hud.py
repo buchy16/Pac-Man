@@ -103,12 +103,17 @@ class Hud():
         Args:
             timer (float): time left
         """
-        pts_offset = display_nums(10, 10, "main", str(self.player.score))
+        pts_offset = display_nums.display(
+            10 - 7,
+            10,
+            "main",
+            str(self.player.score)
+            )
         mlx.get_tools().mlx_put_image_to_window(
             mlx.mlx_ptr,
             mlx.windows["main"],
             MENU["PTS"],
-            pts_offset,
+            pts_offset + 7,
             0
         )
 
