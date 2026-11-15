@@ -1,7 +1,11 @@
+"""Define movement directions and their corresponding grid vectors."""
+
 from enum import IntFlag, auto
 
 
 class Direction(IntFlag):
+    """Represent a cardinal movement direction as a bit flag."""
+
     NONE = 0         # 0b0000 (0 = pas de direction)
     NORTH = auto()   # 0b0001 (1)
     EAST = auto()    # 0b0010 (2)
@@ -11,6 +15,7 @@ class Direction(IntFlag):
     # Does NOT handle flag COMBINATIONS: only call on simple directions
     @property
     def opposite(self) -> "Direction":
+        """Return the opposite of the current direction."""
         opposites = {
             Direction.NONE: Direction.NONE,
             Direction.NORTH: Direction.SOUTH,
@@ -23,6 +28,7 @@ class Direction(IntFlag):
     # Does NOT handle flag COMBINATIONS: only call on simple directions
     @property
     def label(self) -> str:
+        """Return the lowercase name of the current direction."""
         assert self.name is not None  # to silence MyPy
         return self.name.lower()
 

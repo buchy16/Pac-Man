@@ -48,7 +48,7 @@ def print_red(msg: str, end_msg: str = '\n') -> None:
 
 
 def print_config(config: "GameConfig") -> None:
-    """Affiche tous les attributs de la config, un par ligne (debug)."""
+    """Print all configuration attributes, one per line for debugging."""
     for attribute, value in config.__dict__.items():
         print(f"{attribute.capitalize()}: {value}")
 
@@ -65,17 +65,44 @@ def manhattan_dist(a: tuple[int, int], b: tuple[int, int]) -> int:
 
 
 def random_cell(nb_col: int, nb_row: int) -> tuple[int, int]:
+    """Return random coordinates within the given grid dimensions.
+
+    Args:
+        nb_col: Number of columns in the grid.
+        nb_row: Number of rows in the grid.
+
+    Returns:
+        A tuple containing the random row and column indices.
+    """
     i = random.randint(0, nb_row - 1)
     j = random.randint(0, nb_col - 1)
     return (i, j)
 
 
 def not_closed_cell(maze: "Maze", i: int, j: int) -> bool:
+    """Return whether a maze cell is not completely closed.
+
+    Args:
+        maze: Maze containing the cell.
+        i: Row index of the cell.
+        j: Column index of the cell.
+
+    Returns:
+        True if the cell is open in at least one direction, otherwise False.
+    """
     # explicit conversion for MyPy
     return bool(maze._maze[i][j] != 15)
 
 
 def random_open_cell(maze: "Maze") -> tuple[int, int]:
+    """Return random coordinates for an open cell in the maze.
+
+    Args:
+        maze: Maze from which to select an open cell.
+
+    Returns:
+        A tuple containing the row and column indices of an open cell.
+    """
     while True:
         i, j = random_cell(maze._width, maze._height)
         if not_closed_cell(maze, i, j):
