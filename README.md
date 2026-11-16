@@ -26,8 +26,9 @@ ToDo: *maj url itch.io*
 + [3.6 Gestion de projet](<#gestion-de-projet>)
 
 [4. Ressources](<#4-ressources>)
-
+DONE: *références classiques liées au sujet (documentation, articles, tutoriels, etc.)*
 + [4.1 Références](<#références>)
+DONE: *description de la manière dont l'IA a été utilisée : pour quelles tâches et quelles parties du projet.*
 + [4.2 Usage IA](<#usage-ia>)
 
 # 1/ Description
@@ -181,20 +182,17 @@ Toutes les commandes de cheat sont listées dans le fichier  [cheats.md](doc/che
 
 Le jeu est configuré via le fichier `config.json`. Les commentaires qui commencent par `#` ou `//`, full-line ou inline, sont ignorés grâce à la bibliothèque `commentjson`.
 
-### Exemple de configuration
+ToDo: *vérifier valeurs par défaut de l'exemple config | Pydantic dans parse_config.py*
+Voici un **exemple de configuration**, avec les valeurs par défaut utilisées par Pydantic pour le parsing :
 ```json
-// Pac-Man settings (default values)
 {
-    # High scores file, must end with .json
     "highscore_filename": "highscores.json",
-    # Gameplay (all optional)
     "lives": 3,
     "points_per_pacgum": 10,
     "points_per_super_pacgum": 50,
     "points_per_ghost": 200,
-    "seed": 42, // seed used for first-level reproducibility
+    "seed": 42,
     "level_max_time": 90,
-    # at least 10 levels, with unique ids from 1 to 10
     "level": [
         {"id": 1, "width": 15, "height": 15},
         {"id": 2, "width": 15, "height": 15},
@@ -210,8 +208,7 @@ Le jeu est configuré via le fichier `config.json`. Les commentaires qui commenc
 }
 ```
 
-
-#### Description des clés
+**Description des clés :**
 | Key                       | Type     | Description                                              |
 | ------------------------- | -------- | -------------------------------------------------------- |
 | `highscore_filename`      | string   | File used to persist the high scores                     |
@@ -226,7 +223,7 @@ Le jeu est configuré via le fichier `config.json`. Les commentaires qui commenc
 | `level[].width`           | integer  | Maze width of this level                                 |
 | `level[].height`          | integer  | Maze height of this level                                |
 
-Les valeurs par défaut sont fournies dans l'exemple qui précède.
+
 
 ### Error handling
 
@@ -502,28 +499,28 @@ Les documents de gestion du projet sont disponibles dans le répertoire dédié,
 
 *[Back to top](<#table-of-contents>)*
 
+
 # 4/ Ressources
 
 ## Références
-*ToDo: références classiques liées au sujet (documentation, articles, tutoriels, etc.)*
 
-Des ressources ont été rassemblées et partagées via un fichier [urls.md](doc/urls.md)
++ Éléments visuels pour les assets : [des sprites](https://www.spriters-resource.com/arcade/pacman/)
++ documentation MLX python: [MLX](https://github.com/noradefitero/42_MiniLibX_Python_Manual)
 
-ToDo: lister qq références principales avec une courte description :
-+ le sujet ([subject_fr_v1.5.md](doc/subject_fr_v1.5.md)),
-+ documentation de MLX,
-+ de Pydantic,
-+ de `commentjson`,
-+ de PyInstaller,
-+ d'`uv`,
-+ article de référence sur A*,
-+ ressources sur le comportement des fantômes de Pac-Man.
++ Official [uv](https://docs.astral.sh/uv/guides/projects/) documentation
++ Official [Pydantic](https://docs.pydantic.dev/) documentation
++ Short [commentjson](https://commentjson.readthedocs.io/en/latest/) documentation
++ Official [PyInstaller](https://pyinstaller.org/en/stable/operating-mode.html/) documentation
++ Official [Pytest](https://docs.pytest.org/en/stable/getting-started.html) documentation
+
++ vidéo [Ghost AI Explained](https://www.youtube.com/watch?v=ataGotQ7ir8)
++ guide complet .fr [algo A*](https://www.datacamp.com/fr/tutorial/a-star-algorithm?dc_referrer=https%3A%2F%2Fwww.google.com%2F)
++ guide .en [algo A*](https://www.geeksforgeeks.org/python/a-search-algorithm-in-python/)
 
 
 ## Usage IA
-*ToDo: description de la manière dont l'IA a été utilisée : pour quelles tâches et quelles parties du projet.*
 
-L'IA Claude (sonnet 5.5) a été utilisée pour :
+L'IA (GPT 5.6 et Sonnet 5.5) a été utilisée pour :
 + finaliser la méthode qui assemble toutes les tuiles du labyrinthe en 1 seule image d'arrière-plan (voir [bake_background](doc/bake_background.md)) ;
 + finaliser le packaging (mise à jour des chemins vers les assets dans `sprites.py`) ;
 + rédiger des docstrings ;
