@@ -17,8 +17,16 @@ PTS_LENGHT = 34
 
 
 class Game(State):
+    """Manage the main Pac-Man game state."""
+
     def __init__(self, config: GameConfig,
                  hight_score: HighScoreStorage) -> None:
+        """Initialize a game with its configuration and score storage.
+
+        Args:
+            config: Configuration used to set up the game.
+            hight_score: Storage for the player's high score.
+        """
         self.level = 0
         self.last_level = len(config.level) - 1
 
@@ -59,19 +67,31 @@ class Game(State):
         mlx.add_key_hook_function(self.enable_disable_cheat, "main")
 
     def open_pause_menu(self, keynum: int) -> None:
+        """Open the pause menu when the Escape key is pressed.
+
+        Args:
+            keynum: Numeric identifier of the pressed key.
+        """
         if (mlx.KEYNAME[keynum] == "Escape" and self.game_ended is False):
             self.pause_menu.activate_pause()
 
     def enable_disable_cheat(self, keynum: int) -> None:
+        """Toggle cheat mode when the F3 key is pressed.
+
+        Args:
+            keynum: Numeric identifier of the pressed key.
+        """
         if (mlx.KEYNAME[keynum] == "F3"):
             self.cheat_mod.enable_disable()
 
     def unload(self) -> State:
+        """Close the game window and return to the main menu."""
         from ..menu.main_menu import MainMenu
         mlx.close_window("main")
         return (MainMenu(self.config, self.hight_score))
 
     def next_level(self) -> None:
+        """Advance to the next level and reset level-specific game objects."""
         self.level += 1
         if (self.level > self.last_level):
             return
@@ -97,12 +117,19 @@ class Game(State):
 # -----------------------------------------------------------------------------
 
     def is_game_ended(self) -> bool:
+        """Return whether the player has lost all lives or time has expired."""
         if (self.timer < 0 or self.player.life <= 0):
             self.game_ended = True
             return (True)
         return (False)
 
     def update(self) -> int:
+        """Update the game state and return its transition status.
+
+        Returns:
+            The end-screen or pause-menu status, or 0 while the game
+            continues normally.
+        """
         # if the timer as finished or pacman is dead or all level are passed,
         if (self.is_game_ended() or self.level > self.last_level):
             if (self.end_screen.enable is False):
@@ -142,6 +169,7 @@ class Game(State):
 # -----------------------------------------------------------------------------
 
     def draw(self) -> None:
+        """Draw the current game screen and active game elements."""
         if (self.game_ended is True):
             self.end_screen.draw(BACKGROUNDS["Game over"])
         elif (self.level > self.last_level):

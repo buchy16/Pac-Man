@@ -9,13 +9,21 @@ from .utils.utils import display_string, display_nums
 from .utils.sprites import second_impact
 from .utils.paths import resolve_path
 
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 # On est pas en RGB mais en BGR
 
 
 class App():
+    """Coordinate the game configuration, state, update, and drawing."""
+
     def __init__(self, config: GameConfig) -> None:
+        """Initialize the application with the game configuration.
+
+        Args:
+            config: Configuration used to initialize the game.
+        """
         self.config = config
         self.scores = HighScoreStorage()
         self.state: State = MainMenu(self.config, self.scores)
@@ -25,6 +33,7 @@ class App():
 # -----------------------------------------------------------------------------
 
     def update(self) -> None:
+        """Update the current state and load the next state when required."""
         if (self.state.update() == 1):
             self.state = self.state.unload()
 
@@ -33,10 +42,16 @@ class App():
 # -----------------------------------------------------------------------------
 
     def draw(self) -> None:
+        """Draw the current game state."""
         self.state.draw()
 
 
 def main(argv: list[str]) -> None:
+    """Run the Pac-Man application.
+
+    Args:
+        argv: Command-line arguments used to load the game configuration.
+    """
     print("begining tests")
     if len(argv) != 2:
         spelling_fanatic = "argument" if len(argv) == 1 else "arguments"

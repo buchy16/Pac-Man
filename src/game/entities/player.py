@@ -12,9 +12,17 @@ from .entity import Slide_State
 
 
 class Player(Entity):
+    """Represent the player character and manage its movement and sprites."""
+
     SUPER_P_TIMER = 15.0
 
     def __init__(self, maze: Maze, life: int = 3) -> None:
+        """Initialize the player in the center of the maze.
+
+        Args:
+            maze: Maze in which the player moves.
+            life: Initial number of lives.
+        """
         super().__init__(maze)
         self.life = life
         self.invincible = False
@@ -39,6 +47,11 @@ class Player(Entity):
         self.timer = Player.SUPER_P_TIMER
 
     def _update_direction(self, keynum: int) -> None:
+        """Update the movement direction from a keyboard event.
+
+        Args:
+            keynum: Numeric identifier of the pressed key.
+        """
         if (mlx.KEYNAME[keynum] == "Up"):
             self.direction = Direction.NORTH
             # print("North")
@@ -53,6 +66,7 @@ class Player(Entity):
             # print("Est")
 
     def reset(self) -> None:
+        """Return the player to the starting position and reset its state."""
         self.i = ceil(self.maze._height / 2) - 1
         self.j = ceil(self.maze._width / 2) - 1
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
@@ -64,11 +78,13 @@ class Player(Entity):
         self.timer = self.SUPER_P_TIMER
 
     def player_hit(self) -> None:
+        """Remove a life and reset the player when it is not invincible."""
         if (self.invincible is False):
             self.life -= 1
             self.reset()
 
     def super_pacgam(self) -> None:
+        """Update the remaining duration of the super pacgum effect."""
         if (self.super_pacgum is True):
             if (self.timer <= 0):
                 self.super_pacgum = False
@@ -77,6 +93,7 @@ class Player(Entity):
                 self.timer -= 1
 
     def move(self) -> None:
+        """Move the player according to its direction and current state."""
         time = mlx.timer
 
         if (time - self.last_s >= 1.0):
@@ -108,6 +125,7 @@ class Player(Entity):
             self.set_destination(next_i, next_j)
 
     def draw_Est(self) -> None:
+        """Draw the player facing east with its walking animation."""
         if (mlx.timer % 0.80 < 0.20):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
@@ -142,6 +160,7 @@ class Player(Entity):
             )
 
     def draw_West(self) -> None:
+        """Draw the player facing west with its walking animation."""
         if (mlx.timer % 0.80 < 0.20):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
@@ -176,6 +195,7 @@ class Player(Entity):
             )
 
     def draw_North(self) -> None:
+        """Draw the player facing north with its walking animation."""
         if (mlx.timer % 0.80 < 0.20):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
@@ -210,6 +230,7 @@ class Player(Entity):
             )
 
     def draw_South(self) -> None:
+        """Draw the player facing south with its walking animation."""
         if (mlx.timer % 0.80 < 0.20):
             mlx.get_tools().mlx_put_image_to_window(
                 mlx.mlx_ptr,
@@ -244,6 +265,7 @@ class Player(Entity):
             )
 
     def draw(self) -> None:
+        """Draw the player using the sprite for its current direction."""
         if (self.draw_direction == Direction.WEST):
             self.draw_West()
         elif (self.draw_direction == Direction.NORTH):
