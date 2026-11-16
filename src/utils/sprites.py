@@ -210,9 +210,9 @@ HUD = {
     "Lives": mlx.get_tools().mlx_png_file_to_image(
         mlx.mlx_ptr, str(ASSETS_DIR / "HUD/Lives.png")
     )[0],
-    "exp": mlx.get_tools().mlx_png_file_to_image(
+    "exp": (mlx.get_tools().mlx_png_file_to_image(
         mlx.mlx_ptr, str(ASSETS_DIR / "HUD/exp(lives).png")
-    )[0],
+    )[0]),
 }
 
 
