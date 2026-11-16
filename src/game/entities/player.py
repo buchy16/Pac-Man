@@ -1,7 +1,7 @@
-from . import Entity
-from ... import Maze
-from ... import J_WALK_SPRIT
-from ... import mlx
+from .entity import Entity
+from ..maze import Maze
+from ...utils.sprites import J_WALK_SPRIT
+from ...Mlx import mlx
 from math import ceil
 from ...utils.directions import Direction
 from .entity import Slide_State
@@ -25,7 +25,7 @@ class Player(Entity):
         self.j = ceil(self.maze._width / 2) - 1
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
         self.destination = (self.i, self.j)
-        self.direction: Direction = Direction.NONE
+        self.direction = Direction.NONE
         self.draw_direction = self.direction
 
         self.speed = 1.0
@@ -56,8 +56,8 @@ class Player(Entity):
         self.i = ceil(self.maze._height / 2) - 1
         self.j = ceil(self.maze._width / 2) - 1
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
-        self.direction: Direction = Direction.NONE
-        self.draw_direction = self.destination
+        self.direction = Direction.NONE
+        self.draw_direction = self.direction
         self.slide_state = Slide_State.NONE
 
         self.super_pacgum = False

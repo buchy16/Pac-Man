@@ -1,6 +1,6 @@
 from .gum import Gum
 from ..maze import Maze
-from ..entities import Player
+from ..entities.player import Player
 
 
 # i = height (y)
