@@ -1,7 +1,8 @@
 import heapq
 import math
 from enum import Enum, auto
-from .entity import Entity, Direction, Slide_State
+from .entity import Entity, Slide_State
+from ...utils.directions import Direction
 from .player import Player
 from .targets import TargetStrategy, CornerTarget
 from ..maze import Maze

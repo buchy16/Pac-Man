@@ -31,12 +31,12 @@ class Maze(MazeGenerator):
         """Initialize the maze and prepare it for visual rendering.
 
         Args:
-            size: Maze dimensions as ``(width, height)``.
-            perfect: If ``True``, generate a perfect maze without loops.
+            size:       Maze dimensions as ``(width, height)``.
+            perfect:    If ``True``, generate a perfect maze without loops.
             entry_cell: Coordinates of the entry cell.
-            exit_cell: Coordinates of the exit cell. ``(-1, -1)`` means no
-                explicit exit is defined.
-            seed: Random seed used to generate the maze.
+            exit_cell:  Coordinates of the exit cell. ``(-1, -1)`` means no
+                        explicit exit is defined.
+            seed:       Random seed used to generate the maze.
         """
         super().__init__(size, perfect, entry_cell, exit_cell, seed)
         self.x, self.y = self.set_coordinates()
@@ -57,7 +57,8 @@ class Maze(MazeGenerator):
         for i in range(0, self._height):
             line = []
             for j in range(0, self._width):
-                line.append({"code": self._maze[i][j], "coor": (x, y)})
+                data: MazeContent = {"code": self._maze[i][j], "coor": (x, y)}
+                line.append(data)
                 x += 48
             result.append(line)
             y += 48
@@ -100,7 +101,8 @@ class Maze(MazeGenerator):
         """
         total_w = tiles_width * tile_size
         total_h = tiles_height * tile_size
-        bg_img = mlx.get_tools().mlx_new_image(mlx.mlx_ptr, total_w, total_h)
+        bg_img: int = mlx.get_tools().mlx_new_image(mlx.mlx_ptr,
+                                                    total_w, total_h)
         bg_addr, bg_bpp, bg_line, _ = mlx.get_tools().mlx_get_data_addr(bg_img)
         bytes_per_px = bg_bpp // 8
         x, y = 0, 0
@@ -141,6 +143,16 @@ class Maze(MazeGenerator):
                         entry_cell: tuple[int, int] = (0, 0),
                         exit_cell: tuple[int, int] = (-1, -1),
                         seed: int = 0) -> None:
+        """Generate a new maze
+
+        Args:
+            size:       Maze dimensions as ``(width, height)``.
+            perfect:    If ``True``, generate a perfect maze without loops.
+            entry_cell: Coordinates of the entry cell.
+            exit_cell:  Coordinates of the exit cell. ``(-1, -1)`` means no
+                        explicit exit is defined.
+            seed:       Random seed used to generate the maze.
+        """
         # ---------------------------------------------------------------------
         # Original Maze re-generation
         self._width = size[0]
@@ -164,4 +176,10 @@ class Maze(MazeGenerator):
         # Custom Maze re-generation
         self.x, self.y = self.set_coordinates()
         self.smaze = self.generate_smaze()
+        self.destroy_background()
         self.maze_img = self.bake_background(self._width, self._height, 48)
+
+    def destroy_background(self) -> None:
+        """Destroy the background image and free memory
+        """
+        mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, self.maze_img)

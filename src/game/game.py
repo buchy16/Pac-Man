@@ -10,17 +10,24 @@ from .end_screen import EndScreen
 from .hud import Hud
 from ..menu.pause_menu import PausMenu
 from ..state import State
-from ..utils.utils import display_nums
-from ..utils.sprites import MENU, BACKGROUNDS
+from ..utils.sprites import BACKGROUNDS
 
 
 PTS_LENGHT = 34
 
 
 class Game(State):
+    """Manage the main Pac-Man game state."""
+
     def __init__(self, config: GameConfig,
                  hight_score: HighScoreStorage) -> None:
-        self.level = 9
+        """Initialize a game with its configuration and score storage.
+
+        Args:
+            config: Configuration used to set up the game.
+            hight_score: Storage for the player's high score.
+        """
+        self.level = 0
         self.last_level = len(config.level) - 1
 
         mlx.new_window(1280, 720, "main")
@@ -45,7 +52,9 @@ class Game(State):
                                      config.points_per_pacgum,
                                      config.points_per_super_pacgum)
 
-        self.ghosts = GhostManager(self.player, self.maze)
+        self.ghosts = GhostManager(self.player,
+                                   self.maze,
+                                   config.points_per_ghost)
 
         self.cheat_mod = Cheat(self.player, self.ghosts, self.pacgums)
 
@@ -58,19 +67,31 @@ class Game(State):
         mlx.add_key_hook_function(self.enable_disable_cheat, "main")
 
     def open_pause_menu(self, keynum: int) -> None:
+        """Open the pause menu when the Escape key is pressed.
+
+        Args:
+            keynum: Numeric identifier of the pressed key.
+        """
         if (mlx.KEYNAME[keynum] == "Escape" and self.game_ended is False):
             self.pause_menu.activate_pause()
 
     def enable_disable_cheat(self, keynum: int) -> None:
+        """Toggle cheat mode when the F3 key is pressed.
+
+        Args:
+            keynum: Numeric identifier of the pressed key.
+        """
         if (mlx.KEYNAME[keynum] == "F3"):
             self.cheat_mod.enable_disable()
 
     def unload(self) -> State:
+        """Close the game window and return to the main menu."""
         from ..menu.main_menu import MainMenu
         mlx.close_window("main")
         return (MainMenu(self.config, self.hight_score))
 
     def next_level(self) -> None:
+        """Advance to the next level and reset level-specific game objects."""
         self.level += 1
         if (self.level > self.last_level):
             return
@@ -96,19 +117,32 @@ class Game(State):
 # -----------------------------------------------------------------------------
 
     def is_game_ended(self) -> bool:
+        """Return whether the player has lost all lives or time has expired."""
         if (self.timer < 0 or self.player.life <= 0):
             self.game_ended = True
             return (True)
         return (False)
 
     def update(self) -> int:
+        """Update the game state and return its transition status.
+
+        Returns:
+            The end-screen or pause-menu status, or 0 while the game
+            continues normally.
+        """
         # if the timer as finished or pacman is dead or all level are passed,
-        # we wait 3s befor sending 1 to return to the main menu
         if (self.is_game_ended() or self.level > self.last_level):
             if (self.end_screen.enable is False):
+                # destroy all bake_background to free memory
+                self.maze.destroy_background()
+                self.pacgums.destroy_img()
+                self.hud.destroy_img()
+
                 self.end_screen.enable_disable()
+
                 if (self.cheat_mod.enable is True):
                     self.cheat_mod.enable_disable()
+
             return (self.end_screen.update())
 
         if (self.pause_menu.pause is False):
@@ -134,39 +168,8 @@ class Game(State):
 # -------------------------------     DRAW   ----------------------------------
 # -----------------------------------------------------------------------------
 
-    def draw_game_over(self) -> None:
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            BACKGROUNDS["Game over"],
-            0,
-            0
-        )
-        score_lenght = len(str(self.player.score)) * 14 + PTS_LENGHT
-        pts_offset = display_nums.display(
-            640 - int((score_lenght / 2)),
-            360,
-            "main",
-            str(self.player.score)
-            )
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            MENU["PTS"],
-            pts_offset,
-            360 - 7
-        )
-
-    def draw_win(self) -> None:
-        mlx.get_tools().mlx_put_image_to_window(
-            mlx.mlx_ptr,
-            mlx.windows["main"],
-            BACKGROUNDS["You won"],
-            0,
-            0
-        )
-
     def draw(self) -> None:
+        """Draw the current game screen and active game elements."""
         if (self.game_ended is True):
             self.end_screen.draw(BACKGROUNDS["Game over"])
         elif (self.level > self.last_level):

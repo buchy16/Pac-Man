@@ -20,7 +20,10 @@ BG_HALF_HEIGHT = 360
 
 
 class PausMenu():
-    def __init__(self):
+    """Manage the pause menu state, input, and rendering."""
+
+    def __init__(self) -> None:
+        """Initialize the pause menu in its inactive state."""
         self.x = 0
         self.y = 0
 
@@ -28,27 +31,39 @@ class PausMenu():
 
         self.exiting = 0  # 0 flase, 1 true
 
-    def update_mouse(self):
+    def update_mouse(self) -> None:
+        """Update the stored mouse position from the main window."""
         _, x, y = mlx.get_tools().mlx_mouse_get_pos(mlx.windows["main"])
         self.x = x
         self.y = y
 
     def activate_mouse_butons(self) -> None:
+        """Register the pause menu mouse callback."""
         mlx.add_mouse_hook_function(self.update_paus_menu, "main")
 
     def deactivate_mouse_butons(self) -> None:
+        """Remove the pause menu mouse callback."""
         mlx.rm_mouse_hook_function(self.update_paus_menu, "main")
 
     def activate_pause(self) -> None:
+        """Activate the pause menu and its mouse input."""
         if (self.pause is False):
             self.pause = True
             self.activate_mouse_butons()
 
     def deactivate_pause(self) -> None:
+        """Deactivate the pause menu and remove its mouse input."""
         self.deactivate_mouse_butons()
         self.pause = False
 
     def update_paus_menu(self, button: int, x: int, y: int) -> None:
+        """Handle a mouse click on the pause menu buttons.
+
+        Args:
+            button: Mouse button identifier.
+            x: Horizontal position of the click.
+            y: Vertical position of the click.
+        """
         if ((x >= S_MIDDLE_X - HALF_WIDTH and
              x <= S_MIDDLE_X + HALF_WIDTH) and
             (y >= 240 - HALF_HEIGHT and
@@ -62,6 +77,7 @@ class PausMenu():
             self.exiting = 1
 
     def draw_paus_menu(self) -> None:
+        """Draw the pause menu and highlight buttons under the mouse."""
         mlx.get_tools().mlx_put_image_to_window(
             mlx.mlx_ptr,
             mlx.windows["main"],

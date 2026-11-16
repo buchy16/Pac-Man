@@ -1,4 +1,3 @@
-from typing import Callable
 from ..Mlx import mlx
 from ..utils.sprites import MENU
 from ..data.parse_config import GameConfig
@@ -6,8 +5,9 @@ from ..data.scores import HighScoreStorage
 from ..utils.utils import display_nums, display_string
 from ..state import State
 
-# Srceen middle x coordinate
+# Srceen middle x, y coordinate
 S_MIDDLE_X = 360
+S_MIDDLE_Y = 360
 
 # normal button (use for draw and selection) half size
 HALF_WIDTH = 180
@@ -23,7 +23,6 @@ class MainMenu(State):
 
     Attributes:
         config: Game configuration used to render the instruction screen.
-        to_draw: Callable used by the game loop to draw the current menu state.
         menu_state: Current handler for menu interactions.
         game_started: Flag indicating whether the game has been launched.
         x: Current mouse x coordinate in the menu window.
@@ -44,7 +43,6 @@ class MainMenu(State):
         self.scores = scores.get_top_scores()
 
         mlx.new_window(720, 720, "MENU")
-        self.to_draw: Callable = self.draw_MENU
         mlx.add_mouse_hook_function(self._update_menu, "MENU")
 
         self.menu_state = self.MENU
@@ -105,7 +103,8 @@ class MainMenu(State):
         elif (button == 1 and (
            (x >= S_MIDDLE_X - HALF_WIDTH and x <= S_MIDDLE_X + HALF_WIDTH) and
            (y >= 288 - HALF_HEIGHT and y <= 288 + HALF_HEIGHT))):
-            self.menu_state = self.scores_viwer
+            self.scores = self.scores_cls.get_top_scores()
+            self.menu_state = self.scores_viewer
 
         # Check if the mouse click was on the surface area of ​​the button
         # Instructions
@@ -120,7 +119,7 @@ class MainMenu(State):
            (y >= 700 - HALF_HEIGHT and y <= 700 + HALF_HEIGHT))):
             mlx.close_app()
 
-    def scores_viwer(self, button: int, x: int, y: int) -> None:
+    def scores_viewer(self, button: int, x: int, y: int) -> None:
         """Handle interactions for the highscores screen.
 
         Args:
@@ -154,7 +153,7 @@ class MainMenu(State):
            (y >= 700 - HALF_HEIGHT and y <= 700 + HALF_HEIGHT))):
             self.menu_state = self.MENU
 
-    def draw_MENU(self):
+    def draw_MENU(self) -> None:
         """Draw the main menu screen.
 
         Returns:
@@ -248,7 +247,7 @@ class MainMenu(State):
                 700 - HALF_HEIGHT
             )
 
-    def draw_scores_viwer(self):
+    def draw_scores_viewer(self) -> None:
         """Draw the highscores screen.
 
         Returns:
@@ -258,25 +257,33 @@ class MainMenu(State):
         MAX_USERNAME_LENGHT = 14 * 10
         PTS_LENGHT = 34
 
-        for hight_score in self.scores:
-            if (hight_score.score > 999999999999999999999999):
-                score = 999999999999999999999999
-            else:
-                score = hight_score.score
-            display_string.display(80, y, "MENU", hight_score.username)
-            display_nums.display(
-                80 + MAX_USERNAME_LENGHT + 48,
-                y,
+        if (len(self.scores) <= 0):
+            display_string.display(
+                int(S_MIDDLE_X - (14 * 28 / 2)),
+                S_MIDDLE_Y,
                 "MENU",
-                str(score))
-            mlx.get_tools().mlx_put_image_to_window(
-                mlx.mlx_ptr,
-                mlx.windows["MENU"],
-                MENU["PTS"],
-                (720 - 80) - PTS_LENGHT,
-                y - 7
+                "score will be displayed here"
             )
-            y += 42
+        else:
+            for hight_score in self.scores:
+                if (hight_score.score > 999999999999999999999999):
+                    score = 999999999999999999999999
+                else:
+                    score = hight_score.score
+                display_string.display(80, y, "MENU", hight_score.username)
+                display_nums.display(
+                    80 + MAX_USERNAME_LENGHT + 48,
+                    y,
+                    "MENU",
+                    str(score))
+                mlx.get_tools().mlx_put_image_to_window(
+                    mlx.mlx_ptr,
+                    mlx.windows["MENU"],
+                    MENU["PTS"],
+                    (720 - 80) - PTS_LENGHT,
+                    y - 7
+                )
+                y += 42
 
         # Draw a bigger version of the button if the mouse is on the surface
         # area of the button Exit
@@ -359,8 +366,8 @@ class MainMenu(State):
         """
         if (self.menu_state == self.MENU):
             self.draw_MENU()
-        elif (self.menu_state == self.scores_viwer):
-            self.draw_scores_viwer()
+        elif (self.menu_state == self.scores_viewer):
+            self.draw_scores_viewer()
         elif (self.menu_state == self.instructions):
             self.draw_instructions()
 
