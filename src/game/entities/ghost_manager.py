@@ -108,6 +108,11 @@ class GhostManager:
             self._is_superpacgum_active = True
             self._set_all_ghosts_state(GhostState.FRIGHTENED)
 
+        # if Pacman just ate an other super-pacgum
+        elif (self.player.super_pacgum
+              and self.player.timer == Player.SUPER_P_TIMER):
+            self._set_all_ghosts_state(GhostState.FRIGHTENED)
+
         # if Pacman has just lost the super-pacgum power
         elif not self.player.super_pacgum and self._is_superpacgum_active:
             self._is_superpacgum_active = False
