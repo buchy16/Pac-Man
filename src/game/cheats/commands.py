@@ -3,9 +3,9 @@
 import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
-from src.utils.utils import Color
+from ...utils.utils import Color
 if (TYPE_CHECKING):
-    from src.game.cheats.cheat import Cheat
+    from .cheat import Cheat
 
 
 class Command(ABC):

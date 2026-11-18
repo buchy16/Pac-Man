@@ -372,6 +372,6 @@ class MainMenu(State):
             self.draw_instructions()
 
     def unload(self) -> State:
-        from ..game import Game
+        from ..game.game import Game
         mlx.close_window("MENU")
         return (Game(self.config, self.scores_cls))

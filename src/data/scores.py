@@ -4,9 +4,9 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 import json
+from ..utils.paths import resource_path
 
-
-PATH_SCORES = "src/data/highscores.json"
+PATH_SCORES = resource_path("src/data/highscores.json")
 MAX_USERNAME_LENGTH = 10
 
 logger = logging.getLogger(__name__)

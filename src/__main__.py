@@ -1,12 +1,14 @@
 import sys
 import logging
 from .Mlx import mlx
-from .menu import MainMenu
+from .menu.main_menu import MainMenu
 from .data.parse_config import get_valid_config, GameConfig
 from .data.scores import HighScoreStorage
 from .state import State
 from .utils.utils import display_string, display_nums
 from .utils.sprites import second_impact
+from .utils.paths import resolve_path
+
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -56,7 +58,8 @@ def main(argv: list[str]) -> None:
         logging.error(f"You gave {len(argv) - 1} {spelling_fanatic}, "
                       "exactly 1 was required: TRY AGAIN")
         sys.exit(1)
-    config = get_valid_config(argv[1])
+
+    config = get_valid_config(str(resolve_path(argv[1])))
 
     pac_man = App(config)
 

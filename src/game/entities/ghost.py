@@ -6,7 +6,7 @@ from ...utils.directions import Direction
 from .player import Player
 from .targets import TargetStrategy, CornerTarget
 from ..maze import Maze
-from ... import mlx
+from ...Mlx import mlx
 from ...utils.utils import manhattan_dist
 from ...utils.directions import DIR_MOVES
 from ...utils.sprites import G_WALK_SPRITES

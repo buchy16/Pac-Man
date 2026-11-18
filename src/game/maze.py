@@ -1,6 +1,6 @@
 from mazegenerator import MazeGenerator
-from .. import WALLS
-from .. import mlx
+from ..utils.sprites import WALLS
+from ..Mlx import mlx
 from typing import TypedDict
 
 
