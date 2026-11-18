@@ -1,20 +1,12 @@
-#### Table of Contents
+#### ToC
+ToDo
 
-[BRANCHES](<#branches>)
+*[Back to top](<#toc>)*
 
-+ [APRES suppression d'une branche depuis GITHUB](<#apres-suppression-dune-branche-depuis-github>)
-+ [Mettre à jour les branches locales avec `main`](<#mettre-à-jour-les-branches-locales-avec-main>)
-+ [Erreur git switch](<#pb-pour-changer-de-branche>)
-
-[PULL REQUEST](<#pull-request>)
-
-[Issues](<#issues>)
-
-*[Back to top](<#table-of-contents>)*
 
 ---
 
-# Branches
+Nouvelle branche
 
 + Mettre à jour le `main` AVANT de créer une branche :
 ```bash
@@ -28,60 +20,123 @@ git branch <my_new_branch>
 ```
 + basculer sur une branche existante :
 ```bash
-git switch my_branch
+git switch my_new_branch
 ```
 
 + ou bien, **créer et basculer** en 1 seule commande :
 ```bash
-git switch -c my_new_branch
+# commande historique (`checkout` sert à la fois à changer de branche et à restaurer des fichiers)
+git checkout -b new_branch
+# ou bien syntaxe moderne, `switch` est dédié uniquement à la navigation entre les branches
+git switch -c new_branch
 ```
+*[Back to top](<#toc>)*
 
-## APRES suppression d'une branche depuis GITHUB
-Il faut la supprimer en local :
+---
 
+AVANT une pull request, mettre à jour la branche locale avec `main`
+pour s'assurer que la branche n'est pas obsolète et qu'il n'y a pas de conflits non résolus :
+```bash
+# ne pas oublier ce push, sinon le pull main ne passera pas...
+git push # pour `git push origin my_branch`
+
+# pour recup du main en local
+git switch main
+git pull origin main # fusionne les modifs du `main` distant vers le `main` local
+
+# pour fusion -EN LOCAL- du main mis à jour dans my_branch
+git switch my_branch
+git merge main  # ctrl + X (Merge made by the 'ort' strategy)
+```
+=> vérifier que ca n'a rien cassé, re-puh :
+```bash
+git push origin my_branch
+```
+et *enfin* let's go pour la pull request :D
+*[Back to top](<#toc>)*
+
+---
+
+Faire une Pull Request
+*Le passage par une Pull Request (PR) est la bonne méthode : cela évite d'altérer `main` directement et force la revue de code.*
+
+Après avoir poussé la branche `my_branch` sur GitHub, le reste se passe principalement sur l'interface web de GitHub
+
+1. Compare & pull request
+ + **Compare & pull request** si le push est très récent
+Sinon :
+ + **« Pull requests »** / **« New pull request »**
+ + Vérifier la comparaison des branches en haut : `base: main` $\leftarrow$ `compare: my_branch`.
+
+2. Renseigner la demande
+* **Titre** : concis et explicite (ex. : `feat: ajout du module de my_branch`).
+* **Description** : résumé précis des modifications apportées, logique retenue, ce qui doit être testé...
+* **Reviewers** : sur le panneau latéral à droite, cliquer sur la roue crantée à côté de *Reviewers* et sélectionner le compte GitHub des collègues.
+
+3. Valider
+ + **Create pull request**
+
+... ENSUITE ...
+
+1. les collègues
++ recevront une notification,
++ pourront inspecter les différences (*diff*) dans l'onglet **« Files changed »**,
++ commenter des lignes précises,
++ et enfin cliquer sur **« Review changes »** pour valider (*Approve*) ou demander des ajustements.
+
+2. Fusionner
+Une fois approuvée, 
++ **« Merge pull request »** / **« Confirm merge »**
+
+... ne pas oublier :
+
+3. En local pour soi
+Une fois le merge validé sur GitHub, mettre à jour le dépôt local :
+```bash
+git switch main
+git pull origin main
+```
+=> et c'est reparti pour une nouvelle branche :D
+```bash
+git switch -c new_branch
+# `-c` garantit qu'on repart directement de la version la plus à jour de `main`
+```
+*[Back to top](<#toc>)*
+
+---
+
+
+Supprimer EN LOCAL une branche supprimée depuis GITHUB
+**1. revenir au `main`**
+On ne peut pas supprimer la branche sur laquelle on se trouve :
 ```bash
 git switch main
 git pull origin main # récupère le merge fait sur GitHub
+```
+
+**2. Supprimer la branche locale**
+L'option `-d` vérifie d'abord que les commits ont bien été intégrés :
+```bash
 git branch -d my_branch # supprime la branche locale
+```
+*Si Git refuse car la branche n'est pas totalement fusionnée, forcer la suppression avec `git branch -D sonNom`*.
 
-# le Git local garde en mémoire la référence distante obsolète
-git fetch --prune # purger ces références mortes
-
-# Vérifier que l'espace est propre 
+**3. Nettoyer les références distantes fantômes**
+Après suppression de la branche locale, le Git local garde en mémoire la référence distante obsolète, il faut synchroniser le dépôt local avec l'état réel de GitHub et purger ces références mortes :
+```bash
+git fetch --prune # cf élaguer ;)
+```
+**4. Vérifier que l'espace est propre**
+```bash
 git branch -a
-# my_branch` et `origin/my_branch` doivent avoir totalement disparu.
+# puis `q` pour reprendre la main
 ```
+`sonNom` et `origin/sonNOM` doivent avoir totalement disparu.
+*[Back to top](<#toc>)*
 
-## Mettre à jour les branches locales avec `main`
+---
 
-Au préalable, s'assurer d'avoir un répertoire de travail propre : `commit` ou `stash` tous les changements.
-
-Puis mettre à jour `main` en local :
-```bash
-git switch main
-git pull origin main # récupère toutes les nouveautés de `main` depuis Github
-# donc les merges ainsi que les commits directs des binômes
-```
-
-puis pour chaque branche `my_branch` à mettre à jour en local :
-```bash
-git switch my_branch
-git merge main
-```
-=> Ainsi, toutes les branches vont fusionner exactement la même version :)
-
-(*en cas de conflit : les résoudre, puis `git add <fichiers>` et `git commit`*)
-
-Si la branche existe aussi sur GitHub :
-```bash
-git push
-```
-
-*[Back to top](<#table-of-contents>)*
-
-## PB pour changer de branche
-
-par ex `git switch main` provoque cette erreur :
+PB pour changer de branche, par ex `git switch main` provoque cette erreur :
 ```bash
 error: Your local changes to the following files would be overwritten by checkout:
 [liste_des_fichiers]
@@ -127,9 +182,25 @@ git restore fichier1 fichier2
 
 Dans les 3 cas, `git switch main` ne devrait plus poser de souci :D
 
-*[Back to top](<#table-of-contents>)*
+---
 
-# Pull request
+Identifier les dépôts distants liés à un projet local :
+```bash
+# à la racine du dépôt :
+git remote -v
+
+# doit afficher
+origin git@framagit.org:utilisateur/projet.git (fetch)  # lecture
+origin git@framagit.org:utilisateur/projet.git (push)   # écriture
+```
+*[Back to top](<#toc>)*
+
+---
+
+---
+
+
+# Pull request V2
 
 ## Création
 
@@ -176,7 +247,9 @@ Une fois la PR approuvée et sans conflits :
 
 + [synchroniser en local](<#apres-suppression-dune-branche-depuis-github>)
 
-*[Back to top](<#table-of-contents>)*
+*[Back to top](<#toc>)*
+
+
 
 # et d'autres trucs...
 
@@ -200,4 +273,6 @@ Le ticket reste ouvert tant que la PR est en phase de revue, puis au moment du `
 * **Traçabilité :** N'importe quel collègue qui consulte le ticket à l'avenir verra exactement quel bloc de code a résolu le problème.
 * **Propreté :** Personne n'oublie de fermer les tâches terminées. Le tableau de bord du projet reste à jour sans aucun effort administratif manuel.
 
-*[Back to top](<#table-of-contents>)*
+=> *à tester pour la correction de p'tits bugs à la fin ?*
+
+*[Back to top](<#toc>)*

@@ -1,3 +1,40 @@
+# Error handling
+
+### Contraintes validées par  `Pydantic`
+
++ `highscore_filename` : chaîne respectant la regex `^[a-zA-Z0-9_\-]+\.json$`
++ `lives` : entier > 0
++ `points_per_pacgum` : entier > 0
++ `points_per_super_pacgum` : entier > 0
++ `points_per_ghost` : entier > 0
++ `seed` : entier
++ `level_max_time` : entier > 0
++ `level` : liste de 10 éléments minimum ;
+    et pour chaque élément :
+    + `id` : entier à partir de 1, sans doublon et consécutifs
+    + `width` : 3 <= entier <= 15
+    + `height` : 3 <= entier <= 15
+      (l'affichage dans une fenêtre de 1280×720 pixels, avec des tuiles de 48×48 pixels, justifie la limite de 15 cases)
+### Comportement en cas de valeur invalide
+
++ `ERROR`
+	+ le nombre d'arguments reçus est différent de 1
+	  => le programme s'arrête avec le code de sortie `1`.
+
++ `WARNING`
+	+ le fichier est manquant, ou illisible (problème d'accès ou erreur de lecture)
+	  => la configuration par défaut est utilisée.
+	+ la validation globale échoue, le JSON est syntaxiquement invalide
+	  => la configuration par défaut est utilisée.
+	+ une valeur est invalide ou manquante
+	  => la valeur par défaut est utilisée.
+
++ `INFO`
+	+ une clé est inconnue
+	  => elle est ignorée.
+	+ une clé est manquante
+	  => elle est ajoutée avec sa valeur par défaut.
+
 # Exemple de journalisation et correction
 
 ### configuration erronée :
@@ -41,7 +78,6 @@ WARNING:
 	Default value '90' used for level_max_time
 	because '0' was invalid: Input should be greater than 0
 ```
-
 
 ### configuration validée :
 ```python

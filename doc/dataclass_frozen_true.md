@@ -1,8 +1,11 @@
 # @dataclass(frozen=True)
 
 `frozen=True` garantit que, n'importe où dans le code, chaque objet a passé la validation.  
-=> pertinent pour `HighScore` :)
 
+=> utilisé pour `HighScore`
+
+
+### Contexte
 
 A la création d'un objet `Highscore`,  `__post_init__()` refuse les données invalides :
 ```python

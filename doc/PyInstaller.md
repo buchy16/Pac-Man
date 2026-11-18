@@ -1,7 +1,4 @@
-à traduire :
-
 https://pyinstaller.org/en/stable/usage.html
-
 https://pyinstaller.org/en/v6.4.0/runtime-information.html 
 
 ---
@@ -89,47 +86,135 @@ dist/PacMan/
 	`sys._MEIPASS` pointe vers un dossier temporaire caché (créé dynamiquement dans le système et supprimé automatiquement à la fermeture du programme).
 
 
-## `get_resource_path()`
+## `paths.py` pour retrouver les fichiers partout
 
-Pour éviter les problèmes de chemins d'accès, puisque l'emplacement des fichiers change selon que le script tourne en mode développement ou une fois gelé, la solution standard consiste à calculer dynamiquement le chemin absolu du dossier racine de l'application au moment de l'exécution.
+Un jeu doit retrouver ses images (`assets/`) et ses données (`config.json`, `highscores.json`). Un chemin comme `"assets/Walls/0000.png"` ne marche que si le programme est lancé **depuis le bon dossier**. Il faut en plus que cela fonctionne **dans l'exécutable PyInstaller**, où les fichiers sont rangés ailleurs.
 
-1. un fichier dédié pour ne plus calculer le chemin depuis un sous-dossier :
-
-```Python
-# par ex `paths.py`
-from pathlib import Path
-
-ROOT_DIR = Path(__file__).resolve().parent # si placé à la racine du projet
+Soluce :
+```mermaid
+flowchart TD
+    A["resource_path(chemin_relatif)"] --> B{"Exécutable figé<br/>(PyInstaller) ?"}
+    B -->|"oui"| C["base = dossier de ressources de l'exécutable<br/>(sys._MEIPASS, ou dossier de l'exécutable)"]
+    B -->|"non"| D["base = ROOT_DIR<br/>racine du projet"]
+    C --> E["base / chemin_relatif"]
+    D --> E
 ```
 
-2. une fonction qui détecte si l'appli tourne depuis le script .py d'origine ou depuis l'exécutable généré par PyInstaller :
+### trouver la racine
+En partant de l'emplacement du fichier lui-même (`paths.py` → `utils` → `src` → racine) au lieu du dossier courant,
+le projet se lance correctement quel que soit l'endroit d'où on tape la commande, ie *ancrage absolu*.
 ```python
-import sys
-from pathlib import Path
-from paths import ROOT_DIR
- 
-    
-def get_resource_path(relative_path: str) -> Path:
+# parents[2] pour remonter l'arbo: paths.py -> utils -> src -> racine du projet
+ROOT_DIR = Path(__file__).resolve().parents[2]
+```
+
+### Assets et `resource_path()`
+PyInstaller ajoute l'attribut `frozen` à `sys` dans un exécutable, `getattr` avec une valeur par défaut évite une erreur quand il n'existe pas (exécution normale)
+```python
+def resource_path(relative_path: str) -> Path:
     """Chemin d'une ressource, en dev comme dans le build PyInstaller.
     ARG: nom du fichier recherché
     RETURN: objet issu du module `pathlib`
     """
     if getattr(sys, "frozen", False):
         # En mode figé, sys._MEIPASS pointe vers dist/PacMan/_internal
-        base_path = Path(getattr(sys, "_MEIPASS"))
+        base_path = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent))
     else:
         # En dev, Ancrage absolu :D
         base_path = ROOT_DIR
     return base_path / relative_path
 ```
 
-3. cette fonction appliquée à tous les fichiers externes
+### Config et `resolve_path()`
 ```python
-# À ÉVITER (plantera une fois packagé) :
-# image_path = "data/image.png"
-
-#  À FAIRE
-image_path = get_resource_path("data/image.png")
+def resolve_path(arg: str) -> Path:
+    given = Path(arg)
+    # le joueur a donné un vrai fichier : on l'utilise
+    if given.is_file():
+        return given
+    # sinon on cherche une version embarquée
+    bundled = resource_path(arg)
+    # au pire, le chemin d'origine sera géré par `get_valid_config` qui reverra la config par défaut.
 ```
 
 `/!\` ne pas oublier d'inclure les dossiers de ressources lors du build
+
+# `PacMan.spec` commenté
+
+```python
+# Indique à l'éditeur de texte la coloration syntaxique à utiliser et force l'encodage en UTF-8
+# -*- mode: python ; coding: utf-8 -*-
+
+# fonction utilitaire indispensable pour les bibliothèques tierces complexes qui possèdent des fichiers non-Python
+from PyInstaller.utils.hooks import collect_all
+
+# Définit les fichiers externes (images, sons, bdd) à copier dans le dossier final
+# liste de tuples respectant le format `('chemin_source', 'dossier_destination_interne')`
+datas = [('src/data/config.json', 'src/data'), ('assets', 'assets')]
+# forcer l'inclusion de bibliothèques dynamiques (comme des `.dll` ou des `.so`)
+binaries = []
+# déclarer les modules Python que le code utilise de façon dynamique
+hiddenimports = []
+# scanner intégralement la biblio `mlx`, notoirement difficile à packager car elle dépend de bibliothèques compilées.
+# collect_all retourne un tuple contenant tout ce qu'il faut embarquer
+tmp_ret = collect_all('mlx')
+# Concatène les éléments découverts pour `mlx` aux 3 listes
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+
+
+# moteur de PyInstaller : l'objet `Analysis` prend le point d'entrée 'run.py' et trace tout l'arbre des dépendances
+# (imports, imports des imports, etc.)
+# On y injecte directement les listes configurées précédemment (datas, binaries, hiddenimport).
+# Les autres paramètres sont laissés vides ou par défaut.
+a = Analysis(
+    ['run.py'],
+    pathex=[],
+    binaries=binaries,
+    datas=datas,
+    hiddenimports=hiddenimports,
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    noarchive=False,
+    optimize=0,
+)
+# compile en .pyc tous les scripts Python purs identifiés à l'étape précédente, puis les zippe en .pyz
+# pour réduire la taille, accélérer le chargement et masquer un peu le code.
+pyz = PYZ(a.pure)
+
+# Prépare la création du fichier exécutable qui servira de lanceur
+exe = EXE(
+    pyz,
+    a.scripts,
+    [],
+    # build --onedir (avec plein de fichiers) et non --onefile (1 seul gros exécutable)
+    exclude_binaries=True,
+    # nom de l'exécutable
+    name='PacMan',
+    # mis à True pour trouver la source des bugs
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    # maintenir le terminal ouvert derrière la fenêtre du jeu
+    console=True,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)
+# étape finale pour l'empaquetage en dossier (cf --onedir :
+# rassemble l'exécutable, les dépendances compilées (`a.binaries`) et les fichiers statiques (`a.datas`)
+# pour construire la structure finale dans le dossier `/dist/PacMan/`.
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,La recommandation absolue
+    upx=True,
+    upx_exclude=[],
+    name='PacMan',
+)
+```
