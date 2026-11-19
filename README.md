@@ -1,7 +1,7 @@
 *This project has been created as part of the 42 curriculum by nbuchy, vadamavi.*
 
 <div align="center">
-  <video src="doc/demo.mp4" width="470" height="386" autoplay muted loop playsinline></video>
+  <video src="doc/img/demo.mp4" width="470" height="386" autoplay muted loop playsinline></video>
 </div>
 
 
