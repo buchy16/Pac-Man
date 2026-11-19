@@ -58,7 +58,6 @@ class Ghost(Entity):
         state: State of the ghost (CHASER, FRIGHTENED, DEAD)
         strategy: The strategy currently in use (chase or flee)
         is_frozen: To immobilise the ghost in cheat mode
-        last_s: time of the last movement
         last_death: time of the last death
         """
         super().__init__(maze)
@@ -77,7 +76,6 @@ class Ghost(Entity):
         self.target: tuple[int, int] = corner_start
         self.state = GhostState.CHASER
         self.is_frozen: bool = False
-        self.last_s = mlx.timer
         self.last_death: float = 0.0
 
         self.chase_strategy: TargetStrategy = chase_strategy
@@ -113,7 +111,6 @@ class Ghost(Entity):
         self.strategy = self.chase_strategy
         self.speed = self.normal_speed
         self.last_death = 0.0
-        self.last_s = mlx.timer
         self.x, self.y = self.maze.smaze[self.i][self.j]["coor"]
 
 # ===========================================================================
@@ -164,9 +161,6 @@ class Ghost(Entity):
         # frozen ghost can't move
         if (self.is_frozen):
             return
-
-        if mlx.timer - self.last_s >= self.speed:
-            self.last_s = mlx.timer
 
         if (self.slide_state == Slide_State.SLIDING):
             self.slide()

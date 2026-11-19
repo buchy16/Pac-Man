@@ -44,7 +44,7 @@ class Game(State):
         self.timer = float(config.level_max_time)
         self.last_second = mlx.timer
 
-        self.player = Player(self.maze)
+        self.player = Player(self.maze, config.lives)
 
         self.hud = Hud(self.player, self.config.level[self.level].id)
 
@@ -102,7 +102,7 @@ class Game(State):
                   self.config.level[self.level].height),
             seed=self.config.seed)
 
-        self.ghosts._reset_all_ghosts()
+        self.ghosts.reset_all_ghosts()
         self.player.reset()
 
         self.pacgums = PacgumManager(self.player, self.maze,

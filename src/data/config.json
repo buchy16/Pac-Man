@@ -1,6 +1,6 @@
 {
     // filename to save highscores
-    "highscore_filename": "highscores.json",
+    "highscore_filename": "scores.json",
     # many levels
     "level": [
         {"id": 1, "width": 10, "height": 8},
@@ -15,7 +15,7 @@
         {"id": 10, "width": 8, "height": 8}
     ],
     "pacgum": 42, // WTF is that ?
-    "lives": 3,
+    "lives": 5,
     "points_per_pacgum": 25, # starts without points
     "points_per_super_pacgum": 50,
     "points_per_ghost": 200,
