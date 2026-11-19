@@ -1,30 +1,3 @@
-https://pyinstaller.org/en/stable/usage.html
-https://pyinstaller.org/en/v6.4.0/runtime-information.html 
-
----
-
-OUILLE OUILLE OUILLE conflits...
-
-git switch Packaging 
- Pacman_GIT git:(Packaging) git merge main      
-Auto-merging src/__main__.py
-CONFLICT (content): Merge conflict in src/__main__.py
-Auto-merging src/game/entities/ghost.py
-Auto-merging src/game/entities/ghost_manager.py
-Auto-merging src/game/entities/player.py
-Auto-merging src/game/game.py
-CONFLICT (content): Merge conflict in src/game/game.py
-Auto-merging src/game/gums/pacgum_manager.py
-Auto-merging src/game/gums/super_pacgum.py
-Auto-merging src/menu/main_menu.py
-Auto-merging src/utils/sprites.py
-CONFLICT (content): Merge conflict in src/utils/sprites.py
-Auto-merging src/utils/utils.py
-CONFLICT (content): Merge conflict in src/utils/utils.py
-Automatic merge failed; fix conflicts and then commit the result.
-
----
-
 ### Arborescence OK
 
 Dossiers `modules/` et `assets/` en dehors de `src/` : OK, bonne architecture
@@ -65,7 +38,7 @@ Pour Itch.io, il est conseillé est d'utiliser `--onedir`, puis de zipper le dos
 - Les joueurs d'Itch.io sont frileux face aux fichiers `.exe` uniques et inconnus... qu'ils ne peuvent pas explorer.
 - Les mises à jour sont ultra-légères, Itch ne téléchargera QUE les fichiers modifiés (vs l'intégralité de l'exécutable avec `--onefile`).
 - Les dossiers des fichiers externes (sprites, musiques, polices...) peuvent rester visiblement stockés à côté de l'exécutable, plus simple à gérer dans le code Python... *à condition de l'avoir anticipé :P*.
-
+- avec un exécutable *onefile*, le dossier **temporaire** utilisé serait **recréé à chaque lancement** : le fichier de scores serait perdu à chaque fermeture.
 
 ## `sys._MEIPASS` 
 

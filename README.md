@@ -1,6 +1,9 @@
 *This project has been created as part of the 42 curriculum by nbuchy, vadamavi.*
 
-<img src="/doc/img/temp.png" alt="game screenshot" align="center">
+<div align="center">
+  <video src="doc/demo.mp4" width="470" height="386" autoplay muted loop playsinline></video>
+</div>
+
 
 ## Table of Contents
 
@@ -149,6 +152,7 @@ Voici les commandes inclues dans le Makefile  :
 | `debug`       | Exécute le programme avec `pdb`                                                      |
 | `test`        | Lance les tests `pytest` concernant le parsing                                       |
 | `lint`        | Lance `flake8 src` et `mypy src` avec les options imposées                           |
+| `lint-strict` | `lint`, avec `mypy --strict`                                                         |
 | `package`     | Crée le package dans un dossier `dist`                                               |
 | `update`      | Met à jour les dépendances                                                           |
 | `clean`       | Supprime les caches et les dossiers `build` et `dist`                                |
