@@ -1,3 +1,5 @@
+"""Validate and load the Pac-Man game configuration."""
+
 from pathlib import Path
 import commentjson
 import logging
@@ -44,6 +46,8 @@ def levels_fallback(
     do_pydantic: ValidatorFunctionWrapHandler,
     infos: ValidationInfo,
 ) -> Any:
+    """Validate levels and replace invalid or
+    incomplete values with defaults."""
     log_msg = []
 
     try:
@@ -77,11 +81,13 @@ def levels_fallback(
 
 
 def fallback(default_value: Any) -> WrapValidator:
+    """Return a validator that replaces invalid values with a default."""
     def return_default(
         value_raw: Any,
         do_pydantic: ValidatorFunctionWrapHandler,
         infos: ValidationInfo,
     ) -> Any:
+        """Validate a value and log when the configured default is used."""
         try:
             return do_pydantic(value_raw)
         except ValidationError as error:
@@ -96,9 +102,12 @@ def fallback(default_value: Any) -> WrapValidator:
 
 
 class ConfigModel(BaseModel):
+    """Provide shared validation behavior for configuration models."""
+
     @model_validator(mode="before")
     @classmethod
     def warn_key_problems(cls, data: Any) -> Any:
+        """Log unknown or missing configuration keys before validation."""
         if isinstance(data, dict):
             expected = set(cls.model_fields)
             unknown = sorted(set(data) - expected)
@@ -113,6 +122,8 @@ class ConfigModel(BaseModel):
 
 
 class LvlConfig(ConfigModel):
+    """Store and validate the dimensions and identifier of one level."""
+
     id: Annotated[int, Field(ge=1), fallback(1)] = 1
     width: Annotated[int, Field(ge=3, le=15), fallback(DEFAULT_SIZE)
                      ] = DEFAULT_SIZE
@@ -121,6 +132,8 @@ class LvlConfig(ConfigModel):
 
 
 class GameConfig(ConfigModel):
+    """Store and validate the complete Pac-Man game configuration."""
+
     highscore_filename: Annotated[
         str, Field(pattern=FILENAME_REGEX),
         fallback(DEFAULT_CONFIG["highscore_filename"]),
@@ -153,6 +166,7 @@ class GameConfig(ConfigModel):
 
 
 def get_valid_config(filename: str) -> GameConfig:
+    """Load, validate, and return a game configuration from a JSON file."""
     config_path = Path(filename)
     try:
         with config_path.open("r", encoding="utf-8") as config_file:

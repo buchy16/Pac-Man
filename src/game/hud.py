@@ -8,7 +8,7 @@ class Hud():
     LIVE_W = 26
     LIVE_H = 22
 
-    def __init__(self, player: Player, level_id: str) -> None:
+    def __init__(self, player: Player, level_id: int) -> None:
         """_summary_
 
         Args:
@@ -22,7 +22,7 @@ class Hud():
 
         self.level_id = level_id
 
-    def set_level(self, level_id: str) -> None:
+    def set_level(self, level_id: int) -> None:
         """Change the level to display
 
         Args:
@@ -71,8 +71,9 @@ class Hud():
             self.player_life = self.player.life
 
             # prevent drawing an absurd amount of life icons
-            if (self.player.life > 12):
-                self.player_life = 12
+            if (self.player.life > 10):
+                self.player_life = 10
+            self.destroy_img()
             self.set_lives_img(self.player_life, 1)
 
     def draw_pacman_lives(self) -> None:
@@ -87,12 +88,12 @@ class Hud():
             0,
             int(39 - (self.LIVE_H / 2))
         )
-        if (self.player.life > 12):
+        if (self.player.life > 10):
             mlx.get_tools().mlx_put_image_to_window(
                     mlx.mlx_ptr,
                     mlx.windows["main"],
                     HUD["exp"],
-                    12 * self.LIVE_W,
+                    10 * self.LIVE_W,
                     int(39 - (self.LIVE_H / 2))
             )
 
@@ -140,3 +141,8 @@ class Hud():
             0x0000FF,
             f"time left: {int(timer)}"
         )
+
+    def destroy_img(self) -> None:
+        """Destroy the life image and free memory
+        """
+        mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, self.life_img)

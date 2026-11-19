@@ -74,11 +74,10 @@ class Entity(ABC):
         pass
 
     def slide(self) -> None:
-        """Applique x fois un déplacement de n pixel
-        proportionnellement a un temps donné (speed) ou x est égale à la
-        distance a parcourir
-        Exemple : si j'ai 48 pixel à parcourir et que speed = 1s, alors en 1s
-        je dois avoir parcouru 48 pixel
+        """establishes the player’s coordinates, over a given distance,
+        in proportion to the time elapsed since the start of the movement
+        Example: if I have 48 pixels to scan and speed = 1s, then in 1s
+        I must have traveled 48 pixels
         """
         pp: float  # pp for Progress_Percentage
         dest_i, dest_j = self.destination
@@ -86,23 +85,23 @@ class Entity(ABC):
 
         # 48 is the size of a cell
         # if speed = 1s and dist = 48 then slide_duration = 1s
-        # but if dist = 24 then slide_duration = 0.5s (on a 2x moins de pixel
-        # a parcourir pour la même vitesse, 48px toutes les 1s)
+        # but if dist = 24 then slide_duration = 0.5s (we have 2x less pixels
+        # to be traveled at the same speed, 48px every 1)
         slide_duration = self.speed * (self.dist / 48)
         if slide_duration > 0:
-            # pourcentage du temps actuelle par rapport a la durée donné pour
-            # parcourir la distance
+            # percentage of current time compared to the given duration for
+            # cover the distance
             pp = min((mlx.timer - self.time_start) / slide_duration, 1.0)
         else:
             pp = 1.0
 
-        # on applique le pp en multipliant la distance entre origine et arrivé
-        # par le pp pour obtenir une portion proportionnelle au temps qu'il
-        # nous reste pour parcourir notre distance
+        # we apply the pp by multiplying the distance between origin and
+        # arrival by the pp to obtain a portion proportional to the time it
+        # we are left to cover our distance
         self.x = round(self.start_pos[0] + ((dest_x - self.start_pos[0]) * pp))
         self.y = round(self.start_pos[1] + ((dest_y - self.start_pos[1]) * pp))
 
-        # on a atteint le temps imparti
+        # we have reached the allotted time
         if (pp >= 1.0):
             self.x = dest_x
             self.y = dest_y

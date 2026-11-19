@@ -1,4 +1,5 @@
-from . import Player, Ghost, GhostState
+from .player import Player
+from .ghost import Ghost, GhostState
 from .ghost_characters import Blinky, Clyde, Inky, Pinky
 from ..maze import Maze
 from ...utils.directions import Direction
@@ -11,7 +12,8 @@ class GhostManager:
     #   re-centrer Pacman quand il perd une vie
     #   ou gérer la fin de partie s'il n'en a plus
 
-    def __init__(self, player: Player, maze: Maze) -> None:
+    def __init__(self, player: Player, maze: Maze,
+                 points_per_ghost: int) -> None:
         self.player = player
         self.maze = maze
 
@@ -40,6 +42,8 @@ class GhostManager:
             "inky": inky,
             "clyde": clyde,
         }
+
+        self.points_per_ghost = points_per_ghost
 
         # flag enabled/disabled when Pacman’s super-pacgum mode starts/ends
         # (to preserve the DEAD status of a ghost killed during this mode)
@@ -104,6 +108,11 @@ class GhostManager:
             self._is_superpacgum_active = True
             self._set_all_ghosts_state(GhostState.FRIGHTENED)
 
+        # if Pacman just ate an other super-pacgum
+        elif (self.player.super_pacgum
+              and self.player.timer == Player.SUPER_P_TIMER):
+            self._set_all_ghosts_state(GhostState.FRIGHTENED)
+
         # if Pacman has just lost the super-pacgum power
         elif not self.player.super_pacgum and self._is_superpacgum_active:
             self._is_superpacgum_active = False
@@ -127,6 +136,7 @@ class GhostManager:
         """Handles the collision based on the ghost's current state"""
         if hunter.state == GhostState.FRIGHTENED:
             hunter.die()
+            self.player.score += self.points_per_ghost
         elif hunter.state == GhostState.CHASER:
             self._handle_pacman_death(name)
         # else: ghost is DEAD, so nothing to do

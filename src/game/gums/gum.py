@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from ..maze import Maze
-from ..entities import Player
+from ..entities.player import Player
 
 
 class Gum(ABC):

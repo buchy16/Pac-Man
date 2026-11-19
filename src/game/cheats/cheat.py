@@ -1,10 +1,10 @@
 import logging
-from src.Mlx import mlx
-from src.game.entities.player import Player
-from src.game.entities.ghost_manager import GhostManager
-from src.game.gums.pacgum_manager import PacgumManager
-from src.utils.utils import SPECIAL_CHAR, Color
-from src.game.cheats.commands import (
+from ...Mlx import mlx
+from ..entities.player import Player
+from ..entities.ghost_manager import GhostManager
+from ..gums.pacgum_manager import PacgumManager
+from ...utils.utils import SPECIAL_CHAR, Color
+from .commands import (
     Kill, SetPlayerLife, SetPlayerScore, SetPlayerSpeed, FreezeGhosts,
     SetPlayerInvincible, StopTimer, SkipingLevel, Help, ResetAll,
     Command, Super

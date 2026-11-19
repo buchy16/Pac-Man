@@ -22,7 +22,7 @@ class Mlx_Engine():
             ValueError: If the MLX context cannot be created.
         """
         self.m = Mlx()
-        self._mlx_ptr = self.m.mlx_init()
+        self._mlx_ptr: int | None = self.m.mlx_init()
         self._windows: dict[str, int] = {}  # key = Window_name, value = ptr
 
         if (self._mlx_ptr is None):
@@ -32,9 +32,11 @@ class Mlx_Engine():
         self.KEYNAME = {x[1]: x[0] for x in keysymdef}
 
         # key = Window_name, value = list of key_hook_functions
-        self.key_hook_functions: dict[str, list[Callable]] = {}
+        self.key_hook_functions: dict[str, list[Callable[[int], None]]] = {}
         # key = Window_name, value = list of mouse_hook_functions
-        self.mouse_hook_functions: dict[str, list[Callable]] = {}
+        self.mouse_hook_functions: dict[str,
+                                        list[Callable[[int,
+                                                       int, int], None]]] = {}
 
         self._start_time = time.monotonic_ns()
         self._timer = 0.0
@@ -56,7 +58,7 @@ class Mlx_Engine():
             int | None: The MLX context pointer, or ``None`` if initialization
                 failed before the engine could be created.
         """
-        return self._mlx_ptr
+        return (self._mlx_ptr)
 
     @property
     def windows(self) -> dict[str, int]:
@@ -77,8 +79,8 @@ class Mlx_Engine():
         """
         return self._timer
 
-    def add_key_hook_function(self, function: Callable,
-                              window_name: str):
+    def add_key_hook_function(self, function: Callable[[int], None],
+                              window_name: str) -> None:
         """Link a function with the window's keys events specified in args
 
         Args:
@@ -87,7 +89,7 @@ class Mlx_Engine():
         """
         self.key_hook_functions[window_name].append(function)
 
-    def rm_key_hook_function(self, function: Callable,
+    def rm_key_hook_function(self, function: Callable[[int], None],
                              window_name: str) -> bool:
         """Unlink a function with the window's keys events specified in args
 
@@ -106,8 +108,9 @@ linked to this window ")
             return (False)
         return (True)
 
-    def add_mouse_hook_function(self, function: Callable,
-                                window_name: str):
+    def add_mouse_hook_function(self,
+                                function: Callable[[int, int, int], None],
+                                window_name: str) -> None:
         """Link a function with the window's mouse events specified in args
 
         Args:
@@ -116,7 +119,7 @@ linked to this window ")
         """
         self.mouse_hook_functions[window_name].append(function)
 
-    def rm_mouse_hook_function(self, function: Callable,
+    def rm_mouse_hook_function(self, function: Callable[[int, int, int], None],
                                window_name: str) -> bool:
         """Unlink a function with the window's mouse events specified in args
 
@@ -203,7 +206,8 @@ linked to this window ")
         for function in self.mouse_hook_functions[window_name]:
             function(button, mouse_x, mouse_y)
 
-    def run(self, update: Callable, draw: Callable) -> None:
+    def run(self, update: Callable[[], None],
+            draw: Callable[[], None]) -> None:
         """Start the MLX main loop and execute the game callbacks.
 
         Args:

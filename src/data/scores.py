@@ -4,9 +4,9 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 import json
+from ..utils.paths import resource_path
 
-
-PATH_SCORES = "src/data/highscores.json"
+PATH_SCORES = resource_path("src/data/highscores.json")
 MAX_USERNAME_LENGTH = 10
 
 logger = logging.getLogger(__name__)
@@ -100,7 +100,8 @@ class HighScoreStorage:
         if (score_errors(json_score) is not None):
             return None
 
-        return HighScore(username=json_user.strip(), score=json_score)
+        return HighScore(username=str(json_user).strip(),
+                         score=int(json_score or 0))
 
     def _load_raw(self) -> LoadResult:
         """Handles reading/decoding/validation of scores stored in JSON file
@@ -262,9 +263,9 @@ if __name__ == "__main__":
     try:
         my_backup.add_score(prompt_username(), 4321)
     except (OSError, ValueError) as err:
-            print(f"Highscore not saved:", err)
+        print("Highscore not saved:", err)
 
     try:
         display_best_scores(my_backup.get_top_scores())
     except (OSError, ValueError) as err:
-            print(f"Highscores can not be displayed:", err)
+        print("Highscores can not be displayed:", err)

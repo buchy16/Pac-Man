@@ -1,7 +1,7 @@
 from .gum import Gum
 from .pacgum import Pacgum
 from .super_pacgum import SuperPacgum
-from ..entities import Player
+from ..entities.player import Player
 from ..maze import Maze
 from ...Mlx import mlx
 from ...utils.sprites import PACGUMS
@@ -63,9 +63,9 @@ class PacgumManager():
         matrix: list[list[Gum]] = []
 
         for i in range(0, self.maze._height):
-            line = []
+            line: list[Gum] = []
             for j in range(0, self.maze._width):
-                # if the cell is fuly closed, no pacgum, None insted
+                # if the cell is fuly closed, pacgum already eaten
                 if (self.maze.maze[i][j] == 0b1111):
                     gum = Pacgum(self.maze, i, j, pacgum_pts)
                     gum.was_eaten = True
@@ -109,7 +109,8 @@ class PacgumManager():
 
         total_w = tiles_width * tile_size
         total_h = tiles_height * tile_size
-        pg_img = mlx.get_tools().mlx_new_image(mlx.mlx_ptr, total_w, total_h)
+        pg_img: int = mlx.get_tools().mlx_new_image(mlx.mlx_ptr,
+                                                    total_w, total_h)
         pg_addr, bg_bpp, bg_line, _ = mlx.get_tools().mlx_get_data_addr(pg_img)
         bytes_per_px = bg_bpp // 8
         x, y = 0, 0
@@ -144,6 +145,7 @@ class PacgumManager():
     def update_img(self) -> None:
         """Rebuild the pacgum layer image from the current matrix
         """
+        self.destroy_img()
         self.pacgums_img = self.create_img(self.maze._width,
                                            self.maze._height)
 
@@ -196,3 +198,8 @@ class PacgumManager():
                 if (self.pacgums[i][j].was_eaten is False):
                     return (False)
         return (True)
+
+    def destroy_img(self) -> None:
+        """Destroy pacgums image and free memory
+        """
+        mlx.get_tools().mlx_destroy_image(mlx.mlx_ptr, self.pacgums_img)

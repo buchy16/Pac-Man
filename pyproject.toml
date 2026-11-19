@@ -13,12 +13,15 @@ dependencies = [
     "pydantic>=2.13.5",
 ]
 
-# Isolement des outils de test/qualité
+# Isolement des outils 
 [dependency-groups]
 dev = [
     "flake8>=7.3.0",
     "mypy>=2.1.0",
     "pytest>=9.1.1",
+]
+build = [
+    "pyinstaller>=6.0.0",
 ]
 
 [tool.uv.sources]
@@ -30,3 +33,7 @@ mazegenerator = { path = "modules/mazegenerator-2.1.0-py3-none-any.whl" }
 pythonpath = ["."]
 # afficher le nom de chaque fonction pdt les tests
 addopts = "-v"
+
+[[tool.mypy.overrides]]
+module = ["keysymdef.*", "mlx.*", "commentjson.*", "mazegenerator.*"]
+ignore_missing_imports = true
