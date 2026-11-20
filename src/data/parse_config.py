@@ -13,12 +13,14 @@ from pydantic import (
     ValidatorFunctionWrapHandler,
     WrapValidator,
 )
+from ..utils.paths import resource_path
 
-FILENAME_REGEX = r"^[a-zA-Z0-9_\-]+\.json$"
+FILENAME_REGEX = r"^([a-zA-Z0-9_\-]+/)*[a-zA-Z0-9_\-]+\.json$"
 MIN_LEVELS = 10
 DEFAULT_SIZE = 15
 DEFAULT_CONFIG: dict[str, Any] = {
-    "highscore_filename": "highscores.json",
+    # Chemin relatif à la RACINE du projet
+    "highscore_filename": "src/data/default_scores.json",
     "level": [
         {"id": 1, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
         {"id": 2, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
@@ -165,6 +167,24 @@ class GameConfig(ConfigModel):
     ] = DEFAULT_CONFIG["level_max_time"]
 
 
+def ensure_highscore_dir(config: GameConfig) -> GameConfig:
+    """Resolve the highscore path from the project root and create its dir.
+
+    Fall back to the default path if the directory cannot be created.
+    """
+    default_name = DEFAULT_CONFIG["highscore_filename"]
+    path = Path(resource_path(config.highscore_filename))
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+    except OSError as err:
+        logging.warning(f"\n\tCannot create the directory for "
+                        f"'{path}':\n\t{err}\n\t"
+                        f"Default value '{default_name}' used "
+                        f"for highscore_filename")
+        path = Path(resource_path(default_name))
+    return config.model_copy(update={"highscore_filename": str(path)})
+
+
 def get_valid_config(filename: str) -> GameConfig:
     """Load, validate, and return a game configuration from a JSON file."""
     config_path = Path(filename)
@@ -202,4 +222,4 @@ def get_valid_config(filename: str) -> GameConfig:
         logging.warning(f"Config validation error:\n\t{err}")
         config_validated = GameConfig(**DEFAULT_CONFIG)
 
-    return config_validated
+    return ensure_highscore_dir(config_validated)
