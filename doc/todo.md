@@ -1,41 +1,23 @@
 # Last but not least
 
-- [x] ajouter pacman.spec commente a la doc
-
-- [ ] Supprimer `frozen=True` dans `LoadResult`  
-		*ah oui pour la logique... mais non pour mypy*
-
-- [ ]  `mypy --strict` | `mypy`: expliquer pkoi ajouter mypy.md a la doc ?  
-		*ben finalement le strict marche si on ajoute un stub :D*
-
-- [ ] Pas de sécurité en cas d'échec de la génération du labyrinthe ?  [genre...](<#maze-fail>)
-
-verifs valeurs de la config par défaut :  
-- [ ]  `lives`? `Game` crée `Player(self.maze)` avec les 3 vies par défaut du constructeur
-- [ ]  `highscore_filename`? `App/__init__()` crée `HighScoreStorage()` sans argument, ie chemin fixe `src/data/highscores.json`  
-		*ooops, pas intégré dans parsing la verif d'un vrai chemin, y copris relatif à la racine du projet depuis n'importe où*
-		=> **ToDo !**
-
-
-- [ ]  `seed` : `next_level()` passe la même `config.seed` à chaque niveau. Avec la configuration par défaut (dix niveaux de 15×15), tous les niveaux auraient donc le même labyrinthe...  
-	=> gênant ?  
-	? utiliser une graine liée au niveau (par exemple `seed + level`)  
-	? des dimensions différentes à chaque niveau
-
 - [ ] ...ChassÔbugs...
-
-- [ ] (re)norme & docstring, trad commentaires
-	- [x] paths.py
-
-- [ ] republier propre sur Itch.io, cpte Nominoé ?
-
-- [ ] ReadMe
-	+ finir
-	+ ? gif animé du jeu
-	+ traduire
 
 
 # Nominoé
+
+- [ ] relire le ReadMe
+
+
+`seed` : `next_level()` passe la même `config.seed` à chaque niveau.  
+=> avec la configuration par défaut (dix niveaux de 15×15), tous les niveaux auraient donc le même labyrinthe...  
+	=> gênant ?  
+	- [ ] utiliser une graine liée au niveau (par exemple `seed + level`)  
+	~~? des dimensions différentes à chaque niveau~~
+
+- [ ] ajout sécurité en cas d'échec de la génération du labyrinthe ?  
+		[genre...](<#maze-fail>)
+
+- [ ] tester le sujet d'eval
 
 - [x] .gitignore
 
@@ -70,13 +52,24 @@ verifs valeurs de la config par défaut :
 - [x] tests
 	+ tests/test_parsing.py
 
-- [] package
-	+ OK PyInstaller
-	+ Itch.io à mettre à jour qd fini
+- [x] package PyInstaller
 
-- [ ] ReadMe
-	+ en cours...
-	? gif animé du jeu
+- [x]  valeurs de la config `lives` dans `Game` / `Player(self.maze)` 
+
+- [x]  valeurs de la config `highscore_filename` dans `App/__init__()` / `HighScoreStorage()`  
+*ooops, pas intégré dans parsing la verif d'un vrai chemin, y copris relatif à la racine du projet depuis n'importe où* :  
+- [ ]  **ToDo !**
+
+
+- [ ] Itch.io republier
+
+- [ ] ReadMe mise en forme
+- [ ] ReadMe verif demo en repo public
+- [ ] ReadMe traduire
+
+- [ ] A LA FIN : re-verif norme, docstring, commentaires
+
+- [ ] tester le sujet d'eval
 
 
 # both
@@ -84,8 +77,6 @@ verifs valeurs de la config par défaut :
 - [x] répartition tâches, urls
 
 - [x] Makefile, pyproject.toml
-
-- [ ] ? musique
 
 
 
