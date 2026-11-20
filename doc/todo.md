@@ -61,6 +61,9 @@
 - [ ]  **ToDo !**
 
 
+- [ ] cheat.md preciser de figer pour next-level
+
+
 - [ ] Itch.io republier
 
 - [ ] ReadMe mise en forme
