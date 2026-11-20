@@ -155,8 +155,8 @@ class Maze(MazeGenerator):
         """
         # ---------------------------------------------------------------------
         # Original Maze re-generation
-        self._width = size[0]
-        self._height = size[1]
+        self._width = 0  # size[0]
+        self._height = 0  # size[1]
         self._perfect = perfect
         self._seed = seed
         self._entryx = (entry_cell[0]

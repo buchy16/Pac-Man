@@ -1,3 +1,4 @@
+import logging
 from ..Mlx import mlx
 from .maze import Maze
 from .entities.player import Player
@@ -38,7 +39,7 @@ class Game(State):
         self.hight_score = hight_score
         self.maze = Maze(
             size=(config.level[0].width, config.level[0].height),
-            seed=config.seed
+            seed=config.seed + self.level
             )
 
         self.timer = float(config.level_max_time)
@@ -59,6 +60,7 @@ class Game(State):
         self.cheat_mod = Cheat(self.player, self.ghosts, self.pacgums)
 
         self.game_ended = False
+        self.emergency_exit = False
 
         self.end_screen = EndScreen(self.hight_score, self.player)
 
@@ -97,10 +99,16 @@ class Game(State):
             return
 
         self.timer = float(self.config.level_max_time)
-        self.maze.regenerate_maze(
-            size=(self.config.level[self.level].width,
-                  self.config.level[self.level].height),
-            seed=self.config.seed)
+
+        try:
+            self.maze.regenerate_maze(
+                size=(self.config.level[self.level].width,
+                      self.config.level[self.level].height),
+                seed=self.config.seed + self.level)
+        except (Exception) as e:
+            logging.error(f"Can't generate maze {e}")
+            self.emergency_exit = True
+            return
 
         self.ghosts.reset_all_ghosts()
         self.player.reset()
@@ -130,6 +138,9 @@ class Game(State):
             The end-screen or pause-menu status, or 0 while the game
             continues normally.
         """
+        if (self.emergency_exit is True):
+            return (1)
+
         # if the timer as finished or pacman is dead or all level are passed,
         if (self.is_game_ended() or self.level > self.last_level):
             if (self.end_screen.enable is False):
