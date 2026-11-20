@@ -2,33 +2,36 @@
 
 - [x] ajouter pacman.spec commente a la doc
 
-- [ ] Supprimer `frozen=True` dans `LoadResult`
+- [ ] Supprimer `frozen=True` dans `LoadResult`  
+		*ah oui pour la logique... mais non pour mypy*
 
-- [ ]  ~~`mypy --strict` | `mypy`: expliquer pkoi ajouter mypy.md a la doc ?~~
+- [ ]  `mypy --strict` | `mypy`: expliquer pkoi ajouter mypy.md a la doc ?  
+		*ben finalement le strict marche si on ajoute un stub :D*
 
-- [ ] si la génération d'un labyrinthe échoue,
-		? gérer dans un try:
-		avec un except Exception as e:
-			raise Exception(f"maze generation failed: {e}")`
+- [ ] Pas de sécurité en cas d'échec de la génération du labyrinthe ?  [genre...](<#maze-fail>)
 
-- [ ] verif valeurs de la config par défaut
+verifs valeurs de la config par défaut :  
+- [ ]  `lives`? `Game` crée `Player(self.maze)` avec les 3 vies par défaut du constructeur
+- [ ]  `highscore_filename`? `App/__init__()` crée `HighScoreStorage()` sans argument, ie chemin fixe `src/data/highscores.json`  
+		*ooops, pas intégré dans parsing la verif d'un vrai chemin, y copris relatif à la racine du projet depuis n'importe où*
+		=> **ToDo !**
 
-	+ `lives`? `Game` crée `Player(self.maze)` avec les 3 vies par défaut du constructeur
-	+ `highscore_filename`? `App/__init__()` crée `HighScoreStorage()` sans argument, ie chemin fixe `src/data/highscores.json`
-	+ `seed` : `next_level()` passe la même `config.seed` à chaque niveau. Avec la configuration par défaut (dix niveaux de 15×15), tous les niveaux auraient donc le même labyrinthe...
-	=> gênant ?
-	? utiliser une graine liée au niveau (par exemple `seed + level`)
+
+- [ ]  `seed` : `next_level()` passe la même `config.seed` à chaque niveau. Avec la configuration par défaut (dix niveaux de 15×15), tous les niveaux auraient donc le même labyrinthe...  
+	=> gênant ?  
+	? utiliser une graine liée au niveau (par exemple `seed + level`)  
 	? des dimensions différentes à chaque niveau
 
 - [ ] ...ChassÔbugs...
 
-- [ ] (re)norme & docstring, trad commentaires (paths.py)
+- [ ] (re)norme & docstring, trad commentaires
+	- [x] paths.py
 
-- [] republier propre sur Itch.io, cpte Nominoé ?
+- [ ] republier propre sur Itch.io, cpte Nominoé ?
 
 - [ ] ReadMe
 	+ finir
-	? gif animé du jeu
+	+ ? gif animé du jeu
 	+ traduire
 
 
@@ -83,3 +86,66 @@
 - [x] Makefile, pyproject.toml
 
 - [ ] ? musique
+
+
+
+##### maze fail
+
+*genre côté def dans `src/game/maze.py` :*
+```python
+from mazegenerator import MazeGenerator
+
+
+class MazeGenError(Exception):
+    """maze generation failure"""
+
+
+class Maze(MazeGenerator):
+    def __init__(self, size=(15, 15), perfect=False,
+                 entry_cell=(0, 0), exit_cell=(-1, -1), seed=0) -> None:
+        self._validate_params(size, entry_cell, exit_cell)
+        ...
+        try:
+            super().__init__(size, perfect, entry_cell, exit_cell, seed)
+        except Exception as err:
+            raise MazeGenError(f"maze generation failed : {err}") from err
+        # ? checker en + si le labyrithe est valide
+
+    def regenerate_maze(self, size=(15, 15), perfect=False,
+                        entry_cell=(0, 0), exit_cell=(-1, -1),
+                        seed=0) -> None:
+        ...
+        try:
+            self.generate(self._seed)
+        except Exception as err:
+            raise MazeGenError(f"maze regeneration failed : {err}") from err
+        # ? checker en + si le labyrithe est valide
+```
+
+*et côté appels dans `src/game/game.py` :*
+```python
+from .maze import MazegenError
+...
+class Game(State):
+	...
+	def __init__(self, config: GameConfig, hight_score: HighScoreStorage) -> None:
+		...
+		try:
+			self.maze = Maze(size=(config.level[0].width, config.level[0].height),
+							 seed=config.seed)
+		except (MazeGenerationError) as err:
+			logging.error(f"Fatal error generating maze: {err}")
+			sys.exit(1)
+		...
+	
+	def next_level(self) -> None:
+		...
+		try:
+		    self.maze.regenerate_maze(size=(self.config.level[self.level].width,
+									  self.config.level[self.level].height),
+									  seed=self.config.seed)
+		except (MazeGenerationError) as err:
+		    logging.error(f"Fatal error generating maze: {err}")
+		    sys.exit(1)
+		...
+```
