@@ -1,9 +1,9 @@
-from typing import Any
+# from typing import Any
 from ..Mlx import mlx
 from .directions import Direction
 from .paths import resource_path
 
-# pour utiliser la logique "exécutable figé ou non"
+# to use the “fixed or non-fixed executable” logic
 ASSETS_DIR = resource_path("assets")
 
 

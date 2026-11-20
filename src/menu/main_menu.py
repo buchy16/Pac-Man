@@ -1,3 +1,4 @@
+import logging
 from ..Mlx import mlx
 from ..utils.sprites import MENU
 from ..data.parse_config import GameConfig
@@ -374,4 +375,14 @@ class MainMenu(State):
     def unload(self) -> State:
         from ..game.game import Game
         mlx.close_window("MENU")
-        return (Game(self.config, self.scores_cls))
+
+        next_state: State
+        try:
+            next_state = Game(self.config, self.scores_cls)
+        except (Exception) as e:
+            logging.error(f"Can't generate maze {e}")
+            mlx.close_window("main")
+            next_state = MainMenu(self.config, self.scores_cls)
+
+        finally:
+            return (next_state)

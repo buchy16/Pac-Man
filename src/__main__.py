@@ -25,7 +25,7 @@ class App():
             config: Configuration used to initialize the game.
         """
         self.config = config
-        self.scores = HighScoreStorage()
+        self.scores = HighScoreStorage(self.config.highscore_filename)
         self.state: State = MainMenu(self.config, self.scores)
 
 # -----------------------------------------------------------------------------

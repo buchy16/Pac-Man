@@ -58,7 +58,7 @@ class GhostManager:
             when super-pacgum mode starts/ends
         """
         for ghost in self.ghosts.values():
-            # ToDo : intégrer ici _set_all_ghosts_freeze()
+            # ToDo : intégrer ici set_all_ghosts_freeze()
 
             # a dead ghost must remain dead even if Pac-Man eats another pacgum
             if ghost.state != GhostState.DEAD:
@@ -72,7 +72,7 @@ class GhostManager:
                     ghost.strategy = ghost.chase_strategy
                     ghost.speed = ghost.normal_speed
 
-    def _reset_all_ghosts(self) -> None:
+    def reset_all_ghosts(self) -> None:
         """reset ghosts on the maze"""
 
         self.corners = [
@@ -91,7 +91,7 @@ class GhostManager:
         # self._is_superpacgum_active = False
 
     # ToDo : à intégrer dans _set_all_ghosts_state()
-    def _set_all_ghosts_freeze(self, being_frozen: bool) -> None:
+    def set_all_ghosts_freeze(self, being_frozen: bool) -> None:
         """freeze / unfreeze all ghosts"""
         for ghost in self.ghosts.values():
             ghost.is_frozen = being_frozen
@@ -148,7 +148,7 @@ class GhostManager:
         self.player.player_hit()
 
         if self.player.life > 0:
-            self._reset_all_ghosts()
+            self.reset_all_ghosts()
 
         else:
             # ToDo: gestion de la fin de partie par le menu

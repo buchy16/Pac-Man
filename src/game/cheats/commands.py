@@ -142,7 +142,7 @@ class ResetAll(Command):
         Args:
             args: Ignored command arguments.
         """
-        self.cheat.ghosts._reset_all_ghosts()
+        self.cheat.ghosts.reset_all_ghosts()
 
 
 class SetPlayerLife(Command):
@@ -252,7 +252,7 @@ class FreezeGhosts(Command):
         try:
             # quick freeze if no arguments
             if (len(args) <= 0):
-                self.cheat.ghosts._set_all_ghosts_freeze(True)
+                self.cheat.ghosts.set_all_ghosts_freeze(True)
                 return
 
             target, boolean_arg = args
@@ -263,7 +263,7 @@ class FreezeGhosts(Command):
                 raise ValueError()
 
             if (target == "all"):
-                self.cheat.ghosts._set_all_ghosts_freeze(boolean)
+                self.cheat.ghosts.set_all_ghosts_freeze(boolean)
             self.cheat.ghosts.ghosts[target.lower()].is_frozen = boolean
         except (ValueError, KeyError, IndexError):
             self.warn("invalide arguments")
