@@ -5,7 +5,7 @@
 
 # Nominoé
 
-- [ ] relire le ReadMe
+- [x] relire le ReadMe
 
 
 `seed` : `next_level()` passe la même `config.seed` à chaque niveau.  
@@ -14,7 +14,7 @@
 	- [ ] utiliser une graine liée au niveau (par exemple `seed + level`)  
 	~~? des dimensions différentes à chaque niveau~~
 
-- [ ] ajout sécurité en cas d'échec de la génération du labyrinthe ?  
+- [x] ajout sécurité en cas d'échec de la génération du labyrinthe ?  
 		[genre...](<#maze-fail>)
 
 - [ ] tester le sujet d'eval
@@ -58,7 +58,7 @@
 
 - [x]  valeurs de la config `highscore_filename` dans `App/__init__()` / `HighScoreStorage()`  
 *ooops, pas intégré dans parsing la verif d'un vrai chemin, y copris relatif à la racine du projet depuis n'importe où* :  
-- [ ]  **ToDo !**
+- [x]  **ToDo !**
 
 
 - [ ] cheat.md preciser de figer pour next-level
@@ -66,8 +66,8 @@
 
 - [ ] Itch.io republier
 
-- [ ] ReadMe mise en forme
-- [ ] ReadMe verif demo en repo public
+- [x] ReadMe mise en forme
+- [x] ReadMe verif demo en repo public
 - [ ] ReadMe traduire
 
 - [ ] A LA FIN : re-verif norme, docstring, commentaires

@@ -1,14 +1,9 @@
 *This project has been created as part of the 42 curriculum by nbuchy, vadamavi.*
 
-##### test with private repo
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/57f40ba0-2405-4093-8c26-42423b1e5398" width="470" height="386" autoplay muted loop playsinline></video>
+  <video src="https://github.com/user-attachments/assets/57f40ba0-2405-4093-8c26-42423b1e5398" width="470" height="386" playsinline></video>
+  <p><sub>Source file : <a href="doc/img/demo.mp4">doc/img/demo.mp4</a></sub></p>
 </div>
-
-<div align="center">
-  <video src="doc/img/demo.mp4" width="470" height="386" autoplay muted loop playsinline></video>
-</div>
-
 
 ## Table of Contents
 
@@ -49,7 +44,7 @@ Il s'agit de créer et publier un jeu complet en Python (3.10+), en utilisant la
 + Un système de meilleurs scores persistant, par ex. un fichier JSON sauvegardé sur le disque.
 + Une interface graphique soignée, avec menu principal, vue de jeu et gestion de la fin de partie.
 + Un mode triche destiné à l'évaluation.
-+ Un déploiement sur une plateforme de jeu publique, par ex. Itch.io, à des fins de démonstration.
++ Un déploiement sur une plateforme de jeu publique, par ex. [itch.io](https://itch.io/), à des fins de démonstration.
 
 Le code doit :
 + inclure des type hints et docstrings conformes à la PEP 257,
@@ -60,13 +55,13 @@ Le code doit :
 
 # 2/ Instructions
 
-Le projet fonctionne sous Linux et WSL. 
+Le projet fonctionne sous Linux et WSL.  
 Les packages `mazegenerator` et `mlx` sont imposés par le sujet et fournis dans le dossier `modules/`.
 
 ## Requirements
 
 + Python **3.10** et supérieur
-+ Le gestionnaire de paquets [`uv`](https://docs.astral.sh/uv/) qui installe les packages nécessaires,
++ Le gestionnaire de paquets [uv](https://docs.astral.sh/uv/) qui installe les packages nécessaires,
 + pour fonctionner :
 	+ `commentjson`
 	+ `keysymdef`
@@ -128,7 +123,7 @@ dist
 ```
 Le fichier `src/data/highscores.json` a volontairement été exclu du package via `PacMan.spec` : un fichier vierge sera créé par le jeu dès le 1er enregistrement d'un score.
 
-Pour la mise en ligne sur Itch.io, l'intégralité du dossier généré par PyInstaller (exécutable et ses dépendances) a été compressé dans une archive .zip.
+Pour la mise en ligne sur Itch.io, l'intégralité du dossier généré par PyInstaller (exécutable et ses dépendances) a été compressé dans une archive .zip.  
 Butler n'a pas été utilisé pour l'upload car ce projet n'est pas censé recevoir des mises à jour.
 
 Le jeu est téléchargeable à l'adresse https://eclectik.itch.io/42-pacman avec des instructions pour l'installation, par ex. si l'archive est décompressée dans un dossier `pacman_itchio` :
@@ -168,7 +163,7 @@ Voici les commandes inclues dans le Makefile  :
 
 | Keys            | Actions                                                                                                                                          |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `←` `↑` `↓` `→` | Direction de Pac-Man (mémorisée jusqu'au prochain croisement possible)                                                                           |
+| `←` `↑` `↓` `→` | Direction de Pac-Man (mémorisée jusqu'à la case suivante)                                                                           |
 | `Échap`         | Menu pause pendant une partie                                                                                                                    |
 | `F3`            | Ouvre et ferme la console de cheat                                                                                                               |
 | `help`          | en mode cheat, affiche les commandes disponibles<br>(*Le manuel des commandes est également fourni dans le fichier  [cheats.md](doc/cheats.md)*) |
@@ -196,13 +191,13 @@ Le jeu est configuré via un fichier `config.json` reçu en argument.
 **Exemple de configuration**, avec les valeurs par défaut :
 ```json
 {
-    "highscore_filename": "highscores.json",
+    "highscore_filename": "src/data/default_scores.json",
     "lives": 3,
-    "points_per_pacgum": 10,
+    "points_per_pacgum": 25
     "points_per_super_pacgum": 50,
     "points_per_ghost": 200,
     "seed": 42,
-    "level_max_time": 90,
+    "level_max_time": 300,
     "level": [
         {"id": 1, "width": 15, "height": 15},
         {"id": 2, "width": 15, "height": 15},
@@ -254,7 +249,7 @@ Les scores sont **sauvegardés** dans un fichier JSON (choisi pour sa structure 
 ]
 ```
 
-Les erreurs d'accès à ce fichier (`src/data/highscores.json` par défaut) sont journalisées et gérées, il est protégé contre la corruption et les coupures en cours d’écriture :
+Les erreurs d'accès à ce fichier (`src/data/highscores.json` par exemple) sont journalisées et gérées, il est protégé contre la corruption et les coupures en cours d’écriture :
 + **Lecture**  
   la liste (éventuellement vide) des enregistrements valides est retournée, un fichier problématique n'est jamais modifié.
 + **Écriture atomique**  
@@ -282,11 +277,11 @@ flowchart TD
 
 + La configuration validée fournit la taille (`width` et `height`) de chaque niveau ainsi que la graine `seed` pour la reproductibilité des labyrinthes.
 + Le paramètre `PERFECT` du générateur doit impérativement être défini sur `False`, pour que les labyrinthes contiennent des boucles et forment des couloirs compatibles avec le jeu.
-+ Le jeu n'utilise ni entrée, ni sortie, ni chemin : Pac-Man apparaît au centre et les fantômes dans les quatre coins, les chemins varient selon les stratégies des fantômes.
++ Le jeu n'utilise ni entrée, ni sortie, ni chemin : Pac-Man apparaît au centre et les fantômes dans les quatre coins, ensuite les chemins varient selon les stratégies des fantômes.
 
 ### Utilisation de la grille
 
-La matrice générée par `MazeGenerator` est une grille 2D, qui est composée de cellules et qui est utilisée par le reste du jeu pour détecter la présence de murs.
+La matrice générée par `MazeGenerator` est une grille 2D, composée de cellules et utilisée par le reste du jeu pour détecter la présence de murs.
 
 + Une cellule est un **entier de 4 bits** , où chaque bit est associé à un côté et prend la valeur `1` quand quand ce côté est fermé par un mur :  Nord: `0b0001` ; Est: `0b0010` ; Sud: `0b0100` ; Ouest: `0b1000`. 
 + Notre classe `Direction` utilise **les mêmes valeurs**, afin qu'un simple test binaire permette de vérifier dans quelle(s) direction(s) Pacman et les fantômes peuvent se déplacer, par ex :
@@ -295,7 +290,7 @@ La matrice générée par `MazeGenerator` est une grille 2D, qui est composée d
 if (code & Direction.EAST) == 0:
 	...   # pas de mur à l'est : on peut y aller
 ```
-+ Une cellule de code `15` (`0b1111`) est cernée de murs (pattern 42) et donc inaccessible : elle ne pourra contenir aucune pacgum et n'est jamais choisie comme cible par un fantôme.
++ Une cellule de code `15` (`0b1111`) est cernée de murs (pattern 42) et donc inaccessible : elle ne pourra contenir aucune pac-gomme et n'est jamais choisie comme cible par un fantôme.
 
 ### Affichage
 
@@ -319,9 +314,9 @@ Certains aspects de l'implémentation ont déjà été présentés :
 + La [lecture de la configuration](<#configuration>) et la [conservation des scores](<#meilleurs-scores>) ;
 
 ### Affichage et mémoire
-L'utilisation imposée de la MiniLibX était le principal défi de ce projet, car cette bibliothèque graphique est TRÈS minimaliste : affichage pixel par pixel lent, gestion rudimentaire des sprites, aucune gestion de la physique...
+L'utilisation imposée de la **MiniLibX était le principal défi de ce projet**, car cette bibliothèque graphique est TRÈS minimaliste : affichage pixel par pixel lent, gestion rudimentaire des sprites, aucune gestion de la physique...
 
-- Les images sont chargées une seule fois, à l'import de `src/utils/sprites.py`, rangées dans des dictionnaires elles utilisées par leur nom, puis elles sont libérées à la fin du programme par `second_impact()`.
+- Les images sont chargées une seule fois, à l'import de `src/utils/sprites.py`, rangées dans des dictionnaires pour être utilisées par leur nom, puis elles sont libérées à la fin du programme par `second_impact()`.
 - Pour limiter autant que possible le nombre d'appels à chaque frame, certaines images ont été assemblées en une seule : le dessin du labyrinthe, la couche de pacgums, la rangée de vies... Chaque image composée peut ainsi être affichée en un seul appel par frame, et elle n'est reconstruite que si son contenu change. L'annexe [bake_background.md](doc/bake_background.md) décrit le principe de cet assemblage pour le cas particulier du background.
 - Les textes et nombres sont assemblés à partir de sprites et mis en cache, cf `src/utils/text_digit_displayer.py`.
 
@@ -331,13 +326,13 @@ Comme vu à la rubrique [Affichage du labyrinthe](<#affichage>), la logique (mur
 
 ### Boucle principale
 `Mlx_Engine.run()` enregistre une fonction appelée en continu par MLX. À chaque appel, elle laisse passer **16 ms** (environ 60 images par seconde), puis exécute dans l'ordre :
- 1. **`update()`**
+ 1. **`update()`**  
 	 calcule la nouvelle situation du jeu (déplacements, collisions, score) ;
- 2. **effacement** de la fenêtre
+ 2. **effacement** de la fenêtre  
     MLX dessine toujours par-dessus ce qui existe déjà, il faut donc repartir d’une fenêtre vide pour éviter les traînées ;
- 3. **`draw()`**
+ 3. **`draw()`**  
     redessine tout l’écran courant, de l’arrière-plan vers l’avant-plan ;
- 4. **synchronisation** (`mlx_do_sync`)
+ 4. **synchronisation** (`mlx_do_sync`)  
     envoie tous les ordres de dessin au système graphique et attend qu’ils soient exécutés, pour que l’image soit complète à l’écran avant la frame suivante.
 
 L'application ne connaît que ces deux fonctions, `App.update()` et `App.draw()`, qui délèguent au `State` courant.
@@ -346,8 +341,15 @@ L'application ne connaît que ces deux fonctions, `App.update()` et `App.draw()`
 Chaque écran du jeu (le menu, la partie, etc.)  est un objet `State` qui fonctionne ainsi :
 + se met à jour avec `update()`, en renvoyant `1` quand il a fini ;
 + se dessine avec `draw()`,
-+ ferme sa propre fenêtre et crée l’écran suivant avec `unload()`.
++ ferme sa propre fenêtre et crée l’écran suivant avec `unload()`.  
 L'application peut passer ainsi de `MainMenu` à `Game`, puis de nouveau à `MainMenu`, etc.
+
+Chaque écran possède sa propre fenêtre et y enregistre ses propres écouteurs clavier et souris :
++ MainMenu écoute la souris sur la fenêtre "MENU" ;
++ Game et ses composants écoutent
+	+ le clavier sur la fenêtre "main" (flèches, Échap, F3, saisie du pseudo),
+	+ la souris pendant la pause.  
+Ces écouteurs disparaissent avec la fenêtre quand unload() la ferme, ce qui évite qu'un écran reçoive les événements d'un autre.
 
 Ni la pause ni la saisie du pseudo en fin de partie ne sont des écrans à part entière : ce sont de petits objets que `Game` active ou désactive avec un drapeau, afin que que `Game` ne soit pas détruit pendant une pause et que la partie (labyrinthe, score, positions) reste en mémoire jusqu’à la reprise.
 
@@ -359,7 +361,7 @@ Chaque fantôme dispose de ses propres stratégies de déplacement, appliquées 
 + `flee_strategy` en mode `FRIGHTENED` (fuite) ;
 + `home_strategy` en mode `DEAD` (retour au coin et résurrection après 10 secondes).
 
-Pour respecter l'interface `TargetStrategy`, toutes les stratégies implémentent la méthode `get_target()` qui calcule les coordonnées de la cible à atteindre. Par exemple, pour la  poursuite :
+Pour respecter l'interface `TargetStrategy`, toutes les stratégies implémentent la méthode `get_target()` qui calcule les coordonnées de la cible à atteindre. Par exemple, pour la poursuite :
 + `Blinky` vise directement Pac-Man, avec `PacmanTarget` ;
 + `Pinky` vise 3 cases devant Pacman, avec `NearbyTarget` ;
 + `Inky` vise le symétrique de Blinky par rapport à 2 cases devant Pac-Man, avec `TrickyTarget` ;
@@ -504,7 +506,10 @@ flowchart TD
 │       ├── sprites.py                  # Load all assets
 │       ├── text_digit_displayer.py     # Display text and numbers
 │       └── utils.py
-└── tests/                               # Unit tests with pytest
+├── stubs/                              # Description of the types of imported modules
+│   └── mazegenerator
+│       └── __init__.pyi
+└── tests/                              # Unit tests with pytest
     └── test_parsing.py
 ```
 
@@ -608,7 +613,7 @@ classDiagram
 + Le code a été partagé via GitHub, avec :
     + une branche par fonctionnalité,
     + des pull requests régulières,
-    + une communication orale le cas échéant. 
+    + une communication orale le cas échéant.  
 Cette démarche a généré peu de conflits, à l'exception de la branche `packaging`.
 
 + En parallèle, des fiches thématiques ont été rédigées et partagées afin d'aider chaque binôme à s'approprier le code de l'autre.
@@ -622,27 +627,25 @@ Tous ces documents sont disponibles dans le répertoire dédié, [`doc/`](doc/).
 ## Références
 
 + Éléments visuels pour les assets : [des sprites](https://www.spriters-resource.com/arcade/pacman/)
-+ documentation MLX python: [MLX](https://github.com/noradefitero/42_MiniLibX_Python_Manual)
-
++ Documentation MLX python: [MLX](https://github.com/noradefitero/42_MiniLibX_Python_Manual)
 + Official [uv](https://docs.astral.sh/uv/guides/projects/) documentation
 + Official [Pydantic](https://docs.pydantic.dev/) documentation
 + Short [commentjson](https://commentjson.readthedocs.io/en/latest/) documentation
 + Official [PyInstaller](https://pyinstaller.org/en/stable/operating-mode.html/) documentation
 + Official [Pytest](https://docs.pytest.org/en/stable/getting-started.html) documentation
-
-+ vidéo [Ghost AI Explained](https://www.youtube.com/watch?v=ataGotQ7ir8)
-+ guide complet .fr [algo A*](https://www.datacamp.com/fr/tutorial/a-star-algorithm?dc_referrer=https%3A%2F%2Fwww.google.com%2F)
-+ guide .en [algo A*](https://www.geeksforgeeks.org/python/a-search-algorithm-in-python/)
++ Vidéo [Ghost AI Explained](https://www.youtube.com/watch?v=ataGotQ7ir8)
++ Guide complet .fr [algo A*](https://www.datacamp.com/fr/tutorial/a-star-algorithm?dc_referrer=https%3A%2F%2Fwww.google.com%2F)
++ Guide .en [algo A*](https://www.geeksforgeeks.org/python/a-search-algorithm-in-python/)
 
 
 ## Usage IA
 
 L'IA (GPT 5.6 et Sonnet 5.5) a été utilisée pour :
-+ finaliser la méthode qui assemble toutes les tuiles du labyrinthe en 1 seule image d'arrière-plan (voir [bake_background](doc/bake_background.md)) ;
-+ finaliser le packaging (mise à jour des chemins vers les assets dans `sprites.py`) ;
-+ rédiger des docstrings ;
-+ corriger des erreurs `mypy` ;
++ Finaliser la méthode qui assemble toutes les tuiles du labyrinthe en 1 seule image d'arrière-plan (voir [bake_background](doc/bake_background.md)) ;
++ Finaliser le packaging (mise à jour des chemins vers les assets dans `sprites.py`) ;
++ Rédiger des docstrings ;
++ Corriger des erreurs `mypy` ;
 + Générer les diagrammes de l'architecture générale ;
-+ traduire ce ReadMe en anglais.
++ Traduire ce ReadMe en anglais.
 
 *[Back to top](<#table-of-contents>)*
