@@ -8,14 +8,22 @@ from ..maze import Maze
 from ...utils.directions import Direction
 
 
+"""
+4 types of ghost
+    Blinky targets directly Pac-Man
+    Pinky targets 3 squares in front of Pac-Man
+    Inky chases Pac-Man in a team with Blinky
+    Clyde moves randomly and charges when Pac-Man is 3 squares or fewer away
+"""
+
+
 class Pinky(Ghost):
     """
     when CHASER
         Pinky is aiming to be MAGNETIC_DISTANCE squares ahead of Pacman
     when FRIGHTENED
-        Pinky moves to the corner furthest from Pac-Man
-        This target is updated when it is reached,
-        or if Pac-Man has entered the same quarter of the maze as the target
+        From the possible moves,
+        choose the one that takes him furthest away from Pacman
     """
     MAGNETIC_DISTANCE: int = 3
 
@@ -34,9 +42,8 @@ class Blinky(Ghost):
     when CHASER
         Blinky targets Pacman
     when FRIGHTENED
-        Blinky moves to the corner furthest from Pac-Man
-        This target is updated when it is reached,
-        or if Pac-Man has entered the same quarter of the maze as the target
+        From the possible moves,
+        choose the one that takes him furthest away from Pacman
     """
 
     def __init__(self, maze: Maze, player: Player, prefix: str, speed: float,
@@ -54,9 +61,8 @@ class Inky(Ghost):
         Inky aims at the point symmetrical to Blinky relative to the cell
         MAGNETIC_DISTANCE squares ahead of Pac-Man
     when FRIGHTENED
-        Inky moves to the corner furthest from Pac-Man
-        This target is updated when it is reached,
-        or if Pac-Man has entered the same quarter of the maze as the target
+        From the possible moves,
+        choose the one that takes him furthest away from Pacman
     """
     MAGNETIC_DISTANCE: int = 2
 
@@ -72,12 +78,8 @@ class Inky(Ghost):
             flee_strategy=FleeTarget()
         )
 
-        # will need blinky's position to calculate his target
-        self.blinky_ptr: Ghost | None = None
-
     def set_blinky_ptr(self, blinky: Ghost) -> None:
         """Dependency injection: gives Inky access to Blinky"""
-        self.blinky_ptr = blinky
         self.tricky_target.blinky = blinky
 
 
@@ -87,9 +89,8 @@ class Clyde(Ghost):
         Clyde moves randomly
         and targets Pacman at FAST_SPEED when it's within MAGNETIC_DISTANCE
     when FRIGHTENED
-        Clyde moves to the corner furthest from Pac-Man
-        This target is updated when it is reached,
-        or if Pac-Man has entered the same quarter of the maze as the target
+        From the possible moves,
+        choose the one that takes him furthest away from Pacman
     """
     MAGNETIC_DISTANCE: int = 3
 

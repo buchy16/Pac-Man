@@ -19,7 +19,7 @@ FILENAME_REGEX = r"^([a-zA-Z0-9_\-]+/)*[a-zA-Z0-9_\-]+\.json$"
 MIN_LEVELS = 10
 DEFAULT_SIZE = 15
 DEFAULT_CONFIG: dict[str, Any] = {
-    # Chemin relatif à la RACINE du projet
+    # Relative path from the ROOT of the project
     "highscore_filename": "src/data/default_scores.json",
     "level": [
         {"id": 1, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
@@ -33,13 +33,12 @@ DEFAULT_CONFIG: dict[str, Any] = {
         {"id": 9, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE},
         {"id": 10, "width": DEFAULT_SIZE, "height": DEFAULT_SIZE}
     ],
-    #   "pacgum": 0,
     "lives": 3,
-    "points_per_pacgum": 10,
+    "points_per_pacgum": 25,
     "points_per_super_pacgum": 50,
     "points_per_ghost": 200,
     "seed": 42,
-    "level_max_time": 90
+    "level_max_time": 300
 }
 
 
@@ -48,8 +47,14 @@ def levels_fallback(
     do_pydantic: ValidatorFunctionWrapHandler,
     infos: ValidationInfo,
 ) -> Any:
-    """Validate levels and replace invalid or
-    incomplete values with defaults."""
+    """Validate levels
+    and replace invalid or incomplete values with defaults.
+
+    ARGS:
+    levels_raw: raw value read from the JSON
+    do_pydantic: function that starts the standard Pydantic validation
+    infos: information regarding validation (field name, etc.)
+    """
     log_msg = []
 
     try:
@@ -84,12 +89,20 @@ def levels_fallback(
 
 def fallback(default_value: Any) -> WrapValidator:
     """Return a validator that replaces invalid values with a default."""
+
     def return_default(
         value_raw: Any,
         do_pydantic: ValidatorFunctionWrapHandler,
         infos: ValidationInfo,
     ) -> Any:
-        """Validate a value and log when the configured default is used."""
+        """Validate a value and log when the configured default is used.
+        (could be renamed `validate_or_default()` for greater precision)
+
+    ARGS:
+    levels_raw: raw value read from the JSON
+    do_pydantic: function that starts the standard Pydantic validation
+    infos: information regarding validation (field name, etc.)
+    """
         try:
             return do_pydantic(value_raw)
         except ValidationError as error:
@@ -208,7 +221,7 @@ def get_valid_config(filename: str) -> GameConfig:
     except commentjson.JSONLibraryException:
         logging.warning("Config file has invalid syntax:"
                         "\ta default config will be loaded")
-        # as e To display details (reste moche, même coupé avant le traceback)
+        # as e To display details (still a mess when cut off before traceback)
         # err = str(e).split("Traceback")[0].strip()
         # logging.warning(err)
         config_raw = DEFAULT_CONFIG

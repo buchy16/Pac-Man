@@ -114,7 +114,11 @@ class HighScoreStorage:
         if not self.file_path.exists():
             return LoadResult(entries=[], corrupted=False)
 
-        content = self.file_path.read_text(encoding="utf-8")
+        try:
+            content = self.file_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as err:
+            logger.warning("Scores file: unreadable (%s).", err)
+            return LoadResult(entries=[], corrupted=True)
 
         if not content.strip():
             return LoadResult(entries=[], corrupted=False)

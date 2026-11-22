@@ -31,7 +31,7 @@ class Entity(ABC):
         maze : Maze
             The maze that owns the gum and provides tile coordinates.
         """
-        self.life: int  # /!\ inutile pour ghosts depuis ajout GhostState=DEAD
+        self.life: int  # useless for ghosts since GhostState=DEAD was added
 
         self.maze = maze
         self.width: int = self.ENTITY_SIZE

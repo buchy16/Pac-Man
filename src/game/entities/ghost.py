@@ -13,23 +13,14 @@ from ...utils.sprites import G_WALK_SPRITES
 
 
 class GhostState(Enum):
-    CHASER = auto()       # Pursues its target (Pac-Man, random or other)
-    FRIGHTENED = auto()   # Escapes from Pac-Man (far corner, random or other)
+    CHASER = auto()       # Pursues its target (Pacman, nearby, tricky, random)
+    FRIGHTENED = auto()   # Escapes from Pacman (Far from Pacman)
     DEAD = auto()         # Returns and remains at his corner for DEATH_DELAY
-
-
-"""
-4 types of ghost
-    Blinky chases Pac-Man
-    Pinky targets a square four squares ahead of Pac-Man
-    Inky chases Pac-Man in a team with Blinky
-    Clyde moves around at random and charges at Pac-Man when he is close
-"""
 
 
 class Ghost(Entity):
     DEATH_DELAY: int = 10  # in seconds
-    SNAIL_SPEED: float = 1.5
+    SNAIL_SPEED: float = 1.5  # duration in seconds, from one square to another
     FAST_SPEED: float = 0.75
     ROCKET_SPEED: float = 0.15
 
@@ -84,7 +75,7 @@ class Ghost(Entity):
         self.strategy: TargetStrategy = self.chase_strategy
 
 # ===========================================================================
-#
+#                                                   RESET ghost to its CORNER
 # ===========================================================================
 
     def _get_corner(self, ghost_name: str) -> int:
@@ -103,10 +94,11 @@ class Ghost(Entity):
         (is_frozen is left untouched: it is controlled by the cheat mode)
         """
         id_corner = self._get_corner(name)
+        # Update the corner when the maze changes size
         self.i_corner, self.j_corner = corners[id_corner]
-        self.i, self.j = corners[id_corner]
+        self.i, self.j = self.i_corner, self.j_corner
         self.direction = self.direction_start
-        self.target = corners[id_corner]
+        self.target = (self.i_corner, self.j_corner)
         self.state = GhostState.CHASER
         self.strategy = self.chase_strategy
         self.speed = self.normal_speed
@@ -120,8 +112,8 @@ class Ghost(Entity):
     def hit_player(self) -> bool:
         """
         Returns:
-            True when Pac-Man's sprite and the ghost's sprite are
-            on the same square on the grid
+            True when Pac-Man's sprite and the ghost's sprite overlap,
+            with a 4-pixel margin.
         """
         player_w = self.player.width - self.ENTITY_COLLISION_MARGIN
         player_h = self.player.height - self.ENTITY_COLLISION_MARGIN

@@ -59,10 +59,9 @@ class FleeTarget(TargetStrategy):
         pacman = ghost.player
         maze = ghost.maze
 
-        # distance de manhattan maximum
         dist_max = maze._height + maze._width
 
-        # prochaine case (si accessible) de Pacman
+        # Pacman’s next square (if accessible)
         di, dj = DIR_MOVES.get(pacman.direction, (0, 0))
         pacman_current = maze.smaze[pacman.i][pacman.j]["code"]
         if (pacman_current & pacman.direction) == 0:
@@ -70,7 +69,7 @@ class FleeTarget(TargetStrategy):
         else:
             pacman_ahead = (pacman.i, pacman.j)
 
-        # dictionnaire des cellules accessibles pour ghost
+        # dictionary of accessible cells for ghost
         ghost_current = maze.smaze[ghost.i][ghost.j]["code"]
         valid_neighbours: dict[tuple[int, int], int] = {}
         for wall, (di, dj) in DIR_MOVES.items():
@@ -83,22 +82,22 @@ class FleeTarget(TargetStrategy):
         if not valid_neighbours:
             return (ghost.i, ghost.j)
 
-        # Trouver la distance maximale
+        # Find the maximum distance
         dist_max = max(valid_neighbours.values())
         best_neighbours = [coord for coord, dist in valid_neighbours.items()
                            if dist == dist_max]
 
-        # si une distance est supérieure à toutes les autres
+        # if one distance is greater than all the others
         if len(best_neighbours) == 1:
             return (best_neighbours[0])
 
-        # distances ex aequo : conserver direction si possible
+        # Tied distances: maintain direction if possible
         di, dj = DIR_MOVES.get(ghost.direction, (0, 0))
         ghost_ahead = (ghost.i + di, ghost.j + dj)
         if ghost_ahead in best_neighbours:
             return ghost_ahead
 
-        # distances ex aequo & impossible de conserver direction : aléatoire
+        # Tied distances & unable to maintain direction: random
         return random.choice(best_neighbours)
 
 
@@ -164,7 +163,7 @@ class TrickyTarget(TargetStrategy):
         # specific configuration for this strategy
         self.dist = dist
         # provided later by the GhostManager (see Inky.set_blinky_ptr)
-        self.blinky = blinky
+        self.blinky: 'Ghost | None' = None
 
     def get_target(self, ghost: 'Ghost') -> tuple[int, int]:
         """
