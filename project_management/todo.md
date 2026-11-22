@@ -1,6 +1,7 @@
 # Last but not least
 
-- [ ] ...ChassÔbugs...
+...ChassÔbugs...  
+- [ ]  ToDo: 'freeze all false' affiche une erreur 'WARNING: (cheat): invalide arguments' dans la console
 
 
 # Nominoé
@@ -51,24 +52,31 @@
 - [x] package PyInstaller
 
 - [x] valeurs de la config `lives` dans `Game` / `Player(self.maze)` 
-
 - [x] valeurs de la config `highscore_filename` dans `App/__init__()` / `HighScoreStorage()`  
-
 - [x] intégrer dans parsing la verif d'un chemin complet
 
-- [x] cheat.md : mettre en foirme et preciser de figer avant skip-level
+- [x] ? modif valeurs de config.et config par défaut, pour difficulté croissante ?
 
-- [ ] ? modif valeurs de config.et config par défaut, pour difficulté croissante ?
-- [ ] verif DEATHDELAY et autres constantes modifiées pendant les tests
+- [x] protéger lecture du fichier scores avec un try/except sur 'read_text()'
+- [x] corriger docstrings obsolètes, supprimer/traduire commentaires
+- [x] supprimer print_red() et green() inutilisés
+
+
+- [x] renommer `doc` en `project_management` et réorganiser le contenu ; maj liens dans `README`
+- [x] cheat.md : mettre en forme, ajouter des exemples et preciser de figer avant skip-level
+- [x] README maj tree
+
+- [x] ? ajout freeze dans demo vidéo
+- [x] chercher moins mauvaise soluce pour affichage optimal de la vidéo demo
+
+- [x] README.md mise en forme / coquilles
+- [x] README.md traduire
+
+- [ ] ? déplacer `Maze Parts.png`, `Place_Holder`... dans `project_management/img` 
 
 - [ ] derniers tests en simulant l'eval
 
-- [x] ReadMe mise en forme
-- [x] ReadMe verif demo en repo public
-- [ ] ReadMe traduire
-- [ ] ? ajout freeze dans demo vidéo
-
-- [ ] A LA FIN : re-verif norme, docstring, commentaires
+- [x] A LA FIN : re-verif norme, docstring, commentaires
 
 - [ ] Itch.io republier
 

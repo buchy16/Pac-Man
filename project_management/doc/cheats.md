@@ -39,3 +39,11 @@ Si besoin, saisissez `help` pour accéder au manuel des commandes de cheat :
 
 + `super <true/false>` :  
 	*Set Pacman to super Pacman or not*
+
+Pour rappeler la derniére commande, utilisez la touche [tab] : les 6 dernières commendes sont gardées en mémoire.
+
+**Exemples** d'utilisation :  
+- `freeze blinky true` : Blinky se drape de **blanc** et **s'immobilise** (les autres continuent) ;
+- `invincible true` : Pacman peut entrer en collision avec un fantôme sans perdre de vie ;
+- `super true` : tous les fantômes se drapent de **bleu**, ralentissent et s'éloignent de Pacman comme s'il avait mangé une super-pacgum;
+- `reset-all` : tous les fantômes retournent à leur coin de départ.
