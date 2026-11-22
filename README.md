@@ -2,7 +2,7 @@
 
 <div align="center">
   <video src="https://github.com/user-attachments/assets/57f40ba0-2405-4093-8c26-42423b1e5398" width="470" height="386" playsinline></video>
-  <p><sub>Source file : <a href="doc/img/demo.mp4">doc/img/demo.mp4</a></sub></p>
+  <p><sub>Source file : <a href="project_management/img/demo.mp4">project_management/img/demo.mp4</a></sub></p>
 </div>
 
 ## Table of Contents
@@ -166,7 +166,7 @@ Voici les commandes inclues dans le Makefile  :
 | `←` `↑` `↓` `→` | Direction de Pac-Man (mémorisée jusqu'à la case suivante)                                                                           |
 | `Échap`         | Menu pause pendant une partie                                                                                                                    |
 | `F3`            | Ouvre et ferme la console de cheat                                                                                                               |
-| `help`          | en mode cheat, affiche les commandes disponibles<br>(*Le manuel des commandes est également fourni dans le fichier  [cheats.md](doc/cheats.md)*) |
+| `help`          | en mode cheat, affiche les commandes disponibles<br>(*Le manuel des commandes est également fourni dans le fichier  [cheats.md](project_management/doc/cheats.md)*) |
 | `tabulation`    | en mode cheat, rappelle la commande précédente                                                                                                   |
 | `Suppr`         | Ferme l'application                                                                                                                              |
 | Souris          | Boutons des menus (survol et clic)                                                                                                               |
@@ -229,7 +229,7 @@ Le jeu est configuré via un fichier `config.json` reçu en argument.
 | `level[].width`           | integer | Maze width of this level                                  |
 | `level[].height`          | integer | Maze height of this level                                 |
 
-Les règles validées par Pydantic et un exemple de journalisation/correction d'une configuration sont détaillés en annexe dans [config.md](doc/config.md).
+Les règles validées par Pydantic et un exemple de journalisation/correction d'une configuration sont détaillés en annexe dans [config.md](project_management/doc/config.md).
 
 
 *[Back to top](<#table-of-contents>)*
@@ -257,7 +257,7 @@ Les erreurs d'accès à ce fichier (`src/data/highscores.json` par exemple) sont
 + **Quarantaine**  
   en cas de fichier corrompu, une copie `<fichier>.corrupt-AAAAMMJJ-HHMMSS` est conservée avant toute nouvelle écriture. Le cas échéant les enregistrements valides sont conservés, et si la copie échoue, l'opération est annulée pour éviter de perdre ces données.
 
-L'implémentation de la gestion des scores est détaillée en annexe dans [scores.md](doc/scores.md).
+L'implémentation de la gestion des scores est détaillée en annexe dans [scores.md](project_management/doc/scores.md).
 
 *[Back to top](<#table-of-contents>)*
 
@@ -317,7 +317,7 @@ Certains aspects de l'implémentation ont déjà été présentés :
 L'utilisation imposée de la **MiniLibX était le principal défi de ce projet**, car cette bibliothèque graphique est TRÈS minimaliste : affichage pixel par pixel lent, gestion rudimentaire des sprites, aucune gestion de la physique...
 
 - Les images sont chargées une seule fois, à l'import de `src/utils/sprites.py`, rangées dans des dictionnaires pour être utilisées par leur nom, puis elles sont libérées à la fin du programme par `second_impact()`.
-- Pour limiter autant que possible le nombre d'appels à chaque frame, certaines images ont été assemblées en une seule : le dessin du labyrinthe, la couche de pacgums, la rangée de vies... Chaque image composée peut ainsi être affichée en un seul appel par frame, et elle n'est reconstruite que si son contenu change. L'annexe [bake_background.md](doc/bake_background.md) décrit le principe de cet assemblage pour le cas particulier du background.
+- Pour limiter autant que possible le nombre d'appels à chaque frame, certaines images ont été assemblées en une seule : le dessin du labyrinthe, la couche de pacgums, la rangée de vies... Chaque image composée peut ainsi être affichée en un seul appel par frame, et elle n'est reconstruite que si son contenu change. L'annexe [bake_background.md](project_management/doc/bake_background.md) décrit le principe de cet assemblage pour le cas particulier du background.
 - Les textes et nombres sont assemblés à partir de sprites et mis en cache, cf `src/utils/text_digit_displayer.py`.
 
 ### Temps réel et fluidité
@@ -367,7 +367,7 @@ Pour respecter l'interface `TargetStrategy`, toutes les stratégies implémenten
 + `Inky` vise le symétrique de Blinky par rapport à 2 cases devant Pac-Man, avec `TrickyTarget` ;
 + `Clyde` erre au hasard et charge quand Pac-Man se trouve à 3 cases ou moins, avec `RandomOrChargeTarget`.
 
-Ensuite l'algorithme `A*`  utilise la distance de Manhattan pour calculer le chemin le plus court. Le choix de cet algorithme et son implémentation sont expliqués dans l'annexe [Astar.md](doc/Astar.md).
+Ensuite l'algorithme `A*`  utilise la distance de Manhattan pour calculer le chemin le plus court. Le choix de cet algorithme et son implémentation sont expliqués dans l'annexe [Astar.md](project_management/doc/Astar.md).
 
 ### Chemins relatifs
 Les problèmes de chemins ont été résolus par l'ajout du fichier `src/utils/paths.py` qui fournit `ROOT_DIR`, `resource_path()` et  `resolve_path()`. Afin que le jeu trouve toujours ses `assets/` et ses `.json`, les chemins sont calculés à partir de l'emplacement du code (et non du dossier courant), que le jeu soit lancé depuis les sources ou depuis le package.
@@ -448,18 +448,26 @@ flowchart TD
 │   ├── Entities/
 │   │   └── ...
 │   └── ...
-├── doc/                                 # All documentation produced and shared during development
-│   ├── Astar.md
-│   ├── bake_background.md
-│   ├── config.md
-│   ├── dataclass_frozen_true.md
-│   ├── git.md
-│   ├── Pacman.excalidraw
-│   ├── PyInstaller.md
-│   ├── scores.md
+├── project_management/                  # All documentation produced and shared during development
 │   ├── subject_fr_v1.5.md
 │   ├── todo.md
-│   └── urls.md
+│   ├── Pacman.excalidraw
+│   ├── repartition_taches.md
+│   ├── planning.md
+│   ├── img/
+│   │   ├── demo.mp4
+│   │   └── ...
+│   └── doc/
+│       ├── Astar.md
+│       ├── bake_background.md
+│       ├── cheats.md
+│       ├── config.md
+│       ├── git.md
+│       ├── PyInstaller.md
+│       ├── scores.md
+│       ├── stub.md
+│       ├── urls.md
+│       └── ...
 ├── modules/                             # packages provided for the project
 │   ├── mazegenerator-2.1.0-py3-none-any.whl
 │   └── mlx-2.4-py3-none-any.whl
@@ -606,8 +614,8 @@ classDiagram
 **Au démarrage**
 + Chacun a choisi les tâches sur lesquelles il souhaitait travailler ;
 + Le projet a été cadré via 2 fichiers :
-    + [ToDo list](doc/todo.md)
-    + [Pacman.excalidraw](doc/Pacman.excalidraw)
+    + [ToDo list](project_management/todo.md)
+    + [Pacman.excalidraw](project_management/Pacman.excalidraw)
 
 **Pendant le développement**
 + Le code a été partagé via GitHub, avec :
@@ -618,7 +626,7 @@ Cette démarche a généré peu de conflits, à l'exception de la branche `packa
 
 + En parallèle, des fiches thématiques ont été rédigées et partagées afin d'aider chaque binôme à s'approprier le code de l'autre.
 
-Tous ces documents sont disponibles dans le répertoire dédié, [`doc/`](doc/).
+Tous ces documents sont disponibles dans le répertoire dédié, [`project_management/`](project_management/).
 
 *[Back to top](<#table-of-contents>)*
 
@@ -641,7 +649,7 @@ Tous ces documents sont disponibles dans le répertoire dédié, [`doc/`](doc/).
 ## Usage IA
 
 L'IA (GPT 5.6 et Sonnet 5.5) a été utilisée pour :
-+ Finaliser la méthode qui assemble toutes les tuiles du labyrinthe en 1 seule image d'arrière-plan (voir [bake_background](doc/bake_background.md)) ;
++ Finaliser la méthode qui assemble toutes les tuiles du labyrinthe en 1 seule image d'arrière-plan (voir [bake_background](project_management/doc/bake_background.md)) ;
 + Finaliser le packaging (mise à jour des chemins vers les assets dans `sprites.py`) ;
 + Rédiger des docstrings ;
 + Corriger des erreurs `mypy` ;
