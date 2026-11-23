@@ -15,6 +15,7 @@ URLs en vrac
 + Official [uv](https://docs.astral.sh/uv/guides/projects/) documentation
 + Official [Pydantic](https://docs.pydantic.dev/) documentation
 + Official [Pytest](https://docs.pytest.org/en/stable/getting-started.html) documentation
+[pytest Tutorial: Effective Python Testing – Real Python](https://realpython.com/pytest-python-testing/)
 
 
 + jouer pendant les pauses : [pacman](https://freepacman.org/) :D
