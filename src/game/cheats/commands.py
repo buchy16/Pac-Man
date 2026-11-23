@@ -266,9 +266,8 @@ class FreezeGhosts(Command):
                 self.cheat.ghosts.set_all_ghosts_freeze(boolean)
             else:
                 self.cheat.ghosts.ghosts[target.lower()].is_frozen = boolean
-        except (ValueError, KeyError, IndexError) as e:
+        except (ValueError, KeyError, IndexError):
             self.warn("invalide arguments")
-            print(e)
 
 
 class SetPlayerInvincible(Command):
