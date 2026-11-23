@@ -260,13 +260,15 @@ class FreezeGhosts(Command):
             if (boolean_arg == "true" or boolean_arg == "false"):
                 boolean = boolean_arg == "true"
             else:
-                raise ValueError()
+                raise ValueError("CACA")
 
             if (target == "all"):
                 self.cheat.ghosts.set_all_ghosts_freeze(boolean)
-            self.cheat.ghosts.ghosts[target.lower()].is_frozen = boolean
-        except (ValueError, KeyError, IndexError):
+            else:
+                self.cheat.ghosts.ghosts[target.lower()].is_frozen = boolean
+        except (ValueError, KeyError, IndexError) as e:
             self.warn("invalide arguments")
+            print(e)
 
 
 class SetPlayerInvincible(Command):
