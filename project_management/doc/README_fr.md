@@ -1,7 +1,7 @@
 *This project has been created as part of the 42 curriculum by nbuchy, vadamavi.*
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/57f40ba0-2405-4093-8c26-42423b1e5398" width="470" height="386" autoplay muted loop playsinline></video>
+  <video src="https://github.com/user-attachments/assets/f10c2c14-04ee-4d70-b54f-e00b73695834" width="470" height="386" autoplay muted loop playsinline></video>
   <p><sub>Source file : <a href="project_management/img/demo.mp4">project_management/img/demo.mp4</a></sub></p>
 </div>
 
