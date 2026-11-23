@@ -2,6 +2,7 @@ import pytest
 import logging
 from _pytest.logging import LogCaptureFixture
 from pathlib import Path
+from typing import Any
 from src.__main__ import main
 from src.data.parse_config import get_valid_config
 from src.data.parse_config import DEFAULT_CONFIG, MIN_LEVELS, DEFAULT_SIZE
@@ -13,7 +14,7 @@ def resolved(name: str) -> str:
     return str(resource_path(name))
 
 
-def expected_default() -> dict:
+def expected_default() -> dict[str, Any]:
     """DEFAULT_CONFIG as it looks after ensure_highscore_dir()."""
     return {
         **DEFAULT_CONFIG,
