@@ -18,7 +18,7 @@ run:
 	uv run python pac-man.py $(CONFIG)
 
 debug:
-	uv run python -m pdb pac-man.py src $(CONFIG)
+	uv run python -m pdb pac-man.py $(CONFIG)
 
 lint:
 	uv run flake8 src

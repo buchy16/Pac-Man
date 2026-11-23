@@ -3,9 +3,9 @@ from enum import Enum
 import random
 from .text_digit_displayer import DisplayString, DisplayNums
 
-# parsing.py importe déjà utils.py, donc pour ne PAS créer d'import circulaire
-# tout en fournissant les types 'GameConfig' et 'Maze' à VSCode et mypy,
-# on utilise TYPE_CHECKING qui est toujours False à l'exécution :
+# parsing.py already imports utils.py, so to avoid creating a circular import
+# whilst still providing the “GameConfig” and “Maze” types to VSCode and mypy,
+# we use TYPE_CHECKING, which is always False at runtime:
 if TYPE_CHECKING:
     from ..data.parse_config import GameConfig
     from ..game.maze import Maze
@@ -35,16 +35,6 @@ class Color(Enum):
     GREEN = "\033[32m"
     RED = "\033[31m"
     NONE = "\033[0m"
-
-
-def print_green(msg: str, end_msg: str = '\n') -> None:
-    """Print msg in green"""
-    print(f"\033[32m{msg}\033[0m", end=end_msg)
-
-
-def print_red(msg: str, end_msg: str = '\n') -> None:
-    """Print msg in red"""
-    print(f"\033[31m{msg}\033[0m", end=end_msg)
 
 
 def print_config(config: "GameConfig") -> None:
