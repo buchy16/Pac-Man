@@ -52,7 +52,6 @@ def main(argv: list[str]) -> None:
     Args:
         argv: Command-line arguments used to load the game configuration.
     """
-    print("begining tests")
     if len(argv) != 2:
         spelling_fanatic = "argument" if len(argv) == 1 else "arguments"
         logging.error(f"You gave {len(argv) - 1} {spelling_fanatic}, "
