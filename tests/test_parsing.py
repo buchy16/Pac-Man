@@ -5,6 +5,20 @@ from pathlib import Path
 from src.__main__ import main
 from src.data.parse_config import get_valid_config
 from src.data.parse_config import DEFAULT_CONFIG, MIN_LEVELS, DEFAULT_SIZE
+from src.utils.paths import resource_path
+
+
+def resolved(name: str) -> str:
+    """Highscore path as returned by get_valid_config() (resolved)."""
+    return str(resource_path(name))
+
+
+def expected_default() -> dict:
+    """DEFAULT_CONFIG as it looks after ensure_highscore_dir()."""
+    return {
+        **DEFAULT_CONFIG,
+        "highscore_filename": resolved(DEFAULT_CONFIG["highscore_filename"]),
+    }
 
 
 # ===========================================================================
@@ -63,7 +77,7 @@ def test_file_not_found(caplog: LogCaptureFixture, tmp_path: Path) -> None:
         config = get_valid_config(str(config_file))
 
     assert "is missing:\ta default config will be loaded" in caplog.text
-    assert config.model_dump() == DEFAULT_CONFIG
+    assert config.model_dump() == expected_default()
 
 
 # ---------------------------------------------------------- PERMISSION ERROR
@@ -85,7 +99,7 @@ def test_file_unreadable(caplog: LogCaptureFixture, tmp_path: Path) -> None:
 
         assert "You have no permission to read" in caplog.text
         assert "a default config will be loaded" in caplog.text
-        assert config.model_dump() == DEFAULT_CONFIG
+        assert config.model_dump() == expected_default()
 
     finally:
         config_file.chmod(0o644)
@@ -108,7 +122,7 @@ def test_file_empty(caplog: LogCaptureFixture, tmp_path: Path) -> None:
 
     assert "Config file has invalid syntax" in caplog.text
     assert "a default config will be loaded" in caplog.text
-    assert config.model_dump() == DEFAULT_CONFIG
+    assert config.model_dump() == expected_default()
 
 
 # ===========================================================================
@@ -144,7 +158,7 @@ def test_file_with_comments(tmp_path: Path,
     config = get_valid_config(str(json_file))
 
     assert config.points_per_pacgum == 33
-    assert config.highscore_filename == "highscores.json"
+    assert config.highscore_filename == resolved("highscores.json")
     assert config.lives == 33
     assert config.seed == 33
     assert config.level_max_time == 33
@@ -181,7 +195,7 @@ def test_invalid_json_syntax(caplog: LogCaptureFixture, tmp_path: Path,
         config = get_valid_config(str(json_file))
     assert "Config file has invalid syntax" in caplog.text
     assert "a default config will be loaded" in caplog.text
-    assert config.model_dump() == DEFAULT_CONFIG
+    assert config.model_dump() == expected_default()
 
 
 # ---------------------------------------------------------------- not a dict
@@ -211,7 +225,7 @@ def test_json_not_a_dict(caplog: LogCaptureFixture, tmp_path: Path,
         config = get_valid_config(str(json_file))
     assert "Config file is not a dict" in caplog.text
     assert "a default config will be loaded" in caplog.text
-    assert config.model_dump() == DEFAULT_CONFIG
+    assert config.model_dump() == expected_default()
 
 
 # ===========================================================================
@@ -244,7 +258,8 @@ def test_unexpected_keys_ignored(caplog: LogCaptureFixture, tmp_path: Path,
         config = get_valid_config(str(json_file))
 
     assert "unknown keys ignored" in caplog.text
-    assert config.highscore_filename == DEFAULT_CONFIG["highscore_filename"]
+    assert config.highscore_filename == resolved(
+        DEFAULT_CONFIG["highscore_filename"])
     assert config.lives == 33
 
 
@@ -334,7 +349,8 @@ def test_wrong_regex(caplog: LogCaptureFixture, tmp_path: Path,
         config = get_valid_config(str(json_file))
 
     assert "was invalid" in caplog.text
-    assert config.highscore_filename == DEFAULT_CONFIG["highscore_filename"]
+    assert config.highscore_filename == resolved(
+        DEFAULT_CONFIG["highscore_filename"])
     assert config.level_max_time == 33
 
 

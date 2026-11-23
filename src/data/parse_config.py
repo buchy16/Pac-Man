@@ -98,11 +98,11 @@ def fallback(default_value: Any) -> WrapValidator:
         """Validate a value and log when the configured default is used.
         (could be renamed `validate_or_default()` for greater precision)
 
-    ARGS:
-    levels_raw: raw value read from the JSON
-    do_pydantic: function that starts the standard Pydantic validation
-    infos: information regarding validation (field name, etc.)
-    """
+        ARGS:
+        levels_raw: raw value read from the JSON
+        do_pydantic: function that starts the standard Pydantic validation
+        infos: information regarding validation (field name, etc.)
+        """
         try:
             return do_pydantic(value_raw)
         except ValidationError as error:
